@@ -1,5 +1,4 @@
-# ScriptsFolderOf3DFirstPersonMovement2
-And also the UnityPackage of the project.
+# 3DFirstPersonMovement2
 
 This is a Unity project that I made.
 
