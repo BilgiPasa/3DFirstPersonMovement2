@@ -13,6 +13,7 @@ public class PlayerMovementManager : MonoBehaviour
     //* In Unity Editor, layer 8 should be "Movable Bouncy Layer".
     //* In the project settings, make the default Physics material a frictionless and not bouncy material.
     //* Make sure that movable objects have a Rigidbody.
+    //* Don't change any values if not necessary, because some functions are designed for some values.
 
     [Header("Horizontal and Vertical")]
     public static int vertical, horizontal, runSpeed = 12;
