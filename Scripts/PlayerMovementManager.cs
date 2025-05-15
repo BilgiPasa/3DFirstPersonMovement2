@@ -13,13 +13,15 @@ public class PlayerMovementManager : MonoBehaviour
     //* In Unity Editor, layer 8 should be "Movable Bouncy Layer".
     //* In the project settings, make the default Physics material a frictionless and not bouncy material.
     //* Make sure that movable objects have a Rigidbody.
-    //* Don't change any values if not necessary, because some functions are designed for some values.
+    //* Don't change any constants' values if not necessary.
 
     [Header("Horizontal and Vertical")]
     public static int vertical, horizontal, runSpeed = 12;
     public static bool onSlope;
-    int normalMoveSpeed = 9, crouchSpeed = 6, normalGroundLinearDamping = 10, theMoveSpeed;
-    float theMoveMultiplier = 625.005f, airMoveMultiplier = 0.16f, minimum = 0.1f, airLinearDamping = 0.04f, bouncyGroundLinearDamping = 12.5f, flatRotationAngleInAir;
+    const int normalGroundLinearDamping = 10;
+    int normalMoveSpeed = 9, crouchSpeed = 6, theMoveSpeed;
+    const float theMoveMultiplier = 625.005f, airMoveMultiplier = 0.16f, minimum = 0.1f, airLinearDamping = 0.04f, bouncyGroundLinearDamping = 12.5f;
+    float flatRotationAngleInAir;
     bool normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum;
     Vector2 flatVelocityRelativeToPlayerInAir, normalizedMoveDirectionRelativeToPlayerInAir, normalizedMoveDirectionAsVector2;
     Vector3 normalizedMoveDirection, normalizedSlopeMoveDirection;
@@ -31,13 +33,14 @@ public class PlayerMovementManager : MonoBehaviour
     bool inCrouchingProcess, dontUncrouch;
 
     [Header("Coyote Time")]
-    float coyoteTime = 0.15f, coyoteTimeCounter;
+    const float coyoteTime = 0.15f;
+    float coyoteTimeCounter;
 
     [Header("Jump And Fall")]
     public static float startOfFall, endOfFall, fallDistance;
     public static bool groundedForAll, wasGrounded, jumping;
     int normalJumpForce = 21, bouncyJumpForce = 56, maxFallWithoutBouncyJumpCalculationByThisScript = 5, maxFallWithoutFallDamage = 15, maxFallWithoutParticles = 5;
-    float jumpingCooldown = 0.1f, jumpAgainCooldown = 0.3f, groundedSphereRadius = 0.3f;
+    const float jumpingCooldown = 0.1f, jumpAgainCooldown = 0.3f, groundedSphereRadius = 0.3f;
     bool readyToJump = true, jumpingInput, falling, wasFalling, groundedForBouncyEnvironment, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment, playerTouchingToAnyGround, playerStandingOnMovableGround;
 
     [Header("Keybinds")]

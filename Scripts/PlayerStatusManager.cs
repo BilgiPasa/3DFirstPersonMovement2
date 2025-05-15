@@ -8,7 +8,7 @@ public class PlayerStatusManager : MonoBehaviour
     public static bool idling, walking, running, jumpingUp, jumpingDown, goingUp, goingDown, crouchIdling, crouchWalking, crouchJumpingUp, crouchJumpingDown, crouchGoingUp, crouchGoingDown, sliding, fallDistanceIsBiggerThanMinimum;
     public static Vector2 flatVelocity;
     int runSpeedFromPlayerMovementManager, verticalFromPlayerMovementManager;
-    float minimum = 0.1f;
+    const float minimum = 0.1f;
     bool playerDiedFromPlayerSpawnAndSaveManager, groundedForAllFromPlayerMovementManager;
     KeyCode runKey = KeyCode.R;
     [SerializeField] Transform playerTransform, playerGroundParticles;

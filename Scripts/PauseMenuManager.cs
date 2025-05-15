@@ -8,7 +8,7 @@ public class PauseMenuManager : MonoBehaviour
     public static bool gamePaused, dynamicFOV, settingsMenuOpened;
     int[] last5FPS = new int[5];
     int counter;
-    KeyCode escapeKey = KeyCode.Escape;
+    const KeyCode escapeKey = KeyCode.Escape;
     [SerializeField] GameObject pauseMenu, settingsMenu, speedTextObject, FPSTextObject;
     [SerializeField] Toggle dynamicFOVToggle, speedTextToggle, increasedSensitivityToggle, showFPSToggle;
     [SerializeField] Slider FOVSlider, mouseSensitivitySlider, maxFPSSlider;
