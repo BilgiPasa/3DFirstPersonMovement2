@@ -20,7 +20,7 @@ public class PlayerMovementManager : MonoBehaviour
     public static bool onSlope;
     const int normalGroundLinearDamping = 10;
     int normalMoveSpeed = 9, crouchSpeed = 6, theMoveSpeed;
-    const float theMoveMultiplier = 625.005f, airMoveMultiplier = 0.16f, minimum = 0.1f, airLinearDamping = 0.04f, bouncyGroundLinearDamping = 12.5f;
+    const float theMoveMultiplier = 625.005f, airMoveMultiplier = 0.16f, airLinearDamping = 0.04f, bouncyGroundLinearDamping = 12.5f, minimum = 0.1f;
     float flatRotationAngleInAir;
     bool normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum;
     Vector2 flatVelocityRelativeToPlayerInAir, normalizedMoveDirectionRelativeToPlayerInAir, normalizedMoveDirectionAsVector2;
