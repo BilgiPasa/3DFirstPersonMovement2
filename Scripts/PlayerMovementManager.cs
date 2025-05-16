@@ -84,7 +84,7 @@ public class PlayerMovementManager : MonoBehaviour
     {// I didn't added the if not game paused condition because if game pauses, FixedUpdate pauses too.
         if (!PlayerSpawnAndSaveManager.playerDied)
         {// These functions' order are intentional, i wouldn't recommend you to change the order.
-            GroundedCheckAndFallingCheckAndBouncyJumpAndCoyoteTimeAndFallDamage();
+            GroundedCheckAndFallingCheckAndBouncyJumpAndFallDamageAndCoyoteTime();
             Jump();
             Crouch();
             LinearDamping();
@@ -131,7 +131,7 @@ public class PlayerMovementManager : MonoBehaviour
         jumpingInput = Input.GetKey(jumpKey);
     }
 
-    void GroundedCheckAndFallingCheckAndBouncyJumpAndCoyoteTimeAndFallDamage()
+    void GroundedCheckAndFallingCheckAndBouncyJumpAndFallDamageAndCoyoteTime()
     {
         if (!crouching)
         {
