@@ -7,8 +7,8 @@ using UnityEngine;
 public class PlayerMovementManager : MonoBehaviour
 {
     //* In Unity Editor, make the gravity "-60".
-    //* In Unity Editor, layer 3 should be "Normal Layer".
-    //* In Unity Editor, layer 6 should be "Bouncy Layer".
+    //* In Unity Editor, layer 3 should be "Static Normal Layer".
+    //* In Unity Editor, layer 6 should be "Static Bouncy Layer".
     //* In Unity Editor, layer 7 should be "Movable Normal Layer".
     //* In Unity Editor, layer 8 should be "Movable Bouncy Layer".
     //* In the project settings, make the default Physics material a frictionless and not bouncy material.

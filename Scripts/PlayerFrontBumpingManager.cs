@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PlayerFrontBumpingManager : MonoBehaviour
 {
-    //* In Unity Editor, layer 3 should be "Normal Layer".
-    //* In Unity Editor, layer 6 should be "Bouncy Layer".
+    //* In Unity Editor, layer 3 should be "Static Normal Layer".
+    //* In Unity Editor, layer 6 should be "Static Bouncy Layer".
     //* In Unity Editor, layer 7 should be "Movable Normal Layer".
     //* In Unity Editor, layer 8 should be "Movable Bouncy Layer".
 
