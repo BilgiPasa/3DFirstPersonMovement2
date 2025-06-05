@@ -54,7 +54,7 @@ public class PlayerMovementManager : MonoBehaviour
     [SerializeField] Transform playerModelTransform;
     [SerializeField] CapsuleCollider playerCapsuleCollider;
     [SerializeField] ParticleSystem jumpingDownParticles;
-    [SerializeField] LayerMask normalLayer, bouncyLayer, movableNormalLayer, movableBouncyLayer;
+    [SerializeField] LayerMask staticNormalLayer, staticBouncyLayer, movableNormalLayer, movableBouncyLayer;
     Transform playerTransform;
     Rigidbody playerRigidbody;
 
@@ -135,14 +135,14 @@ public class PlayerMovementManager : MonoBehaviour
     {
         if (!crouching)
         {
-            groundedForAll = Physics.CheckSphere(playerTransform.position - new Vector3(0, playerHeight / 2, 0), groundedSphereRadius, normalLayer | bouncyLayer | movableNormalLayer | movableBouncyLayer);
-            groundedForBouncyEnvironment = Physics.CheckSphere(playerTransform.position - new Vector3(0, playerHeight / 2, 0), groundedSphereRadius, bouncyLayer | movableBouncyLayer);
+            groundedForAll = Physics.CheckSphere(playerTransform.position - new Vector3(0, playerHeight / 2, 0), groundedSphereRadius, staticNormalLayer | staticBouncyLayer | movableNormalLayer | movableBouncyLayer);
+            groundedForBouncyEnvironment = Physics.CheckSphere(playerTransform.position - new Vector3(0, playerHeight / 2, 0), groundedSphereRadius, staticBouncyLayer | movableBouncyLayer);
             playerStandingOnMovableGround = Physics.CheckSphere(playerTransform.position - new Vector3(0, playerHeight / 2, 0), groundedSphereRadius, movableNormalLayer | movableBouncyLayer);
         }
         else
         {
-            groundedForAll = Physics.CheckSphere(playerTransform.position - new Vector3(0, crouchHeight / 2, 0), groundedSphereRadius, normalLayer | bouncyLayer | movableNormalLayer | movableBouncyLayer);
-            groundedForBouncyEnvironment = Physics.CheckSphere(playerTransform.position - new Vector3(0, crouchHeight / 2, 0), groundedSphereRadius, bouncyLayer | movableBouncyLayer);
+            groundedForAll = Physics.CheckSphere(playerTransform.position - new Vector3(0, crouchHeight / 2, 0), groundedSphereRadius, staticNormalLayer | staticBouncyLayer | movableNormalLayer | movableBouncyLayer);
+            groundedForBouncyEnvironment = Physics.CheckSphere(playerTransform.position - new Vector3(0, crouchHeight / 2, 0), groundedSphereRadius, staticBouncyLayer | movableBouncyLayer);
             playerStandingOnMovableGround = Physics.CheckSphere(playerTransform.position - new Vector3(0, crouchHeight / 2, 0), groundedSphereRadius, movableNormalLayer | movableBouncyLayer);
         }
 
@@ -266,7 +266,7 @@ public class PlayerMovementManager : MonoBehaviour
             }
             else if (crouching)
             {// Bilgi için https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Physics.CheckCapsule.html sitesine bakabilirsin. -0.075f'i de girebildiği ama küçücük bir kısmı CapsuleCollider ile temas ettiği için uncrouch yapamama durumu olmasın diye koydum.
-                dontUncrouch = Physics.CheckCapsule(playerTransform.position + new Vector3(0, playerHeight - crouchHeight / 2 - (playerWidthRadius - 0.01f) - 0.075f, 0), playerTransform.position + new Vector3(0, crouchHeight / 2 - (playerWidthRadius - 0.01f), 0), playerWidthRadius - 0.01f, normalLayer | bouncyLayer);
+                dontUncrouch = Physics.CheckCapsule(playerTransform.position + new Vector3(0, playerHeight - crouchHeight / 2 - (playerWidthRadius - 0.01f) - 0.075f, 0), playerTransform.position + new Vector3(0, crouchHeight / 2 - (playerWidthRadius - 0.01f), 0), playerWidthRadius - 0.01f, staticNormalLayer | staticBouncyLayer | movableNormalLayer | movableBouncyLayer);
 
                 if (!Input.GetKey(crouchKey) && !dontUncrouch)
                 {
