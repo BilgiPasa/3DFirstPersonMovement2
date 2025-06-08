@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -30,7 +29,7 @@ public class PlayerMovementManager : MonoBehaviour
     [Header("Crouch")]
     public static float playerHeightForOtherScripts, crouchHeightForOtherScripts, playerWidthRadiusForOtherScripts;
     public static bool crouching;
-    bool inCrouchingProcess, dontUncrouch;
+    bool dontUncrouch;
 
     [Header("Coyote Time")]
     const float coyoteTime = 0.15f;
@@ -88,12 +87,7 @@ public class PlayerMovementManager : MonoBehaviour
             Jump();
             Crouch();
             LinearDamping();
-
-            if (!inCrouchingProcess) // For not to gain speed when you crouch
-            {
-                Movement();
-            }
-
+            Movement();
             WasFallingAndWasGroundedCheck();
             GravityAndSpeedControl();
         }
@@ -248,9 +242,9 @@ public class PlayerMovementManager : MonoBehaviour
         jumping = false;
     }
 
-    /* For a continuous jump, use JumpAgainReset. If you don't want to use JumpAgainReset, make a jump buffer function
-    and use it but don't forget to add "coyoteTimeCounter = 0;" in your jumping function after the jumping force.
-    But you don't need to do that in this script if you are using JumpAgainReset. */
+    /* For a continuous jump, use JumpAgainReset. If you don't want to use JumpAgainReset, make a jump buffer
+    function and use it but don't forget to add "coyoteTimeCounter = 0;" in your jumping function after the
+    jumping force. But you don't need to do that in this script if you are using JumpAgainReset. */
     void JumpAgainReset()
     {
         readyToJump = true;
@@ -262,7 +256,15 @@ public class PlayerMovementManager : MonoBehaviour
         {
             if (!crouching && Input.GetKey(crouchKey))
             {
-                StartCoroutine(Crouching());
+                playerTransform.localScale = new Vector3(playerWidthRadius * 2, crouchHeight / 2, playerWidthRadius * 2);
+
+                if (groundedForAll)
+                {
+                    playerRigidbody.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (playerHeight / 2 - crouchHeight / 2), playerTransform.position.z);
+                }
+
+                crouching = true;
+                PlayerPrefs.SetInt("playerCrouching", 1);
             }
             else if (crouching)
             {// Bilgi için https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Physics.CheckCapsule.html sitesine bakabilirsin. -0.075f'i de girebildiği ama küçücük bir kısmı CapsuleCollider ile temas ettiği için uncrouch yapamama durumu olmasın diye koydum.
@@ -270,42 +272,17 @@ public class PlayerMovementManager : MonoBehaviour
 
                 if (!Input.GetKey(crouchKey) && !dontUncrouch)
                 {
-                    StartCoroutine(Uncrouching());
+                    if (groundedForAll)
+                    {
+                        playerRigidbody.position = new Vector3(playerTransform.position.x, playerTransform.position.y + (playerHeight / 2 - crouchHeight / 2), playerTransform.position.z);
+                    }
+
+                    playerTransform.localScale = new Vector3(playerWidthRadius * 2, playerHeight / 2, playerWidthRadius * 2);
+                    crouching = false;
+                    PlayerPrefs.SetInt("playerCrouching", -1);
                 }
             }
         }
-    }
-
-    IEnumerator Crouching()
-    {
-        inCrouchingProcess = true;
-        playerTransform.localScale = new Vector3(playerWidthRadius * 2, crouchHeight / 2, playerWidthRadius * 2);
-
-        if (groundedForAll)
-        {
-            playerRigidbody.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (playerHeight / 2 - crouchHeight / 2), playerTransform.position.z);
-        }
-
-        crouching = true;
-        PlayerPrefs.SetInt("playerCrouching", 1);
-        yield return new WaitForFixedUpdate();
-        inCrouchingProcess = false;
-    }
-
-    IEnumerator Uncrouching()
-    {
-        inCrouchingProcess = true;
-
-        if (groundedForAll)
-        {
-            playerRigidbody.position = new Vector3(playerTransform.position.x, playerTransform.position.y + (playerHeight / 2 - crouchHeight / 2), playerTransform.position.z);
-        }
-
-        playerTransform.localScale = new Vector3(playerWidthRadius * 2, playerHeight / 2, playerWidthRadius * 2);
-        crouching = false;
-        PlayerPrefs.SetInt("playerCrouching", -1);
-        yield return new WaitForFixedUpdate();
-        inCrouchingProcess = false;
     }
 
     void LinearDamping()
