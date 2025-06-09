@@ -88,8 +88,8 @@ public class PlayerMovementManager : MonoBehaviour
             Crouch();
             LinearDamping();
             Movement();
-            WasFallingAndWasGroundedCheck();
             GravityAndSpeedControl();
+            WasFallingAndWasGroundedCheck();
         }
     }
 
@@ -166,7 +166,6 @@ public class PlayerMovementManager : MonoBehaviour
             }
 
             fallDistance = startOfFall - endOfFall;
-
             //print(fallDistance); // For testing
         }
 
@@ -232,7 +231,7 @@ public class PlayerMovementManager : MonoBehaviour
         readyToJump = false;
         jumping = true;
         playerRigidbody.linearVelocity = new Vector3(playerRigidbody.linearVelocity.x, 0, playerRigidbody.linearVelocity.z);
-        playerRigidbody.AddForce(playerTransform.up * jumpForce, ForceMode.VelocityChange);
+        playerRigidbody.AddForce(jumpForce * playerTransform.up, ForceMode.VelocityChange);
         Invoke(nameof(JumpAgainReset), jumpAgainCooldown);
         Invoke(nameof(JumpingReset), jumpingCooldown);
     }
@@ -306,12 +305,12 @@ public class PlayerMovementManager : MonoBehaviour
         {
             if (!onSlope)
             {
-                playerRigidbody.AddForce(normalizedMoveDirection * theMoveSpeed * theMoveMultiplier * Time.fixedDeltaTime, ForceMode.Acceleration);
+                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * Time.fixedDeltaTime * normalizedMoveDirection, ForceMode.Acceleration);
             }
             else
             {
                 normalizedSlopeMoveDirection = Vector3.ProjectOnPlane(normalizedMoveDirection, slopeHit.normal);
-                playerRigidbody.AddForce(normalizedSlopeMoveDirection * theMoveSpeed * theMoveMultiplier * Time.fixedDeltaTime, ForceMode.Acceleration);
+                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * Time.fixedDeltaTime * normalizedSlopeMoveDirection, ForceMode.Acceleration);
             }
         }
         else
@@ -353,11 +352,11 @@ public class PlayerMovementManager : MonoBehaviour
                         {
                             if (flatVelocityRelativeToPlayerInAir.x > theMoveSpeed)
                             {
-                                playerRigidbody.AddForce(-playerModelTransform.right * theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.y) / 2, ForceMode.Acceleration);
+                                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.y / 2) * -playerModelTransform.right, ForceMode.Acceleration);
                             }
                             else if (flatVelocityRelativeToPlayerInAir.x < -theMoveSpeed)
                             {
-                                playerRigidbody.AddForce(playerModelTransform.right * theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.y) / 2, ForceMode.Acceleration);
+                                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.y / 2) * playerModelTransform.right, ForceMode.Acceleration);
                             }
                         }
                     }
@@ -372,11 +371,11 @@ public class PlayerMovementManager : MonoBehaviour
                         {
                             if (flatVelocityRelativeToPlayerInAir.y > theMoveSpeed)
                             {
-                                playerRigidbody.AddForce(-playerModelTransform.forward * theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.x) / 2, ForceMode.Acceleration);
+                                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.x / 2) * -playerModelTransform.forward, ForceMode.Acceleration);
                             }
                             else if (flatVelocityRelativeToPlayerInAir.y < -theMoveSpeed)
                             {
-                                playerRigidbody.AddForce(playerModelTransform.forward * theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.x) / 2, ForceMode.Acceleration);
+                                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.x / 2) * playerModelTransform.forward, ForceMode.Acceleration);
                             }
                         }
                     }
@@ -388,12 +387,12 @@ public class PlayerMovementManager : MonoBehaviour
 
             if (!onSlope)
             {
-                playerRigidbody.AddForce(normalizedMoveDirection * theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime, ForceMode.Acceleration);
+                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * normalizedMoveDirection, ForceMode.Acceleration);
             }
             else
             {
                 normalizedSlopeMoveDirection = Vector3.ProjectOnPlane(normalizedMoveDirection, slopeHit.normal);
-                playerRigidbody.AddForce(normalizedSlopeMoveDirection * theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime, ForceMode.Acceleration);
+                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * normalizedSlopeMoveDirection, ForceMode.Acceleration);
             }
         }
     }
@@ -403,12 +402,6 @@ public class PlayerMovementManager : MonoBehaviour
         // Gets x and z vectors and an angle. Then returs x and y vectors. x means x vector, y means z vector.
         // If you enter the angle negative and the vectors as relative to player, it returns the vectors as relative to world.
         return new Vector2(x * Mathf.Cos(Mathf.Deg2Rad * angle) - z * MathF.Sin(Mathf.Deg2Rad * angle), x * Mathf.Sin(Mathf.Deg2Rad * angle) + z * Mathf.Cos(Mathf.Deg2Rad * angle));
-    }
-
-    void WasFallingAndWasGroundedCheck()
-    {
-        wasFalling = falling;
-        wasGrounded = groundedForAll;
     }
 
     void GravityAndSpeedControl()
@@ -460,6 +453,12 @@ public class PlayerMovementManager : MonoBehaviour
         }
     }
 
+    void WasFallingAndWasGroundedCheck()
+    {
+        wasFalling = falling;
+        wasGrounded = groundedForAll;
+    }
+
     void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.layer == 3 || collision.gameObject.layer == 6 || collision.gameObject.layer == 7 || collision.gameObject.layer == 8)
@@ -471,15 +470,15 @@ public class PlayerMovementManager : MonoBehaviour
         {
             if (playerRigidbody.linearDamping == normalGroundLinearDamping)
             {
-                playerRigidbody.AddForce(collision.gameObject.GetComponent<Rigidbody>().linearVelocity * theMoveMultiplier * Time.fixedDeltaTime, ForceMode.Acceleration);
+                playerRigidbody.AddForce(theMoveMultiplier * Time.fixedDeltaTime * collision.gameObject.GetComponent<Rigidbody>().linearVelocity, ForceMode.Acceleration);
             }
             else if (playerRigidbody.linearDamping == bouncyGroundLinearDamping)
             {
-                playerRigidbody.AddForce(collision.gameObject.GetComponent<Rigidbody>().linearVelocity * theMoveMultiplier * Time.fixedDeltaTime * 4 / 3, ForceMode.Acceleration); // Yes, I found the "* 4 / 3" by trying.
+                playerRigidbody.AddForce(theMoveMultiplier * (Time.fixedDeltaTime * 4 / 3) * collision.gameObject.GetComponent<Rigidbody>().linearVelocity, ForceMode.Acceleration); // Yes, I found the "* 4 / 3" by trying.
             }
             else
             {
-                playerRigidbody.AddForce(collision.gameObject.GetComponent<Rigidbody>().linearVelocity * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime / 49.96f, ForceMode.Acceleration); // Yes, I also found the "/ 49.96f" by trying.
+                playerRigidbody.AddForce(theMoveMultiplier * airMoveMultiplier * (Time.fixedDeltaTime / 49.96f) * collision.gameObject.GetComponent<Rigidbody>().linearVelocity, ForceMode.Acceleration); // Yes, I also found the "/ 49.96f" by trying.
             }
         }
     }
