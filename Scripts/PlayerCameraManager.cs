@@ -52,8 +52,8 @@ public class PlayerCameraManager : MonoBehaviour
     {
         if (!PlayerSpawnAndSaveManager.playerDied)
         {
-            yRotation += Input.GetAxisRaw("Mouse X") * sensitivity * Time.fixedDeltaTime;
-            xRotation -= Input.GetAxisRaw("Mouse Y") * sensitivity * Time.fixedDeltaTime;
+            yRotation += Input.GetAxisRaw("Mouse X") * sensitivity * 0.02f;
+            xRotation -= Input.GetAxisRaw("Mouse Y") * sensitivity * 0.02f;
             xRotation = Mathf.Clamp(xRotation, -90, 90);
         }
 
