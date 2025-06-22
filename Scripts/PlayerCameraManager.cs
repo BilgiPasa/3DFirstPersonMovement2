@@ -69,7 +69,7 @@ public class PlayerCameraManager : MonoBehaviour
 
         if (!Input.GetKey(zoomKey))
         {
-            if (!(PauseMenuManager.dynamicFOV && (PlayerStatusManager.running || (PlayerStatusManager.sliding && PlayerStatusManager.flatVelocity.magnitude > PlayerMovementManager.runSpeed))))
+            if (!(PauseMenuManager.dynamicFOV && (PlayerStatusManager.running || (PlayerStatusManager.sliding && PlayerStatusManager.flatVelocityMagnitude > PlayerMovementManager.runSpeed))))
             {
                 mainCamera.fieldOfView = mainCamera.fieldOfView > normalFOV - 0.01f && mainCamera.fieldOfView < normalFOV + 0.01f ? mainCamera.fieldOfView = normalFOV : mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView, normalFOV, 7.5f * Time.deltaTime);
             }
@@ -80,7 +80,7 @@ public class PlayerCameraManager : MonoBehaviour
         }
         else
         {
-            if (!(PauseMenuManager.dynamicFOV && (PlayerStatusManager.running || (PlayerStatusManager.sliding && PlayerStatusManager.flatVelocity.magnitude > PlayerMovementManager.runSpeed))))
+            if (!(PauseMenuManager.dynamicFOV && (PlayerStatusManager.running || (PlayerStatusManager.sliding && PlayerStatusManager.flatVelocityMagnitude > PlayerMovementManager.runSpeed))))
             {
                 mainCamera.fieldOfView = mainCamera.fieldOfView < zoomFOV + 0.01f ? mainCamera.fieldOfView = zoomFOV : mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView, zoomFOV, 7.5f * Time.deltaTime);
             }

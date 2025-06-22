@@ -5,8 +5,8 @@ using TMPro;
 public class PlayerStatusManager : MonoBehaviour
 {
     public static int playerHealth;
+    public static float flatVelocityMagnitude;
     public static bool idling, walking, running, jumpingUp, jumpingDown, goingUp, goingDown, crouchIdling, crouchWalking, crouchJumpingUp, crouchJumpingDown, crouchGoingUp, crouchGoingDown, sliding, fallDistanceIsBiggerThanMinimum;
-    public static Vector2 flatVelocity;
     int runSpeedFromPlayerMovementManager, verticalFromPlayerMovementManager;
     const float minimum = 0.1f;
     bool playerDiedFromPlayerSpawnAndSaveManager, groundedForAllFromPlayerMovementManager;
@@ -27,7 +27,7 @@ public class PlayerStatusManager : MonoBehaviour
 
         if (!playerDiedFromPlayerSpawnAndSaveManager)
         {
-            flatVelocity = new Vector2(playerRigidbody.linearVelocity.x, playerRigidbody.linearVelocity.z);
+            flatVelocityMagnitude = new Vector2(playerRigidbody.linearVelocity.x, playerRigidbody.linearVelocity.z).magnitude;
             verticalFromPlayerMovementManager = PlayerMovementManager.vertical;
 
             if (!PlayerMovementManager.crouching)
@@ -40,7 +40,7 @@ public class PlayerStatusManager : MonoBehaviour
                 crouchGoingUp = false;
                 crouchGoingDown = false;
                 sliding = false;
-                walking = flatVelocity.magnitude > minimum && (verticalFromPlayerMovementManager != 0 || PlayerMovementManager.horizontal != 0);
+                walking = flatVelocityMagnitude > minimum && (verticalFromPlayerMovementManager != 0 || PlayerMovementManager.horizontal != 0);
 
                 if (walking && verticalFromPlayerMovementManager == 1 && (Input.GetKeyDown(runKey) || Input.GetKey(runKey)))
                 {
@@ -53,7 +53,7 @@ public class PlayerStatusManager : MonoBehaviour
 
                 if (groundedForAllFromPlayerMovementManager)
                 {
-                    idling = flatVelocity.magnitude <= minimum;
+                    idling = flatVelocityMagnitude <= minimum;
                     jumpingUp = PlayerMovementManager.jumping && playerRigidbody.linearVelocity.y > minimum;
                     goingUp = false;
                     goingDown = false;
@@ -86,15 +86,15 @@ public class PlayerStatusManager : MonoBehaviour
                 jumpingDown = false;
                 goingUp = false;
                 goingDown = false;
-                crouchWalking = flatVelocity.magnitude > minimum && (verticalFromPlayerMovementManager != 0 || PlayerMovementManager.horizontal != 0);
+                crouchWalking = flatVelocityMagnitude > minimum && (verticalFromPlayerMovementManager != 0 || PlayerMovementManager.horizontal != 0);
 
                 if (groundedForAllFromPlayerMovementManager)
                 {
-                    crouchIdling = flatVelocity.magnitude <= minimum;
+                    crouchIdling = flatVelocityMagnitude <= minimum;
                     crouchJumpingUp = PlayerMovementManager.jumping && playerRigidbody.linearVelocity.y > minimum;
                     crouchGoingUp = false;
                     crouchGoingDown = false;
-                    sliding = flatVelocity.magnitude > runSpeedFromPlayerMovementManager || PlayerMovementManager.onSlope;
+                    sliding = flatVelocityMagnitude > runSpeedFromPlayerMovementManager || PlayerMovementManager.onSlope;
                 }
                 else
                 {
@@ -138,11 +138,11 @@ public class PlayerStatusManager : MonoBehaviour
             runJumpParticles.Play();
         }
 
-        if (!runAndSlideParticles.isPlaying && groundedForAllFromPlayerMovementManager && !playerDiedFromPlayerSpawnAndSaveManager && (sliding || (running && flatVelocity.magnitude > runSpeedFromPlayerMovementManager / 4)))
+        if (!runAndSlideParticles.isPlaying && groundedForAllFromPlayerMovementManager && !playerDiedFromPlayerSpawnAndSaveManager && (sliding || (running && flatVelocityMagnitude > runSpeedFromPlayerMovementManager / 4)))
         {
             runAndSlideParticles.Play();
         }
-        else if (runAndSlideParticles.isPlaying && (!groundedForAllFromPlayerMovementManager || playerDiedFromPlayerSpawnAndSaveManager || (!sliding && (!running || flatVelocity.magnitude <= runSpeedFromPlayerMovementManager / 4))))
+        else if (runAndSlideParticles.isPlaying && (!groundedForAllFromPlayerMovementManager || playerDiedFromPlayerSpawnAndSaveManager || (!sliding && (!running || flatVelocityMagnitude <= runSpeedFromPlayerMovementManager / 4))))
         {
             runAndSlideParticles.Stop();
         }

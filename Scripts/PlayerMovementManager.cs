@@ -22,7 +22,7 @@ public class PlayerMovementManager : MonoBehaviour
     const float theMoveMultiplier = 625.005f, airMoveMultiplier = 0.16f, airLinearDamping = 0.04f, bouncyGroundLinearDamping = 12.5f, minimum = 0.1f;
     float flatRotationAngleInAir;
     bool normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum;
-    Vector2 flatVelocityRelativeToPlayerInAir, normalizedMoveDirectionRelativeToPlayerInAir, normalizedMoveDirectionAsVector2;
+    Vector2 flatVelocityRelativeToPlayerInAir, normalizedMoveDirectionRelativeToPlayerInAir, normalizedMoveDirectionAsVector2InAir;
     Vector3 normalizedMoveDirection, normalizedSlopeMoveDirection;
     RaycastHit slopeHit;
 
@@ -382,8 +382,8 @@ public class PlayerMovementManager : MonoBehaviour
                 }
             }
 
-            normalizedMoveDirectionAsVector2 = RelativeToPlayerConverter(normalizedMoveDirectionRelativeToPlayerInAir.x, normalizedMoveDirectionRelativeToPlayerInAir.y, -flatRotationAngleInAir);
-            normalizedMoveDirection = new Vector3(normalizedMoveDirectionAsVector2.x, 0, normalizedMoveDirectionAsVector2.y);
+            normalizedMoveDirectionAsVector2InAir = RelativeToPlayerConverter(normalizedMoveDirectionRelativeToPlayerInAir.x, normalizedMoveDirectionRelativeToPlayerInAir.y, -flatRotationAngleInAir);
+            normalizedMoveDirection = new Vector3(normalizedMoveDirectionAsVector2InAir.x, 0, normalizedMoveDirectionAsVector2InAir.y);
 
             if (!onSlope)
             {

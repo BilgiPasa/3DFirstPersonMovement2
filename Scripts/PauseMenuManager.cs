@@ -181,7 +181,7 @@ public class PauseMenuManager : MonoBehaviour
 
             if (speedTextObject.activeSelf)
             {
-                speedText.text = $"Speed : {PlayerStatusManager.flatVelocity.magnitude}";
+                speedText.text = $"Speed : {PlayerStatusManager.flatVelocityMagnitude}";
             }
         }
     }
