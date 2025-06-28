@@ -40,7 +40,6 @@ public class PlayerMovementManager : MonoBehaviour
     public static bool groundedForAll, wasGrounded, jumping;
     int normalJumpForce = 21, bouncyJumpForce = 56, maxFallWithoutBouncyJumpCalculationByThisScript = 5, maxFallWithoutFallDamage = 15, maxFallWithoutParticles = 5;
     const float jumpingCooldown = 0.1f, jumpAgainCooldown = 0.3f;
-    float groundedSphereRadius = 0.3f;
     bool readyToJump = true, jumpingInput, falling, wasFalling, groundedForBouncyEnvironment, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment, playerTouchingToAnyGround, playerStandingOnMovableGround;
 
     [Header("Keybinds")]
@@ -50,6 +49,7 @@ public class PlayerMovementManager : MonoBehaviour
     [SerializeField] float playerHeight = 3;
     [SerializeField] float crouchHeight = 2;
     [SerializeField] float playerWidthRadius = 0.5f;
+    [SerializeField] float groundedSphereRadius = 0.3f;
     [SerializeField] Transform playerModelTransform;
     [SerializeField] CapsuleCollider playerCapsuleCollider;
     [SerializeField] ParticleSystem jumpingDownParticles;
