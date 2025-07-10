@@ -81,16 +81,19 @@ public class PlayerMovementManager : MonoBehaviour
 
     void FixedUpdate()
     {// I didn't added the if not game paused condition because if game pauses, FixedUpdate pauses too.
-        if (!PlayerSpawnAndSaveManager.playerDied)
-        {// These functions' order are intentional, i wouldn't recommend you to change the order.
-            GroundedCheckAndFallingCheckAndBouncyJumpAndFallDamageAndCoyoteTime();
-            Jump();
-            Crouch();
-            LinearDamping();
-            Movement();
-            GravityAndSpeedControl();
-            WasFallingAndWasGroundedCheck();
+        if (PlayerSpawnAndSaveManager.playerDied)
+        {
+            return;
         }
+
+        // These functions' order are intentional, i wouldn't recommend you to change the order.
+        GroundedCheckAndFallingCheckAndBouncyJumpAndFallDamageAndCoyoteTime();
+        Jump();
+        Crouch();
+        LinearDamping();
+        Movement();
+        GravityAndSpeedControl();
+        WasFallingAndWasGroundedCheck();
     }
 
     void MovementInputs()
@@ -251,35 +254,37 @@ public class PlayerMovementManager : MonoBehaviour
 
     void Crouch()
     {
-        if (!jumping)
+        if (jumping)
         {
-            if (!crouching && Input.GetKey(crouchKey))
-            {
-                playerTransform.localScale = new Vector3(playerWidthRadius * 2, crouchHeight / 2, playerWidthRadius * 2);
+            return;
+        }
 
+        if (!crouching && Input.GetKey(crouchKey))
+        {
+            playerTransform.localScale = new Vector3(playerWidthRadius * 2, crouchHeight / 2, playerWidthRadius * 2);
+
+            if (groundedForAll)
+            {
+                playerRigidbody.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (playerHeight / 2 - crouchHeight / 2), playerTransform.position.z);
+            }
+
+            crouching = true;
+            PlayerPrefs.SetInt("playerCrouching", 1);
+        }
+        else if (crouching)
+        {// Bilgi için https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Physics.CheckCapsule.html sitesine bakabilirsin. -0.075f'i de girebildiği ama küçücük bir kısmı CapsuleCollider ile temas ettiği için uncrouch yapamama durumu olmasın diye koydum.
+            dontUncrouch = Physics.CheckCapsule(playerTransform.position + new Vector3(0, playerHeight - crouchHeight / 2 - (playerWidthRadius - 0.01f) - 0.075f, 0), playerTransform.position + new Vector3(0, crouchHeight / 2 - (playerWidthRadius - 0.01f), 0), playerWidthRadius - 0.01f, staticNormalLayer | staticBouncyLayer | movableNormalLayer | movableBouncyLayer);
+
+            if (!Input.GetKey(crouchKey) && !dontUncrouch)
+            {
                 if (groundedForAll)
                 {
-                    playerRigidbody.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (playerHeight / 2 - crouchHeight / 2), playerTransform.position.z);
+                    playerRigidbody.position = new Vector3(playerTransform.position.x, playerTransform.position.y + (playerHeight / 2 - crouchHeight / 2), playerTransform.position.z);
                 }
 
-                crouching = true;
-                PlayerPrefs.SetInt("playerCrouching", 1);
-            }
-            else if (crouching)
-            {// Bilgi için https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Physics.CheckCapsule.html sitesine bakabilirsin. -0.075f'i de girebildiği ama küçücük bir kısmı CapsuleCollider ile temas ettiği için uncrouch yapamama durumu olmasın diye koydum.
-                dontUncrouch = Physics.CheckCapsule(playerTransform.position + new Vector3(0, playerHeight - crouchHeight / 2 - (playerWidthRadius - 0.01f) - 0.075f, 0), playerTransform.position + new Vector3(0, crouchHeight / 2 - (playerWidthRadius - 0.01f), 0), playerWidthRadius - 0.01f, staticNormalLayer | staticBouncyLayer | movableNormalLayer | movableBouncyLayer);
-
-                if (!Input.GetKey(crouchKey) && !dontUncrouch)
-                {
-                    if (groundedForAll)
-                    {
-                        playerRigidbody.position = new Vector3(playerTransform.position.x, playerTransform.position.y + (playerHeight / 2 - crouchHeight / 2), playerTransform.position.z);
-                    }
-
-                    playerTransform.localScale = new Vector3(playerWidthRadius * 2, playerHeight / 2, playerWidthRadius * 2);
-                    crouching = false;
-                    PlayerPrefs.SetInt("playerCrouching", -1);
-                }
+                playerTransform.localScale = new Vector3(playerWidthRadius * 2, playerHeight / 2, playerWidthRadius * 2);
+                crouching = false;
+                PlayerPrefs.SetInt("playerCrouching", -1);
             }
         }
     }

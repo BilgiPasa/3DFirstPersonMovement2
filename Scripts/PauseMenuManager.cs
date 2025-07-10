@@ -98,91 +98,94 @@ public class PauseMenuManager : MonoBehaviour
 
     void Update()
     {
-        if (!PlayerSpawnAndSaveManager.playerDied)
+        if (!(gamePaused || PlayerSpawnAndSaveManager.playerDied))
         {
-            if (Input.GetKeyDown(escapeKey))
-            {
-                if (!settingsMenu.activeSelf)
-                {
-                    if (!gamePaused)
-                    {
-                        Pause();
-                    }
-                    else
-                    {
-                        Resume();
-                    }
-                }
-                else
-                {
-                    GoBackToPauseMenu();
-                }
-            }
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            speedText.text = $"Speed: {PlayerStatusManager.flatVelocityMagnitude}";
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
 
-            PlayerCameraManager.normalFOV = PlayerPrefs.GetInt("FOV");
-            PlayerCameraManager.sensitivity = PlayerPrefs.GetInt("mouseSensitivity");
-
-            if (PlayerPrefs.GetInt("dynamicFOV") == 1)
+        if (!gamePaused && FPSTextObject.activeSelf && 1 / Time.deltaTime <= int.MaxValue)
+        {
+            if (counter < last5FPS.Length - 1)
             {
-                dynamicFOV = true;
-            }
-            else if (PlayerPrefs.GetInt("dynamicFOV") == -1)
-            {
-                dynamicFOV = false;
-            }
-
-            if (PlayerPrefs.GetInt("showFPS") == 1)
-            {
-                FPSTextObject.SetActive(true);
-            }
-            else if (PlayerPrefs.GetInt("showFPS") == -1)
-            {
-                FPSTextObject.SetActive(false);
-            }
-
-            if (PlayerPrefs.GetInt("speedTextObjectActive") == 1)
-            {
-                speedTextObject.SetActive(true);
-            }
-            else if (PlayerPrefs.GetInt("speedTextObjectActive") == -1)
-            {
-                speedTextObject.SetActive(false);
-            }
-
-            if (!(!speedTextObject.activeSelf && FPSTextObject.activeSelf))
-            {
-                FPSTextObject.transform.position = new Vector3(FPSTextObject.transform.position.x, 990, FPSTextObject.transform.position.z);
+                counter++;
             }
             else
             {
-                FPSTextObject.transform.position = new Vector3(FPSTextObject.transform.position.x, 1035, FPSTextObject.transform.position.z);
+                counter = 0;
             }
+
+            last5FPS[counter] = (int)(1 / Time.deltaTime);
+            FPSText.text = $"FPS: {(int)Queryable.Average(last5FPS.AsQueryable())}";
         }
 
-        Cursor.lockState = !(gamePaused || PlayerSpawnAndSaveManager.playerDied) ? CursorLockMode.Locked : CursorLockMode.None;
-        Cursor.visible = gamePaused || PlayerSpawnAndSaveManager.playerDied;
-
-        if (!gamePaused)
+        if (PlayerSpawnAndSaveManager.playerDied)
         {
-            if (FPSTextObject.activeSelf && 1 / Time.deltaTime <= int.MaxValue)
+            return;
+        }
+
+        if (Input.GetKeyDown(escapeKey))
+        {
+            if (!settingsMenu.activeSelf)
             {
-                if (counter < last5FPS.Length - 1)
+                if (!gamePaused)
                 {
-                    counter++;
+                    Pause();
                 }
                 else
                 {
-                    counter = 0;
+                    Resume();
                 }
-
-                last5FPS[counter] = (int)(1 / Time.deltaTime);
-                FPSText.text = $"FPS : {(int)Queryable.Average(last5FPS.AsQueryable())}";
             }
-
-            if (speedTextObject.activeSelf)
+            else
             {
-                speedText.text = $"Speed : {PlayerStatusManager.flatVelocityMagnitude}";
+                GoBackToPauseMenu();
             }
+        }
+
+        PlayerCameraManager.normalFOV = PlayerPrefs.GetInt("FOV");
+        PlayerCameraManager.sensitivity = PlayerPrefs.GetInt("mouseSensitivity");
+
+        if (PlayerPrefs.GetInt("dynamicFOV") == 1)
+        {
+            dynamicFOV = true;
+        }
+        else if (PlayerPrefs.GetInt("dynamicFOV") == -1)
+        {
+            dynamicFOV = false;
+        }
+
+        if (PlayerPrefs.GetInt("showFPS") == 1)
+        {
+            FPSTextObject.SetActive(true);
+        }
+        else if (PlayerPrefs.GetInt("showFPS") == -1)
+        {
+            FPSTextObject.SetActive(false);
+        }
+
+        if (PlayerPrefs.GetInt("speedTextObjectActive") == 1)
+        {
+            speedTextObject.SetActive(true);
+        }
+        else if (PlayerPrefs.GetInt("speedTextObjectActive") == -1)
+        {
+            speedTextObject.SetActive(false);
+        }
+
+        if (!(!speedTextObject.activeSelf && FPSTextObject.activeSelf))
+        {
+            FPSTextObject.transform.position = new Vector3(FPSTextObject.transform.position.x, 990, FPSTextObject.transform.position.z);
+        }
+        else
+        {
+            FPSTextObject.transform.position = new Vector3(FPSTextObject.transform.position.x, 1035, FPSTextObject.transform.position.z);
         }
     }
 
@@ -206,55 +209,55 @@ public class PauseMenuManager : MonoBehaviour
         switch (PlayerCameraManager.normalFOV)
         {
             case 90:
-                FOVText.text = "FOV : Normal";
+                FOVText.text = "FOV: Normal";
                 break;
             case 110:
-                FOVText.text = "FOV : WIDE";
+                FOVText.text = "FOV: WIDE";
                 break;
             case 30:
-                FOVText.text = "FOV : Telescope";
+                FOVText.text = "FOV: Telescope";
                 break;
             default:
-                FOVText.text = $"FOV : {PlayerCameraManager.normalFOV}";
+                FOVText.text = $"FOV: {PlayerCameraManager.normalFOV}";
                 break;
         }
 
         switch (PlayerPrefs.GetInt("maxFPS"))
         {
             case 9:
-                maxFPSText.text = "Max FPS : Unlimited";
+                maxFPSText.text = "Max FPS: Unlimited";
                 maxFPSSlider.value = 9;
                 break;
             case 8:
-                maxFPSText.text = "Max FPS : V-Sync";
+                maxFPSText.text = "Max FPS: V-Sync";
                 maxFPSSlider.value = 8;
                 break;
             case 7:
-                maxFPSText.text = "Max FPS : 240";
+                maxFPSText.text = "Max FPS: 240";
                 maxFPSSlider.value = 7;
                 break;
             case 6:
-                maxFPSText.text = "Max FPS : 180";
+                maxFPSText.text = "Max FPS: 180";
                 maxFPSSlider.value = 6;
                 break;
             case 5:
-                maxFPSText.text = "Max FPS : 165";
+                maxFPSText.text = "Max FPS: 165";
                 maxFPSSlider.value = 5;
                 break;
             case 4:
-                maxFPSText.text = "Max FPS : 144";
+                maxFPSText.text = "Max FPS: 144";
                 maxFPSSlider.value = 4;
                 break;
             case 3:
-                maxFPSText.text = "Max FPS : 120";
+                maxFPSText.text = "Max FPS: 120";
                 maxFPSSlider.value = 3;
                 break;
             case 2:
-                maxFPSText.text = "Max FPS : 75";
+                maxFPSText.text = "Max FPS: 75";
                 maxFPSSlider.value = 2;
                 break;
             case 1:
-                maxFPSText.text = "Max FPS : 60";
+                maxFPSText.text = "Max FPS: 60";
                 maxFPSSlider.value = 1;
                 break;
         }
@@ -266,16 +269,16 @@ public class PauseMenuManager : MonoBehaviour
             switch (PlayerCameraManager.sensitivity)
             {
                 case 100:
-                    mouseSensitivityText.text = "Mouse Sensitivity : Normal";
+                    mouseSensitivityText.text = "Mouse Sensitivity: Normal";
                     break;
                 case 200:
-                    mouseSensitivityText.text = "Mouse Sensitivity : FAST";
+                    mouseSensitivityText.text = "Mouse Sensitivity: FAST";
                     break;
                 case 1:
-                    mouseSensitivityText.text = "Mouse Sensitivity : Snail";
+                    mouseSensitivityText.text = "Mouse Sensitivity: Snail";
                     break;
                 default:
-                    mouseSensitivityText.text = $"Mouse Sensitivity : {PlayerCameraManager.sensitivity}";
+                    mouseSensitivityText.text = $"Mouse Sensitivity: {PlayerCameraManager.sensitivity}";
                     break;
             }
 
@@ -288,13 +291,13 @@ public class PauseMenuManager : MonoBehaviour
             switch (PlayerCameraManager.sensitivity)
             {
                 case 300:
-                    mouseSensitivityText.text = "Mouse Sensitivity : VERY FAST";
+                    mouseSensitivityText.text = "Mouse Sensitivity: VERY FAST";
                     break;
                 case 400:
-                    mouseSensitivityText.text = "Mouse Sensitivity : MAXIMUM";
+                    mouseSensitivityText.text = "Mouse Sensitivity: MAXIMUM";
                     break;
                 default:
-                    mouseSensitivityText.text = $"Mouse Sensitivity : {PlayerCameraManager.sensitivity}";
+                    mouseSensitivityText.text = $"Mouse Sensitivity: {PlayerCameraManager.sensitivity}";
                     break;
             }
 
@@ -339,16 +342,16 @@ public class PauseMenuManager : MonoBehaviour
         switch (value)
         {
             case 90:
-                FOVText.text = "FOV : Normal";
+                FOVText.text = "FOV: Normal";
                 break;
             case 110:
-                FOVText.text = "FOV : WIDE";
+                FOVText.text = "FOV: WIDE";
                 break;
             case 30:
-                FOVText.text = "FOV : Telescope";
+                FOVText.text = "FOV: Telescope";
                 break;
             default:
-                FOVText.text = "FOV : " + Mathf.RoundToInt(value);
+                FOVText.text = "FOV: " + Mathf.RoundToInt(value);
                 break;
         }
 
@@ -360,55 +363,55 @@ public class PauseMenuManager : MonoBehaviour
         switch (value)
         {
             case 9:
-                maxFPSText.text = "Max FPS : Unlimited";
+                maxFPSText.text = "Max FPS: Unlimited";
                 QualitySettings.vSyncCount = 0;
                 Application.targetFrameRate = -1;
                 PlayerPrefs.SetInt("maxFPS", 9);
                 break;
             case 8:
-                maxFPSText.text = "Max FPS : V-Sync";
+                maxFPSText.text = "Max FPS: V-Sync";
                 QualitySettings.vSyncCount = 1;
                 Application.targetFrameRate = -1;
                 PlayerPrefs.SetInt("maxFPS", 8);
                 break;
             case 7:
-                maxFPSText.text = "Max FPS : 240";
+                maxFPSText.text = "Max FPS: 240";
                 QualitySettings.vSyncCount = 0;
                 Application.targetFrameRate = 240;
                 PlayerPrefs.SetInt("maxFPS", 7);
                 break;
             case 6:
-                maxFPSText.text = "Max FPS : 180";
+                maxFPSText.text = "Max FPS: 180";
                 QualitySettings.vSyncCount = 0;
                 Application.targetFrameRate = 180;
                 PlayerPrefs.SetInt("maxFPS", 6);
                 break;
             case 5:
-                maxFPSText.text = "Max FPS : 165";
+                maxFPSText.text = "Max FPS: 165";
                 QualitySettings.vSyncCount = 0;
                 Application.targetFrameRate = 165;
                 PlayerPrefs.SetInt("maxFPS", 5);
                 break;
             case 4:
-                maxFPSText.text = "Max FPS : 144";
+                maxFPSText.text = "Max FPS: 144";
                 QualitySettings.vSyncCount = 0;
                 Application.targetFrameRate = 144;
                 PlayerPrefs.SetInt("maxFPS", 4);
                 break;
             case 3:
-                maxFPSText.text = "Max FPS : 120";
+                maxFPSText.text = "Max FPS: 120";
                 QualitySettings.vSyncCount = 0;
                 Application.targetFrameRate = 120;
                 PlayerPrefs.SetInt("maxFPS", 3);
                 break;
             case 2:
-                maxFPSText.text = "Max FPS : 75";
+                maxFPSText.text = "Max FPS: 75";
                 QualitySettings.vSyncCount = 0;
                 Application.targetFrameRate = 75;
                 PlayerPrefs.SetInt("maxFPS", 2);
                 break;
             case 1:
-                maxFPSText.text = "Max FPS : 60";
+                maxFPSText.text = "Max FPS: 60";
                 QualitySettings.vSyncCount = 0;
                 Application.targetFrameRate = 60;
                 PlayerPrefs.SetInt("maxFPS", 1);
@@ -423,16 +426,16 @@ public class PauseMenuManager : MonoBehaviour
             switch (value)
             {
                 case 100:
-                    mouseSensitivityText.text = "Mouse Sensitivity : Normal";
+                    mouseSensitivityText.text = "Mouse Sensitivity: Normal";
                     break;
                 case 200:
-                    mouseSensitivityText.text = "Mouse Sensitivity : FAST";
+                    mouseSensitivityText.text = "Mouse Sensitivity: FAST";
                     break;
                 case 1:
-                    mouseSensitivityText.text = "Mouse Sensitivity : Snail";
+                    mouseSensitivityText.text = "Mouse Sensitivity: Snail";
                     break;
                 default:
-                    mouseSensitivityText.text = "Mouse Sensitivity : " + Mathf.RoundToInt(value);
+                    mouseSensitivityText.text = "Mouse Sensitivity: " + Mathf.RoundToInt(value);
                     break;
             }
 
@@ -443,13 +446,13 @@ public class PauseMenuManager : MonoBehaviour
             switch (value)
             {
                 case 100:
-                    mouseSensitivityText.text = "Mouse Sensitivity : VERY FAST";
+                    mouseSensitivityText.text = "Mouse Sensitivity: VERY FAST";
                     break;
                 case 200:
-                    mouseSensitivityText.text = "Mouse Sensitivity : MAXIMUM";
+                    mouseSensitivityText.text = "Mouse Sensitivity: MAXIMUM";
                     break;
                 default:
-                    mouseSensitivityText.text = "Mouse Sensitivity : " + Mathf.RoundToInt(value + 200);
+                    mouseSensitivityText.text = "Mouse Sensitivity: " + Mathf.RoundToInt(value + 200);
                     break;
             }
 
@@ -485,16 +488,16 @@ public class PauseMenuManager : MonoBehaviour
             switch (mouseSensitivitySlider.value)
             {
                 case 100:
-                    mouseSensitivityText.text = "Mouse Sensitivity : Normal";
+                    mouseSensitivityText.text = "Mouse Sensitivity: Normal";
                     break;
                 case 200:
-                    mouseSensitivityText.text = "Mouse Sensitivity : FAST";
+                    mouseSensitivityText.text = "Mouse Sensitivity: FAST";
                     break;
                 case 1:
-                    mouseSensitivityText.text = "Mouse Sensitivity : Snail";
+                    mouseSensitivityText.text = "Mouse Sensitivity: Snail";
                     break;
                 default:
-                    mouseSensitivityText.text = "Mouse Sensitivity : " + Mathf.RoundToInt(mouseSensitivitySlider.value);
+                    mouseSensitivityText.text = "Mouse Sensitivity: " + Mathf.RoundToInt(mouseSensitivitySlider.value);
                     break;
             }
 
@@ -505,13 +508,13 @@ public class PauseMenuManager : MonoBehaviour
             switch (mouseSensitivitySlider.value)
             {
                 case 100:
-                    mouseSensitivityText.text = "Mouse Sensitivity : VERY FAST";
+                    mouseSensitivityText.text = "Mouse Sensitivity: VERY FAST";
                     break;
                 case 200:
-                    mouseSensitivityText.text = "Mouse Sensitivity : MAXIMUM";
+                    mouseSensitivityText.text = "Mouse Sensitivity: MAXIMUM";
                     break;
                 default:
-                    mouseSensitivityText.text = "Mouse Sensitivity : " + Mathf.RoundToInt(mouseSensitivitySlider.value + 200);
+                    mouseSensitivityText.text = "Mouse Sensitivity: " + Mathf.RoundToInt(mouseSensitivitySlider.value + 200);
                     break;
             }
 

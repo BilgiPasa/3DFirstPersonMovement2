@@ -4,7 +4,7 @@ using UnityEngine;
 public class PlayerSpawnAndSaveManager : MonoBehaviour
 {
     public static bool playerDied, spawnProtection;
-    int normalSavingTheGameDelay = 20, pressingAltSavingTheGameDelay = 2;
+    int normalSavingTheGameDelay = 20, pressingAltSavingTheGameDelay = 2, spawnProtectionSeconds = 3;
     float normalSavingTheGameTimer, pressingAltSavingTheGameTimer, playerWidthRadiusForOtherScriptsFromPlayerMovementManager;
     bool respawnButtonPressed;
     [SerializeField] GameObject player, deathMenu, pauseMenu, settingsMenu;
@@ -130,7 +130,7 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
         PlayerStatusManager.playerHealth = 100;
         deathMenu.SetActive(false);
         playerDied = false;
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(spawnProtectionSeconds);
         spawnProtection = false;
         SavingTheGame();
     }
@@ -179,7 +179,7 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
                 PlayerMovementManager.crouching = true;
             }
 
-            yield return new WaitForSeconds(3);
+            yield return new WaitForSeconds(spawnProtectionSeconds);
             spawnProtection = false;
         }
         else if (PlayerPrefs.GetInt("playerDied") == 1)
