@@ -18,12 +18,14 @@ public class PlayerMovementManager : MonoBehaviour
     public static int vertical, horizontal, runSpeed = 12;
     public static bool onSlope;
     const int normalGroundLinearDamping = 10;
-    int normalMoveSpeed = 9, crouchSpeed = 6, theMoveSpeed;
     const float theMoveMultiplier = 625.005f, airMoveMultiplier = 0.16f, airLinearDamping = 0.04f, bouncyGroundLinearDamping = 12.5f, minimum = 0.1f;
+    int normalMoveSpeed = 9, crouchSpeed = 6, theMoveSpeed;
     float flatRotationAngleInAir;
     bool normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum;
     Vector2 flatVelocityRelativeToPlayerInAir, normalizedMoveDirectionRelativeToPlayerInAir, normalizedMoveDirectionAsVector2InAir;
     Vector3 normalizedMoveDirection, normalizedSlopeMoveDirection;
+    Transform playerTransform;
+    Rigidbody playerRigidbody;
     RaycastHit slopeHit;
 
     [Header("Crouch")]
@@ -38,8 +40,8 @@ public class PlayerMovementManager : MonoBehaviour
     [Header("Jump And Fall")]
     public static float startOfFall, endOfFall, fallDistance;
     public static bool groundedForAll, wasGrounded, jumping;
-    int normalJumpForce = 21, bouncyJumpForce = 56, maxFallWithoutBouncyJumpCalculationByThisScript = 5, maxFallWithoutFallDamage = 15, maxFallWithoutParticles = 5;
     const float jumpingCooldown = 0.1f, jumpAgainCooldown = 0.3f;
+    int normalJumpForce = 21, bouncyJumpForce = 56, maxFallWithoutBouncyJumpCalculationByThisScript = 5, maxFallWithoutFallDamage = 15, maxFallWithoutParticles = 5;
     bool readyToJump = true, jumpingInput, falling, wasFalling, groundedForBouncyEnvironment, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment, playerTouchingToAnyGround, playerStandingOnMovableGround;
 
     [Header("Keybinds")]
@@ -50,12 +52,12 @@ public class PlayerMovementManager : MonoBehaviour
     [SerializeField] float crouchHeight = 2;
     [SerializeField] float playerWidthRadius = 0.5f;
     [SerializeField] float groundedSphereRadius = 0.3f;
+    [SerializeField] float dontHoldObjectToFeetRadius = 0.6f;
     [SerializeField] Transform playerModelTransform;
     [SerializeField] CapsuleCollider playerCapsuleCollider;
     [SerializeField] ParticleSystem jumpingDownParticles;
     [SerializeField] LayerMask staticNormalLayer, staticBouncyLayer, movableNormalLayer, movableBouncyLayer;
-    Transform playerTransform;
-    Rigidbody playerRigidbody;
+    [SerializeField] PlayerInteractionManager playerInteractionManagerScript;
 
     void Awake()
     {
@@ -471,6 +473,13 @@ public class PlayerMovementManager : MonoBehaviour
             playerTouchingToAnyGround = true;
         }
 
+        // Tuttuğun obje ile uçmayı ve sürüklenmeyi engellemek için
+        if (collision.rigidbody && PlayerInteractionManager.grabbedObjectRigidbody && collision.rigidbody.Equals(PlayerInteractionManager.grabbedObjectRigidbody) && Physics.CheckSphere(playerTransform.position - new Vector3(0, playerHeightForOtherScripts / 2, 0), dontHoldObjectToFeetRadius, movableNormalLayer | movableBouncyLayer))
+        {
+            playerInteractionManagerScript.ReleaseObject();
+        }
+
+        // Üstünde durduğun hareketli yüzeyin hızına göre hareket etmek için
         if (playerStandingOnMovableGround && (collision.gameObject.layer == 7 || collision.gameObject.layer == 8))
         {
             if (playerRigidbody.linearDamping == normalGroundLinearDamping)
@@ -479,11 +488,11 @@ public class PlayerMovementManager : MonoBehaviour
             }
             else if (playerRigidbody.linearDamping == bouncyGroundLinearDamping)
             {
-                playerRigidbody.AddForce(theMoveMultiplier * (Time.fixedDeltaTime * 4 / 3) * collision.gameObject.GetComponent<Rigidbody>().linearVelocity, ForceMode.Acceleration); // Yes, I found the "* 4 / 3" by trying.
+                playerRigidbody.AddForce(theMoveMultiplier * (Time.fixedDeltaTime * 4 / 3) * collision.gameObject.GetComponent<Rigidbody>().linearVelocity, ForceMode.Acceleration); // Evet, "* 4 / 3"ü deneyerek buldum.
             }
             else
             {
-                playerRigidbody.AddForce(theMoveMultiplier * airMoveMultiplier * (Time.fixedDeltaTime / 49.96f) * collision.gameObject.GetComponent<Rigidbody>().linearVelocity, ForceMode.Acceleration); // Yes, I also found the "/ 49.96f" by trying.
+                playerRigidbody.AddForce(theMoveMultiplier * airMoveMultiplier * (Time.fixedDeltaTime / 49.96f) * collision.gameObject.GetComponent<Rigidbody>().linearVelocity, ForceMode.Acceleration); // Evet, "/ 49.96f"i de deneyerek buldum.
             }
         }
     }

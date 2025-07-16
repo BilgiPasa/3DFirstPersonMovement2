@@ -7,11 +7,11 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
     int normalSavingTheGameDelay = 20, pressingAltSavingTheGameDelay = 2, spawnProtectionSeconds = 3;
     float normalSavingTheGameTimer, pressingAltSavingTheGameTimer, playerWidthRadiusForOtherScriptsFromPlayerMovementManager;
     bool respawnButtonPressed;
+    Transform playerTransform;
     [SerializeField] GameObject player, deathMenu, pauseMenu, settingsMenu;
     [SerializeField] Transform playerModelTransform, cameraPositionTransform, cameraHolderTransform;
-    [SerializeField] Rigidbody playerRigidbody;
     [SerializeField] Camera mainCamera;
-    Transform playerTransform;
+    [SerializeField] Rigidbody playerRigidbody;
 
     void Start()
     {

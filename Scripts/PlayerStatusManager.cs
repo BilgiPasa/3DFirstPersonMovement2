@@ -7,8 +7,8 @@ public class PlayerStatusManager : MonoBehaviour
     public static int playerHealth;
     public static float flatVelocityMagnitude;
     public static bool idling, walking, running, jumpingUp, jumpingDown, goingUp, goingDown, crouchIdling, crouchWalking, crouchJumpingUp, crouchJumpingDown, crouchGoingUp, crouchGoingDown, sliding, fallDistanceIsBiggerThanMinimum;
-    int runSpeedFromPlayerMovementManager, verticalFromPlayerMovementManager;
     const float minimum = 0.1f;
+    int runSpeedFromPlayerMovementManager, verticalFromPlayerMovementManager;
     bool playerDiedFromPlayerSpawnAndSaveManager, groundedForAllFromPlayerMovementManager;
     KeyCode runKey = KeyCode.R;
     [SerializeField] Transform playerTransform, playerGroundParticles;
@@ -138,11 +138,11 @@ public class PlayerStatusManager : MonoBehaviour
             runJumpParticles.Play();
         }
 
-        if (!runAndSlideParticles.isPlaying && groundedForAllFromPlayerMovementManager && !playerDiedFromPlayerSpawnAndSaveManager && (sliding || (running && flatVelocityMagnitude > runSpeedFromPlayerMovementManager / 4)))
+        if (!runAndSlideParticles.isPlaying && groundedForAllFromPlayerMovementManager && !playerDiedFromPlayerSpawnAndSaveManager && flatVelocityMagnitude > runSpeedFromPlayerMovementManager / 4 && (sliding || running))
         {
             runAndSlideParticles.Play();
         }
-        else if (runAndSlideParticles.isPlaying && (!groundedForAllFromPlayerMovementManager || playerDiedFromPlayerSpawnAndSaveManager || (!sliding && (!running || flatVelocityMagnitude <= runSpeedFromPlayerMovementManager / 4))))
+        else if (runAndSlideParticles.isPlaying && (!groundedForAllFromPlayerMovementManager || playerDiedFromPlayerSpawnAndSaveManager || flatVelocityMagnitude <= runSpeedFromPlayerMovementManager / 4 || !(sliding || running)))
         {
             runAndSlideParticles.Stop();
         }

@@ -10,9 +10,9 @@ public class PauseMenuManager : MonoBehaviour
     int counter;
     const KeyCode escapeKey = KeyCode.Escape;
     [SerializeField] GameObject pauseMenu, settingsMenu, speedTextObject, FPSTextObject;
+    [SerializeField] TextMeshProUGUI FOVText, mouseSensitivityText, maxFPSText, speedText, FPSText;
     [SerializeField] Toggle dynamicFOVToggle, speedTextToggle, increasedSensitivityToggle, showFPSToggle;
     [SerializeField] Slider FOVSlider, mouseSensitivitySlider, maxFPSSlider;
-    [SerializeField] TextMeshProUGUI FOVText, mouseSensitivityText, maxFPSText, speedText, FPSText;
     [SerializeField] PlayerSpawnAndSaveManager playerSpawnAndSaveManagerScript;
 
     void Start()
