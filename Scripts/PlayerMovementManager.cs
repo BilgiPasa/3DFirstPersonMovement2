@@ -52,7 +52,6 @@ public class PlayerMovementManager : MonoBehaviour
     [SerializeField] float crouchHeight = 2;
     [SerializeField] float playerWidthRadius = 0.5f;
     [SerializeField] float groundedSphereRadius = 0.3f;
-    [SerializeField] float dontHoldObjectToFeetRadius = 0.6f;
     [SerializeField] Transform playerModelTransform;
     [SerializeField] CapsuleCollider playerCapsuleCollider;
     [SerializeField] ParticleSystem jumpingDownParticles;
@@ -474,7 +473,7 @@ public class PlayerMovementManager : MonoBehaviour
         }
 
         // Tuttuğun obje ile uçmayı ve sürüklenmeyi engellemek için
-        if (collision.rigidbody && PlayerInteractionManager.grabbedObjectRigidbody && collision.rigidbody.Equals(PlayerInteractionManager.grabbedObjectRigidbody) && Physics.CheckSphere(playerTransform.position - new Vector3(0, playerHeightForOtherScripts / 2, 0), dontHoldObjectToFeetRadius, movableNormalLayer | movableBouncyLayer))
+        if (collision.rigidbody && collision.rigidbody.Equals(PlayerInteractionManager.grabbedObjectRigidbody))
         {
             playerInteractionManagerScript.ReleaseObject();
         }

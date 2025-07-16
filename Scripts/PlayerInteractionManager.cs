@@ -7,11 +7,12 @@ public class PlayerInteractionManager : MonoBehaviour
     //* Make sure that movable objects have a Rigidbody.
 
     [Header("Holding and Throwing")]
+    public static bool readyToHold = true;
     public static Rigidbody grabbedObjectRigidbody;
     const int holdForce = 30;
     const float holdAgainCooldown = 0.6f;
     int maxHoldingObjectDistance = 6;
-    bool readyToHold = true, interacionKeyPressed, throwKeyPressedWhileHoldingAnObject;
+    bool interacionKeyPressed, throwKeyPressedWhileHoldingAnObject;
     RaycastHit interactionHit;
 
     [Header("Keybinds")]
