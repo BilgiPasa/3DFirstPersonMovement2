@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerCameraManager : MonoBehaviour
 {
-    //* Attach this script to the CameraHolder gameobject
+    //* Attach this script to the CameraHolder gameobject.
 
     public static int sensitivity;
     public static float xRotation, yRotation, normalFOV;
