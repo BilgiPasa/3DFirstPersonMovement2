@@ -8,9 +8,10 @@ public class PlayerInteractionManager : MonoBehaviour
     //* Make sure that movable objects have a Rigidbody.
 
     [Header("Holding and Throwing")]
+    public static bool canReleaseHoldedObjectWhenTouchedToPlayer;
     public static Rigidbody grabbedObjectRigidbody;
     const int holdForce = 30;
-    const float movingHoldingObjectSpeed = 7.5f, holdAgainCooldown = 0.6f;
+    const float movingHoldingObjectSpeed = 7.5f, holdAgainCooldown = 0.6f, canReleaseHoldedObjectWhenTouchedToPlayerCooldown = 0.2f;
     float tempHoldingObjectDistance;
     bool readyToHold = true, interacionKeyPressed, throwKeyPressedWhileHoldingAnObject;
     RaycastHit holdInteractionHit;
@@ -36,7 +37,10 @@ public class PlayerInteractionManager : MonoBehaviour
 
     void Update()
     {
-        InteractionInputs();
+        if (!PauseMenuManager.gamePaused)
+        {
+            InteractionInputs();
+        }
     }
 
     void FixedUpdate()
@@ -46,11 +50,6 @@ public class PlayerInteractionManager : MonoBehaviour
 
     void InteractionInputs()
     {
-        if (PauseMenuManager.gamePaused)
-        {
-            return;
-        }
-
         if (Input.GetKeyDown(interactionKey))
         {
             interacionKeyPressed = true;
@@ -88,20 +87,18 @@ public class PlayerInteractionManager : MonoBehaviour
                 if (tempHoldingObjectDistance >= maxHoldingObjectDistance && Input.GetAxis("Mouse ScrollWheel") > 0)
                 {
                     tempHoldingObjectDistance = maxHoldingObjectDistance;
-                    return;
                 }
-
-                if (tempHoldingObjectDistance <= minHoldingObjectDistance && Input.GetAxis("Mouse ScrollWheel") < 0)
+                else if (tempHoldingObjectDistance <= minHoldingObjectDistance && Input.GetAxis("Mouse ScrollWheel") < 0)
                 {
                     tempHoldingObjectDistance = minHoldingObjectDistance;
-                    return;
                 }
-
-                tempHoldingObjectDistance += movingHoldingObjectSpeed * Input.GetAxis("Mouse ScrollWheel");
+                else
+                {
+                    tempHoldingObjectDistance += movingHoldingObjectSpeed * Input.GetAxis("Mouse ScrollWheel");
+                }
             }
 
             holdedObjectPositionTransform.localPosition = new Vector3(0, 0, tempHoldingObjectDistance);
-
         }
 
         if (interacionKeyPressed)
@@ -123,6 +120,7 @@ public class PlayerInteractionManager : MonoBehaviour
                 {
                     grabbedObjectRigidbody.linearVelocity = Vector3.zero;
                     grabbedObjectRigidbody.useGravity = false;
+                    Invoke(nameof(CanReleaseHoldedObjectWhenTouchedToPlayerActivator), canReleaseHoldedObjectWhenTouchedToPlayerCooldown);
                 }
 
                 Invoke(nameof(HoldAgainReset), holdAgainCooldown);
@@ -135,10 +133,16 @@ public class PlayerInteractionManager : MonoBehaviour
         grabbedObjectRigidbody.useGravity = true;
         grabbedObjectRigidbody = null;
         tempHoldingObjectDistance = normalHoldingObjectDistance;
+        canReleaseHoldedObjectWhenTouchedToPlayer = false;
     }
 
     void HoldAgainReset()
     {
         readyToHold = true;
+    }
+
+    void CanReleaseHoldedObjectWhenTouchedToPlayerActivator()
+    {
+        canReleaseHoldedObjectWhenTouchedToPlayer = true;
     }
 }

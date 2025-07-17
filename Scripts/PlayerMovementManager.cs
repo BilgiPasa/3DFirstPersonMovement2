@@ -43,7 +43,7 @@ public class PlayerMovementManager : MonoBehaviour
     public static bool jumping, groundedForAll;
     const float groundedSphereRadius = 0.3f, jumpingCooldown = 0.1f, jumpAgainCooldown = 0.3f;
     int normalJumpForce = 21, bouncyJumpForce = 56, maxFallWithoutBouncyJumpCalculationByThisScript = 5, maxFallWithoutFallDamage = 15, maxFallWithoutParticles = 5;
-    bool readyToJump = true, jumpingInput, groundedForBouncyEnvironment, playerStandingOnMovableGround, playerTouchingToAnyGround, falling, wasFalling, wasGrounded, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment;
+    bool readyToJump = true, jumpingInput, groundedForBouncyEnvironment, playerTouchingToAnyGround, falling, wasFalling, wasGrounded, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment;
     Rigidbody objectRigidbodyThatPlayerIsStandingOn;
     RaycastHit whatMovableObjectIsPlayerStandingOnHit;
 
@@ -127,15 +127,15 @@ public class PlayerMovementManager : MonoBehaviour
         {
             groundedForAll = Physics.CheckSphere(playerTransform.position - new Vector3(0, playerHeight / 2, 0), groundedSphereRadius, staticNormalLayer | staticBouncyLayer | movableNormalLayer | movableBouncyLayer);
             groundedForBouncyEnvironment = Physics.CheckSphere(playerTransform.position - new Vector3(0, playerHeight / 2, 0), groundedSphereRadius, staticBouncyLayer | movableBouncyLayer);
-            playerStandingOnMovableGround = Physics.CheckSphere(playerTransform.position - new Vector3(0, playerHeight / 2, 0), groundedSphereRadius, movableNormalLayer | movableBouncyLayer);
 
-            // Tuttuğun obje ile havada süzülerek inmeyi engellemek için
+            // Üstünde durduğun objeyi algılamak için
             // Bu arada playerHeight / 2 - 1 yazmamın sebebi, sadece playerHeight / 2 yazarsam çalışmıyor ve eğer ki 2 movable objenin üstünde durarsan sadece alttaki objeyi algılıyor. Ben de -playerTransform.up demek 1 metre aşağı anlamına geldiği için belki playerHeight / 2 - 1 yazarsam (yani 1 metre yukarı kaydırırsam) belki çalışır diye düşündüm. Ve çalıştı da!
-            if (playerStandingOnMovableGround && Physics.SphereCast(playerTransform.position - new Vector3(0, playerHeight / 2 - 1, 0), groundedSphereRadius, -playerTransform.up, out whatMovableObjectIsPlayerStandingOnHit, movableNormalLayer | movableBouncyLayer))
+            if (Physics.SphereCast(playerTransform.position - new Vector3(0, playerHeight / 2 - 1, 0), groundedSphereRadius, -playerTransform.up, out whatMovableObjectIsPlayerStandingOnHit, movableNormalLayer | movableBouncyLayer))
             {
                 objectRigidbodyThatPlayerIsStandingOn = whatMovableObjectIsPlayerStandingOnHit.rigidbody;
 
-                if (objectRigidbodyThatPlayerIsStandingOn && objectRigidbodyThatPlayerIsStandingOn.Equals(PlayerInteractionManager.grabbedObjectRigidbody))
+                // Tuttuğun obje ile havada süzülerek inmeyi engellemek için
+                if (objectRigidbodyThatPlayerIsStandingOn && objectRigidbodyThatPlayerIsStandingOn.Equals(PlayerInteractionManager.grabbedObjectRigidbody) && PlayerInteractionManager.canReleaseHoldedObjectWhenTouchedToPlayer)
                 {
                     playerInteractionManagerScript.ReleaseObject();
                 }
@@ -149,15 +149,15 @@ public class PlayerMovementManager : MonoBehaviour
         {
             groundedForAll = Physics.CheckSphere(playerTransform.position - new Vector3(0, crouchHeight / 2, 0), groundedSphereRadius, staticNormalLayer | staticBouncyLayer | movableNormalLayer | movableBouncyLayer);
             groundedForBouncyEnvironment = Physics.CheckSphere(playerTransform.position - new Vector3(0, crouchHeight / 2, 0), groundedSphereRadius, staticBouncyLayer | movableBouncyLayer);
-            playerStandingOnMovableGround = Physics.CheckSphere(playerTransform.position - new Vector3(0, crouchHeight / 2, 0), groundedSphereRadius, movableNormalLayer | movableBouncyLayer);
 
-            // Tuttuğun obje ile havada süzülerek inmeyi engellemek için
+            // Üstünde durduğun objeyi algılamak için
             // crouchHeight / 2 - 1 yazmamın sebebi, yukarıda playerHeight / 2 - 1 yazmamın sebebiyle aynı.
-            if (playerStandingOnMovableGround && Physics.SphereCast(playerTransform.position - new Vector3(0, crouchHeight / 2 - 1, 0), groundedSphereRadius, -playerTransform.up, out whatMovableObjectIsPlayerStandingOnHit, movableNormalLayer | movableBouncyLayer))
+            if (Physics.SphereCast(playerTransform.position - new Vector3(0, crouchHeight / 2 - 1, 0), groundedSphereRadius, -playerTransform.up, out whatMovableObjectIsPlayerStandingOnHit, movableNormalLayer | movableBouncyLayer))
             {
                 objectRigidbodyThatPlayerIsStandingOn = whatMovableObjectIsPlayerStandingOnHit.rigidbody;
 
-                if (objectRigidbodyThatPlayerIsStandingOn && objectRigidbodyThatPlayerIsStandingOn.Equals(PlayerInteractionManager.grabbedObjectRigidbody))
+                // Tuttuğun obje ile havada süzülerek inmeyi engellemek için
+                if (objectRigidbodyThatPlayerIsStandingOn && objectRigidbodyThatPlayerIsStandingOn.Equals(PlayerInteractionManager.grabbedObjectRigidbody) && PlayerInteractionManager.canReleaseHoldedObjectWhenTouchedToPlayer)
                 {
                     playerInteractionManagerScript.ReleaseObject();
                 }
@@ -496,26 +496,29 @@ public class PlayerMovementManager : MonoBehaviour
             playerTouchingToAnyGround = true;
         }
 
-        // Tuttuğun obje ile uçmayı ve sürüklenmeyi engellemek için
-        if (collision.rigidbody && collision.rigidbody.Equals(PlayerInteractionManager.grabbedObjectRigidbody))
+        if ((collision.gameObject.layer == 7 || collision.gameObject.layer == 8) && collision.rigidbody)
         {
-            playerInteractionManagerScript.ReleaseObject();
-        }
+            // Tuttuğun obje ile uçmayı ve sürüklenmeyi engellemek için
+            if (collision.rigidbody.Equals(PlayerInteractionManager.grabbedObjectRigidbody) && PlayerInteractionManager.canReleaseHoldedObjectWhenTouchedToPlayer)
+            {
+                playerInteractionManagerScript.ReleaseObject();
+            }
 
-        // Üstünde durduğun hareketli yüzeyin hızına göre hareket etmek için
-        if (playerStandingOnMovableGround && (collision.gameObject.layer == 7 || collision.gameObject.layer == 8))
-        {
-            if (playerRigidbody.linearDamping == normalGroundLinearDamping)
+            // Üstünde durduğun hareketli yüzeyin hızına göre hareket etmek için
+            if (collision.rigidbody.Equals(objectRigidbodyThatPlayerIsStandingOn))
             {
-                playerRigidbody.AddForce(theMoveMultiplier * Time.fixedDeltaTime * collision.gameObject.GetComponent<Rigidbody>().linearVelocity, ForceMode.Acceleration);
-            }
-            else if (playerRigidbody.linearDamping == bouncyGroundLinearDamping)
-            {
-                playerRigidbody.AddForce(theMoveMultiplier * (Time.fixedDeltaTime * 4 / 3) * collision.gameObject.GetComponent<Rigidbody>().linearVelocity, ForceMode.Acceleration); // Evet, "* 4 / 3"ü deneyerek buldum.
-            }
-            else
-            {
-                playerRigidbody.AddForce(theMoveMultiplier * airMoveMultiplier * (Time.fixedDeltaTime / 49.96f) * collision.gameObject.GetComponent<Rigidbody>().linearVelocity, ForceMode.Acceleration); // Evet, "/ 49.96f"i de deneyerek buldum.
+                if (playerRigidbody.linearDamping == normalGroundLinearDamping)
+                {
+                    playerRigidbody.AddForce(theMoveMultiplier * Time.fixedDeltaTime * objectRigidbodyThatPlayerIsStandingOn.linearVelocity, ForceMode.Acceleration);
+                }
+                else if (playerRigidbody.linearDamping == bouncyGroundLinearDamping)
+                {
+                    playerRigidbody.AddForce(theMoveMultiplier * (Time.fixedDeltaTime * 4 / 3) * objectRigidbodyThatPlayerIsStandingOn.linearVelocity, ForceMode.Acceleration); // Evet, "* 4 / 3"ü deneyerek buldum.
+                }
+                else
+                {
+                    playerRigidbody.AddForce(theMoveMultiplier * airMoveMultiplier * (Time.fixedDeltaTime / 49.96f) * objectRigidbodyThatPlayerIsStandingOn.linearVelocity, ForceMode.Acceleration); // Evet, "/ 49.96f"i de deneyerek buldum.
+                }
             }
         }
     }
