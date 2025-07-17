@@ -7,7 +7,7 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
 
     public static bool playerDied, spawnProtection;
     int normalSavingTheGameDelay = 20, pressingAltSavingTheGameDelay = 2, spawnProtectionSeconds = 3;
-    float normalSavingTheGameTimer, pressingAltSavingTheGameTimer, playerWidthRadiusForOtherScriptsFromPlayerMovementManager;
+    float normalSavingTheGameTimer, pressingAltSavingTheGameTimer, playerWidthRadiusFromPlayerMovementManager;
     bool respawnButtonPressed;
     Transform playerTransform;
     [SerializeField] GameObject playerObject, deathMenuObject, pauseMenuObject, settingsMenuObject;
@@ -19,7 +19,7 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
     void Start()
     {
         playerTransform = playerObject.transform;
-        playerWidthRadiusForOtherScriptsFromPlayerMovementManager = PlayerMovementManager.playerWidthRadiusForOtherScripts;
+        playerWidthRadiusFromPlayerMovementManager = PlayerMovementManager.playerWidthRadius;
         StartCoroutine(LoadingTheSave());
     }
 
@@ -130,7 +130,7 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
         PlayerMovementManager.startOfFall = 0;
         PlayerMovementManager.endOfFall = 0;
         PlayerMovementManager.fallDistance = 0;
-        playerTransform.localScale = new Vector3(playerWidthRadiusForOtherScriptsFromPlayerMovementManager * 2, PlayerMovementManager.playerHeightForOtherScripts / 2, playerWidthRadiusForOtherScriptsFromPlayerMovementManager * 2);
+        playerTransform.localScale = new Vector3(playerWidthRadiusFromPlayerMovementManager * 2, PlayerMovementManager.playerHeight / 2, playerWidthRadiusFromPlayerMovementManager * 2);
         PlayerMovementManager.crouching = false;
         playerRigidbody.position = new Vector3(0, 0, 0);
         playerRigidbody.linearVelocity = new Vector3(0, 0, 0);
@@ -179,12 +179,12 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
 
             if (PlayerPrefs.GetInt("playerCrouching") == -1)
             {
-                playerTransform.localScale = new Vector3(playerWidthRadiusForOtherScriptsFromPlayerMovementManager * 2, PlayerMovementManager.playerHeightForOtherScripts / 2, playerWidthRadiusForOtherScriptsFromPlayerMovementManager * 2);
+                playerTransform.localScale = new Vector3(playerWidthRadiusFromPlayerMovementManager * 2, PlayerMovementManager.playerHeight / 2, playerWidthRadiusFromPlayerMovementManager * 2);
                 PlayerMovementManager.crouching = false;
             }
             else if (PlayerPrefs.GetInt("playerCrouching") == 1)
             {
-                playerTransform.localScale = new Vector3(playerWidthRadiusForOtherScriptsFromPlayerMovementManager * 2, PlayerMovementManager.crouchHeightForOtherScripts / 2, playerWidthRadiusForOtherScriptsFromPlayerMovementManager * 2);
+                playerTransform.localScale = new Vector3(playerWidthRadiusFromPlayerMovementManager * 2, PlayerMovementManager.crouchHeight / 2, playerWidthRadiusFromPlayerMovementManager * 2);
                 PlayerMovementManager.crouching = true;
             }
 

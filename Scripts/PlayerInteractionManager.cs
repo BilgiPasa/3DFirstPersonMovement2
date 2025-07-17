@@ -8,18 +8,17 @@ public class PlayerInteractionManager : MonoBehaviour
     //* Make sure that movable objects have a Rigidbody.
 
     [Header("Holding and Throwing")]
-    public static bool readyToHold = true;
     public static Rigidbody grabbedObjectRigidbody;
     const int holdForce = 30;
     const float holdAgainCooldown = 0.6f;
-    bool interacionKeyPressed, throwKeyPressedWhileHoldingAnObject;
+    bool readyToHold = true, interacionKeyPressed, throwKeyPressedWhileHoldingAnObject;
     RaycastHit holdInteractionHit;
 
     [Header("Keybinds")]
     KeyCode interactionKey = KeyCode.E, throwKey = KeyCode.Mouse0;
 
     [Header("Inputs")]
-    [SerializeField] int maxHoldingObjectDistance = 6;
+    [SerializeField] int maxHoldingObjectDistance = 8;
     [SerializeField] int throwForce = 60;
     [SerializeField] Transform holdedObjectPositionTransform;
     [SerializeField] Transform cameraHolderTransform;
@@ -89,7 +88,7 @@ public class PlayerInteractionManager : MonoBehaviour
             if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out holdInteractionHit, maxHoldingObjectDistance, movableNormalLayer | movableBouncyLayer) && readyToHold)
             {
                 readyToHold = false;
-                grabbedObjectRigidbody = holdInteractionHit.collider.GetComponent<Rigidbody>();
+                grabbedObjectRigidbody = holdInteractionHit.rigidbody;
 
                 if (grabbedObjectRigidbody)
                 {

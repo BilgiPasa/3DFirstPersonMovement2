@@ -34,7 +34,7 @@ public class PlayerStatusManager : MonoBehaviour
 
             if (!PlayerMovementManager.crouching)
             {
-                playerGroundParticlesTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (PlayerMovementManager.playerHeightForOtherScripts / 2), playerTransform.position.z);
+                playerGroundParticlesTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (PlayerMovementManager.playerHeight / 2), playerTransform.position.z);
                 crouchIdling = false;
                 crouchWalking = false;
                 crouchJumpingUp = false;
@@ -80,7 +80,7 @@ public class PlayerStatusManager : MonoBehaviour
             }
             else
             {
-                playerGroundParticlesTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (PlayerMovementManager.crouchHeightForOtherScripts / 2), playerTransform.position.z);
+                playerGroundParticlesTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (PlayerMovementManager.crouchHeight / 2), playerTransform.position.z);
                 idling = false;
                 walking = false;
                 running = false;

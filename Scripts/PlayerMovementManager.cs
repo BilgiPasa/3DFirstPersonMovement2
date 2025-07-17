@@ -30,7 +30,7 @@ public class PlayerMovementManager : MonoBehaviour
     RaycastHit slopeHit;
 
     [Header("Crouch")]
-    public static float playerHeightForOtherScripts, crouchHeightForOtherScripts, playerWidthRadiusForOtherScripts;
+    public static float playerHeight = 3, crouchHeight = 2, playerWidthRadius = 0.5f;
     public static bool crouching;
     bool dontUncrouch;
 
@@ -40,19 +40,17 @@ public class PlayerMovementManager : MonoBehaviour
 
     [Header("Jump And Fall")]
     public static float startOfFall, endOfFall, fallDistance;
-    public static bool groundedForAll, wasGrounded, jumping;
-    const float jumpingCooldown = 0.1f, jumpAgainCooldown = 0.3f;
+    public static bool jumping, groundedForAll;
+    const float groundedSphereRadius = 0.3f, jumpingCooldown = 0.1f, jumpAgainCooldown = 0.3f;
     int normalJumpForce = 21, bouncyJumpForce = 56, maxFallWithoutBouncyJumpCalculationByThisScript = 5, maxFallWithoutFallDamage = 15, maxFallWithoutParticles = 5;
-    bool readyToJump = true, jumpingInput, falling, wasFalling, groundedForBouncyEnvironment, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment, playerTouchingToAnyGround, playerStandingOnMovableGround;
+    bool readyToJump = true, jumpingInput, groundedForBouncyEnvironment, playerStandingOnMovableGround, playerTouchingToAnyGround, falling, wasFalling, wasGrounded, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment;
+    Rigidbody objectRigidbodyThatPlayerIsStandingOn;
+    RaycastHit whatMovableObjectIsPlayerStandingOnHit;
 
     [Header("Keybinds")]
     KeyCode forwardKey = KeyCode.W, leftKey = KeyCode.A, backwardKey = KeyCode.S, rightKey = KeyCode.D, jumpKey = KeyCode.Space, crouchKey = KeyCode.LeftShift;
 
     [Header("Inputs")]
-    [SerializeField] float playerHeight = 3;
-    [SerializeField] float crouchHeight = 2;
-    [SerializeField] float playerWidthRadius = 0.5f;
-    [SerializeField] float groundedSphereRadius = 0.3f;
     [SerializeField] Transform playerModelTransform;
     [SerializeField] CapsuleCollider playerCapsuleCollider;
     [SerializeField] ParticleSystem jumpingDownParticles;
@@ -61,9 +59,6 @@ public class PlayerMovementManager : MonoBehaviour
 
     void Awake()
     {
-        playerHeightForOtherScripts = playerHeight;
-        crouchHeightForOtherScripts = crouchHeight;
-        playerWidthRadiusForOtherScripts = playerWidthRadius;
         playerTransform = transform;
         playerCapsuleCollider.height = 2;
         playerCapsuleCollider.radius = 0.5f;
@@ -133,12 +128,44 @@ public class PlayerMovementManager : MonoBehaviour
             groundedForAll = Physics.CheckSphere(playerTransform.position - new Vector3(0, playerHeight / 2, 0), groundedSphereRadius, staticNormalLayer | staticBouncyLayer | movableNormalLayer | movableBouncyLayer);
             groundedForBouncyEnvironment = Physics.CheckSphere(playerTransform.position - new Vector3(0, playerHeight / 2, 0), groundedSphereRadius, staticBouncyLayer | movableBouncyLayer);
             playerStandingOnMovableGround = Physics.CheckSphere(playerTransform.position - new Vector3(0, playerHeight / 2, 0), groundedSphereRadius, movableNormalLayer | movableBouncyLayer);
+
+            // Tuttuğun obje ile havada süzülerek inmeyi engellemek için
+            // Bu arada playerHeight / 2 - 1 yazmamın sebebi, sadece playerHeight / 2 yazarsam çalışmıyor ve eğer ki 2 movable objenin üstünde durarsan sadece alttaki objeyi algılıyor. Ben de -playerTransform.up demek 1 metre aşağı anlamına geldiği için belki playerHeight / 2 - 1 yazarsam (yani 1 metre yukarı kaydırırsam) belki çalışır diye düşündüm. Ve çalıştı da!
+            if (playerStandingOnMovableGround && Physics.SphereCast(playerTransform.position - new Vector3(0, playerHeight / 2 - 1, 0), groundedSphereRadius, -playerTransform.up, out whatMovableObjectIsPlayerStandingOnHit, movableNormalLayer | movableBouncyLayer))
+            {
+                objectRigidbodyThatPlayerIsStandingOn = whatMovableObjectIsPlayerStandingOnHit.rigidbody;
+
+                if (objectRigidbodyThatPlayerIsStandingOn && objectRigidbodyThatPlayerIsStandingOn.Equals(PlayerInteractionManager.grabbedObjectRigidbody))
+                {
+                    playerInteractionManagerScript.ReleaseObject();
+                }
+            }
+            else
+            {
+                objectRigidbodyThatPlayerIsStandingOn = null;
+            }
         }
         else
         {
             groundedForAll = Physics.CheckSphere(playerTransform.position - new Vector3(0, crouchHeight / 2, 0), groundedSphereRadius, staticNormalLayer | staticBouncyLayer | movableNormalLayer | movableBouncyLayer);
             groundedForBouncyEnvironment = Physics.CheckSphere(playerTransform.position - new Vector3(0, crouchHeight / 2, 0), groundedSphereRadius, staticBouncyLayer | movableBouncyLayer);
             playerStandingOnMovableGround = Physics.CheckSphere(playerTransform.position - new Vector3(0, crouchHeight / 2, 0), groundedSphereRadius, movableNormalLayer | movableBouncyLayer);
+
+            // Tuttuğun obje ile havada süzülerek inmeyi engellemek için
+            // crouchHeight / 2 - 1 yazmamın sebebi, yukarıda playerHeight / 2 - 1 yazmamın sebebiyle aynı.
+            if (playerStandingOnMovableGround && Physics.SphereCast(playerTransform.position - new Vector3(0, crouchHeight / 2 - 1, 0), groundedSphereRadius, -playerTransform.up, out whatMovableObjectIsPlayerStandingOnHit, movableNormalLayer | movableBouncyLayer))
+            {
+                objectRigidbodyThatPlayerIsStandingOn = whatMovableObjectIsPlayerStandingOnHit.rigidbody;
+
+                if (objectRigidbodyThatPlayerIsStandingOn && objectRigidbodyThatPlayerIsStandingOn.Equals(PlayerInteractionManager.grabbedObjectRigidbody))
+                {
+                    playerInteractionManagerScript.ReleaseObject();
+                }
+            }
+            else
+            {
+                objectRigidbodyThatPlayerIsStandingOn = null;
+            }
         }
 
         falling = !groundedForAll && playerRigidbody.linearVelocity.y < -minimum;
