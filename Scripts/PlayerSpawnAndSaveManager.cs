@@ -3,19 +3,22 @@ using UnityEngine;
 
 public class PlayerSpawnAndSaveManager : MonoBehaviour
 {
+    //* Attach this script to the UserInterface gameobject.
+
     public static bool playerDied, spawnProtection;
     int normalSavingTheGameDelay = 20, pressingAltSavingTheGameDelay = 2, spawnProtectionSeconds = 3;
     float normalSavingTheGameTimer, pressingAltSavingTheGameTimer, playerWidthRadiusForOtherScriptsFromPlayerMovementManager;
     bool respawnButtonPressed;
     Transform playerTransform;
-    [SerializeField] GameObject player, deathMenu, pauseMenu, settingsMenu;
+    [SerializeField] GameObject playerObject, deathMenuObject, pauseMenuObject, settingsMenuObject;
     [SerializeField] Transform playerModelTransform, cameraPositionTransform, cameraHolderTransform;
     [SerializeField] Camera mainCamera;
     [SerializeField] Rigidbody playerRigidbody;
+    [SerializeField] PlayerInteractionManager playerInteractionManagerScript;
 
     void Start()
     {
-        playerTransform = player.transform;
+        playerTransform = playerObject.transform;
         playerWidthRadiusForOtherScriptsFromPlayerMovementManager = PlayerMovementManager.playerWidthRadiusForOtherScripts;
         StartCoroutine(LoadingTheSave());
     }
@@ -42,7 +45,7 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
 
             if (respawnButtonPressed)
             {
-                StartCoroutine(Respawning());
+                StartCoroutine(PlayerRespawning());
             }
         }
 
@@ -105,17 +108,23 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
     void PlayerDespawning()
     {
         playerDied = true;
-        pauseMenu.SetActive(false);
-        settingsMenu.SetActive(false);
-        deathMenu.SetActive(true);
+        pauseMenuObject.SetActive(false);
+        settingsMenuObject.SetActive(false);
+        deathMenuObject.SetActive(true);
+
+        if (PlayerInteractionManager.grabbedObjectRigidbody)
+        {
+            playerInteractionManagerScript.ReleaseObject();
+        }
+
         PlayerStatusManager.playerHealth = 0;
-        player.SetActive(false);
+        playerObject.SetActive(false);
         mainCamera.fieldOfView = PlayerPrefs.GetInt("FOV");
     }
 
-    IEnumerator Respawning()
+    IEnumerator PlayerRespawning()
     {
-        player.SetActive(true);
+        playerObject.SetActive(true);
         respawnButtonPressed = false;
         spawnProtection = true;
         PlayerMovementManager.startOfFall = 0;
@@ -128,7 +137,7 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
         PlayerCameraManager.xRotation = 0;
         PlayerCameraManager.yRotation = 0;
         PlayerStatusManager.playerHealth = 100;
-        deathMenu.SetActive(false);
+        deathMenuObject.SetActive(false);
         playerDied = false;
         yield return new WaitForSeconds(spawnProtectionSeconds);
         spawnProtection = false;

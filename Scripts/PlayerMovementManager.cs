@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class PlayerMovementManager : MonoBehaviour
 {
+    //* Attach this script to the Player gameobject.
     //* In Unity Editor, make the gravity "-60".
     //* In Unity Editor, layer 3 should be "Static Normal Layer".
     //* In Unity Editor, layer 6 should be "Static Bouncy Layer".
@@ -74,19 +75,15 @@ public class PlayerMovementManager : MonoBehaviour
 
     void Update()
     {
-        if (!PauseMenuManager.gamePaused && !PlayerSpawnAndSaveManager.playerDied)
-        {
+        if (!PauseMenuManager.gamePaused)
+        {// I didn't added the if not player died condition because if player dies, this script does not work because it is attached to the player.
             MovementInputs();
         }
     }
 
     void FixedUpdate()
     {// I didn't added the if not game paused condition because if game pauses, FixedUpdate pauses too.
-        if (PlayerSpawnAndSaveManager.playerDied)
-        {
-            return;
-        }
-
+        // And also I didn't added the if not player died condition because if player dies, this script does not work because it is attached to the player.
         // These functions' order are intentional, i wouldn't recommend you to change the order.
         GroundedCheckAndFallingCheckAndBouncyJumpAndFallDamageAndCoyoteTime();
         Jump();

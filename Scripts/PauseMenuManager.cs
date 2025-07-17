@@ -5,11 +5,13 @@ using System.Linq;
 
 public class PauseMenuManager : MonoBehaviour
 {
+    //* Attach this script to the UserInterface gameobject.
+
     public static bool gamePaused, dynamicFOV, settingsMenuOpened;
     int[] last5FPS = new int[5];
     int counter;
     const KeyCode escapeKey = KeyCode.Escape;
-    [SerializeField] GameObject pauseMenu, settingsMenu, speedTextObject, FPSTextObject;
+    [SerializeField] GameObject pauseMenuObject, settingsMenuObject, speedTextObject, FPSTextObject;
     [SerializeField] TextMeshProUGUI FOVText, mouseSensitivityText, maxFPSText, speedText, FPSText;
     [SerializeField] Toggle dynamicFOVToggle, speedTextToggle, increasedSensitivityToggle, showFPSToggle;
     [SerializeField] Slider FOVSlider, mouseSensitivitySlider, maxFPSSlider;
@@ -132,7 +134,7 @@ public class PauseMenuManager : MonoBehaviour
 
         if (Input.GetKeyDown(escapeKey))
         {
-            if (!settingsMenu.activeSelf)
+            if (!settingsMenuObject.activeSelf)
             {
                 if (!gamePaused)
                 {
@@ -192,14 +194,14 @@ public class PauseMenuManager : MonoBehaviour
     void Pause()
     {
         playerSpawnAndSaveManagerScript.SavingTheGame();
-        pauseMenu.SetActive(true);
+        pauseMenuObject.SetActive(true);
         Time.timeScale = 0;
         gamePaused = true;
     }
 
     public void Resume()
     {
-        pauseMenu.SetActive(false);
+        pauseMenuObject.SetActive(false);
         Time.timeScale = 1;
         gamePaused = false;
     }
@@ -332,8 +334,8 @@ public class PauseMenuManager : MonoBehaviour
         }
 
         FOVSlider.value = PlayerCameraManager.normalFOV;
-        pauseMenu.SetActive(false);
-        settingsMenu.SetActive(true);
+        pauseMenuObject.SetActive(false);
+        settingsMenuObject.SetActive(true);
         settingsMenuOpened = true;
     }
 
@@ -548,9 +550,9 @@ public class PauseMenuManager : MonoBehaviour
 
     public void GoBackToPauseMenu()
     {
-        settingsMenu.SetActive(false);
+        settingsMenuObject.SetActive(false);
         settingsMenuOpened = false;
-        pauseMenu.SetActive(true);
+        pauseMenuObject.SetActive(true);
     }
 
     public void QuittingGame()

@@ -2,15 +2,19 @@ using UnityEngine;
 
 public class PlayerCameraManager : MonoBehaviour
 {
+    //* Attach this script to the CameraHolder gameobject
+
     public static int sensitivity;
     public static float xRotation, yRotation, normalFOV;
     float sprintFOV, zoomFOV, zoomSprintFOV;
     KeyCode zoomKey = KeyCode.C;
-    [SerializeField] Transform playerModelTransform, cameraPosition, cameraHolder;
+    Transform cameraHolderTransform;
+    [SerializeField] Transform playerModelTransform, cameraPositionTransform;
     [SerializeField] Camera mainCamera;
 
     void Start()
     {
+        cameraHolderTransform = transform;
         mainCamera.fieldOfView = normalFOV;
         mainCamera.nearClipPlane = 0.1f;
     }
@@ -45,7 +49,7 @@ public class PlayerCameraManager : MonoBehaviour
 
     void CameraMovement()
     {
-        cameraHolder.position = cameraPosition.position;
+        cameraHolderTransform.position = cameraPositionTransform.position;
     }
 
     void CameraLook()
@@ -57,7 +61,7 @@ public class PlayerCameraManager : MonoBehaviour
             xRotation = Mathf.Clamp(xRotation, -90, 90);
         }
 
-        cameraHolder.rotation = Quaternion.Euler(xRotation, yRotation, 0);
+        cameraHolderTransform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
         playerModelTransform.rotation = Quaternion.Euler(0, yRotation, 0);
     }
 

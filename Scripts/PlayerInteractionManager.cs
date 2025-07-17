@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class PlayerInteractionManager : MonoBehaviour
 {
+    //* Attach this script to the Player gameobject.
     //* In Unity Editor, layer 7 should be "Movable Normal Layer".
     //* In Unity Editor, layer 8 should be "Movable Bouncy Layer".
     //* Make sure that movable objects have a Rigidbody.
@@ -11,22 +12,37 @@ public class PlayerInteractionManager : MonoBehaviour
     public static Rigidbody grabbedObjectRigidbody;
     const int holdForce = 30;
     const float holdAgainCooldown = 0.6f;
-    int maxHoldingObjectDistance = 6;
     bool interacionKeyPressed, throwKeyPressedWhileHoldingAnObject;
-    RaycastHit interactionHit;
+    RaycastHit holdInteractionHit;
 
     [Header("Keybinds")]
     KeyCode interactionKey = KeyCode.E, throwKey = KeyCode.Mouse0;
 
     [Header("Inputs")]
+    [SerializeField] int maxHoldingObjectDistance = 6;
     [SerializeField] int throwForce = 60;
-    [SerializeField] Transform holdedObjectPosition;
-    [SerializeField] Transform cameraHolder;
+    [SerializeField] Transform holdedObjectPositionTransform;
+    [SerializeField] Transform cameraHolderTransform;
     [SerializeField] Camera mainCamera;
     [SerializeField] LayerMask movableNormalLayer, movableBouncyLayer;
 
     void Update()
     {
+        InteractionInputs();
+    }
+
+    void FixedUpdate()
+    {
+        HoldingAndThrowingObject();
+    }
+
+    void InteractionInputs()
+    {
+        if (PauseMenuManager.gamePaused)
+        {
+            return;
+        }
+
         if (Input.GetKeyDown(interactionKey))
         {
             interacionKeyPressed = true;
@@ -38,26 +54,11 @@ public class PlayerInteractionManager : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
-    {
-        HoldingAndThrowingObject();
-    }
-
     void HoldingAndThrowingObject()
     {
-        if (PlayerSpawnAndSaveManager.playerDied)
-        {
-            if (grabbedObjectRigidbody)
-            {
-                ReleaseObject();
-            }
-
-            return;
-        }
-
         if (grabbedObjectRigidbody)
         {
-            grabbedObjectRigidbody.AddForce(holdForce * (holdedObjectPosition.position - grabbedObjectRigidbody.position), ForceMode.Impulse);
+            grabbedObjectRigidbody.AddForce(holdForce * (holdedObjectPositionTransform.position - grabbedObjectRigidbody.position), ForceMode.Impulse);
             grabbedObjectRigidbody.linearVelocity *= 0.25f;
             grabbedObjectRigidbody.angularVelocity *= 0.25f;
 
@@ -69,7 +70,7 @@ public class PlayerInteractionManager : MonoBehaviour
                 return;
             }
 
-            if ((holdedObjectPosition.position - grabbedObjectRigidbody.position).magnitude > maxHoldingObjectDistance)
+            if ((holdedObjectPositionTransform.position - grabbedObjectRigidbody.position).magnitude > maxHoldingObjectDistance)
             {
                 ReleaseObject();
             }
@@ -85,10 +86,10 @@ public class PlayerInteractionManager : MonoBehaviour
                 return;
             }
 
-            if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out interactionHit, maxHoldingObjectDistance, movableNormalLayer | movableBouncyLayer) && readyToHold)
+            if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out holdInteractionHit, maxHoldingObjectDistance, movableNormalLayer | movableBouncyLayer) && readyToHold)
             {
                 readyToHold = false;
-                grabbedObjectRigidbody = interactionHit.collider.GetComponent<Rigidbody>();
+                grabbedObjectRigidbody = holdInteractionHit.collider.GetComponent<Rigidbody>();
 
                 if (grabbedObjectRigidbody)
                 {

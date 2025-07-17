@@ -4,6 +4,8 @@ using TMPro;
 
 public class PlayerStatusManager : MonoBehaviour
 {
+    //* Attach this script to the UserInterface gameobject.
+
     public static int playerHealth;
     public static float flatVelocityMagnitude;
     public static bool idling, walking, running, jumpingUp, jumpingDown, goingUp, goingDown, crouchIdling, crouchWalking, crouchJumpingUp, crouchJumpingDown, crouchGoingUp, crouchGoingDown, sliding, fallDistanceIsBiggerThanMinimum;
@@ -11,16 +13,16 @@ public class PlayerStatusManager : MonoBehaviour
     int runSpeedFromPlayerMovementManager, verticalFromPlayerMovementManager;
     bool playerDiedFromPlayerSpawnAndSaveManager, groundedForAllFromPlayerMovementManager;
     KeyCode runKey = KeyCode.R;
-    [SerializeField] Transform playerTransform, playerGroundParticles;
+    [SerializeField] Transform playerTransform, playerGroundParticlesTransform;
     [SerializeField] Rigidbody playerRigidbody;
     [SerializeField] ParticleSystem runJumpParticles, runAndSlideParticles;
     [SerializeField] TextMeshProUGUI healthText;
-    [SerializeField] Slider healthBar;
+    [SerializeField] Slider healthBarSlider;
 
     void FixedUpdate()
     {// I didn't added the if not game paused condition because if game pauses, FixedUpdate pauses too.
         healthText.text = $"{playerHealth}";
-        healthBar.value = playerHealth;
+        healthBarSlider.value = playerHealth;
         playerDiedFromPlayerSpawnAndSaveManager = PlayerSpawnAndSaveManager.playerDied;
         groundedForAllFromPlayerMovementManager = PlayerMovementManager.groundedForAll;
         runSpeedFromPlayerMovementManager = PlayerMovementManager.runSpeed;
@@ -32,7 +34,7 @@ public class PlayerStatusManager : MonoBehaviour
 
             if (!PlayerMovementManager.crouching)
             {
-                playerGroundParticles.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (PlayerMovementManager.playerHeightForOtherScripts / 2), playerTransform.position.z);
+                playerGroundParticlesTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (PlayerMovementManager.playerHeightForOtherScripts / 2), playerTransform.position.z);
                 crouchIdling = false;
                 crouchWalking = false;
                 crouchJumpingUp = false;
@@ -78,7 +80,7 @@ public class PlayerStatusManager : MonoBehaviour
             }
             else
             {
-                playerGroundParticles.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (PlayerMovementManager.crouchHeightForOtherScripts / 2), playerTransform.position.z);
+                playerGroundParticlesTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (PlayerMovementManager.crouchHeightForOtherScripts / 2), playerTransform.position.z);
                 idling = false;
                 walking = false;
                 running = false;
