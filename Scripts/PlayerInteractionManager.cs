@@ -11,7 +11,7 @@ public class PlayerInteractionManager : MonoBehaviour
     public static bool canReleaseHoldedObjectWhenTouchedToPlayer;
     public static Rigidbody grabbedObjectRigidbody;
     const int holdForce = 30;
-    const float movingHoldingObjectSpeed = 7.5f, holdAgainCooldown = 0.6f, canReleaseHoldedObjectWhenTouchedToPlayerCooldown = 0.2f;
+    const float holdAgainCooldown = 0.6f, canReleaseHoldedObjectWhenTouchedToPlayerCooldown = 0.3f, movingHoldingObjectWithScrollWheelSpeed = 7.5f;
     float tempHoldingObjectDistance;
     bool readyToHold = true, interacionKeyPressed, throwKeyPressedWhileHoldingAnObject;
     RaycastHit holdInteractionHit;
@@ -94,7 +94,7 @@ public class PlayerInteractionManager : MonoBehaviour
                 }
                 else
                 {
-                    tempHoldingObjectDistance += movingHoldingObjectSpeed * Input.GetAxis("Mouse ScrollWheel");
+                    tempHoldingObjectDistance += movingHoldingObjectWithScrollWheelSpeed * Input.GetAxis("Mouse ScrollWheel");
                 }
             }
 
@@ -120,10 +120,9 @@ public class PlayerInteractionManager : MonoBehaviour
                 {
                     grabbedObjectRigidbody.linearVelocity = Vector3.zero;
                     grabbedObjectRigidbody.useGravity = false;
+                    Invoke(nameof(HoldAgainReset), holdAgainCooldown);
                     Invoke(nameof(CanReleaseHoldedObjectWhenTouchedToPlayerActivator), canReleaseHoldedObjectWhenTouchedToPlayerCooldown);
                 }
-
-                Invoke(nameof(HoldAgainReset), holdAgainCooldown);
             }
         }
     }

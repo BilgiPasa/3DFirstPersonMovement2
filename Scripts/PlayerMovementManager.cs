@@ -266,17 +266,17 @@ public class PlayerMovementManager : MonoBehaviour
         Invoke(nameof(JumpingReset), jumpingCooldown);
     }
 
-    void JumpingReset() // For jump height consistency
-    {
-        jumping = false;
-    }
-
     /* For a continuous jump, use JumpAgainReset. If you don't want to use JumpAgainReset, make a jump buffer
     function and use it but don't forget to add "coyoteTimeCounter = 0;" in your jumping function after the
     jumping force. But you don't need to do that in this script if you are using JumpAgainReset. */
     void JumpAgainReset()
     {
         readyToJump = true;
+    }
+
+    void JumpingReset() // For jump height consistency
+    {
+        jumping = false;
     }
 
     void Crouch()
