@@ -132,8 +132,8 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
         PlayerMovementManager.fallDistance = 0;
         playerTransform.localScale = new Vector3(playerWidthRadiusFromPlayerMovementManager * 2, PlayerMovementManager.playerHeight / 2, playerWidthRadiusFromPlayerMovementManager * 2);
         PlayerMovementManager.crouching = false;
-        playerRigidbody.position = new Vector3(0, 0, 0);
-        playerRigidbody.linearVelocity = new Vector3(0, 0, 0);
+        playerRigidbody.position = Vector3.zero;
+        playerRigidbody.linearVelocity = Vector3.zero;
         PlayerCameraManager.xRotation = 0;
         PlayerCameraManager.yRotation = 0;
         PlayerStatusManager.playerHealth = 100;
