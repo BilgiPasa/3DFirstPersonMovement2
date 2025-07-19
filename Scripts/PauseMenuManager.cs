@@ -12,6 +12,7 @@ public class PauseMenuManager : MonoBehaviour
     int counter;
     const KeyCode escapeKey = KeyCode.Escape;
     [SerializeField] GameObject pauseMenuObject, settingsMenuObject, speedTextObject, FPSTextObject;
+    [SerializeField] RectTransform FPSTextRectTransform;
     [SerializeField] TextMeshProUGUI FOVText, mouseSensitivityText, maxFPSText, speedText, FPSText;
     [SerializeField] Toggle dynamicFOVToggle, speedTextToggle, increasedSensitivityToggle, showFPSToggle;
     [SerializeField] Slider FOVSlider, mouseSensitivitySlider, maxFPSSlider;
@@ -183,11 +184,11 @@ public class PauseMenuManager : MonoBehaviour
 
         if (!(!speedTextObject.activeSelf && FPSTextObject.activeSelf))
         {
-            FPSTextObject.transform.position = new Vector3(FPSTextObject.transform.position.x, 990, FPSTextObject.transform.position.z);
+            FPSTextRectTransform.anchoredPosition = new Vector2(FPSTextRectTransform.anchoredPosition.x, -90);
         }
         else
         {
-            FPSTextObject.transform.position = new Vector3(FPSTextObject.transform.position.x, 1035, FPSTextObject.transform.position.z);
+            FPSTextRectTransform.anchoredPosition = new Vector2(FPSTextRectTransform.anchoredPosition.x, -45);
         }
     }
 
