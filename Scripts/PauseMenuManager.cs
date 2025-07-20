@@ -6,6 +6,7 @@ using System.Linq;
 public class PauseMenuManager : MonoBehaviour
 {
     //* Attach this script to the UserInterface gameobject.
+    //* PauseMenu'yü aktive et ve SettingsButton'ın Text'ine gel. O text'in Outline materyalinin Face'inin Dilate'sini 0.05 yap. Outline'ının rengini bembeyaz yap ve Thickness'ını 0.05 yap. Ardından PauseMenu'yü inaktif yap.
 
     public static bool gamePaused, dynamicFOV, settingsMenuOpened;
     int[] last5FPS = new int[5];
