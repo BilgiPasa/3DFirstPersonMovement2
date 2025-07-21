@@ -109,7 +109,7 @@ public class PlayerInteractionManager : MonoBehaviour
                 return;
             }
 
-            if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out holdInteractionHit, maxHoldingObjectDistance, movableNormalLayer | movableBouncyLayer) && readyToHold)
+            if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out holdInteractionHit, maxHoldingObjectDistance, movableNormalLayer | movableBouncyLayer) && readyToHold && !holdInteractionHit.rigidbody.isKinematic)
             {
                 readyToHold = false;
                 grabbedObjectRigidbody = holdInteractionHit.rigidbody;
