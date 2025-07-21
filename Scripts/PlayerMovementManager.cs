@@ -302,7 +302,7 @@ public class PlayerMovementManager : MonoBehaviour
 
             if (groundedForAll)
             {
-                playerRigidbody.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (playerHeight / 2 - crouchHeight / 2), playerTransform.position.z);
+                playerTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (playerHeight / 2 - crouchHeight / 2), playerTransform.position.z);
             }
 
             crouching = true;
@@ -316,7 +316,7 @@ public class PlayerMovementManager : MonoBehaviour
             {
                 if (groundedForAll)
                 {
-                    playerRigidbody.position = new Vector3(playerTransform.position.x, playerTransform.position.y + (playerHeight / 2 - crouchHeight / 2), playerTransform.position.z);
+                    playerTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y + (playerHeight / 2 - crouchHeight / 2), playerTransform.position.z);
                 }
 
                 playerColliderCapsuleCollider.height = playerHeight;

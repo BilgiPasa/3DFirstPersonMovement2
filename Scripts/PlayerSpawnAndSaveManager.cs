@@ -46,6 +46,7 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
 
         PlayerCameraManager.xRotation = PlayerPrefs.GetFloat("playerRotationX");
         PlayerCameraManager.yRotation = PlayerPrefs.GetFloat("playerRotationY");
+        playerTransform.position = new Vector3(PlayerPrefs.GetFloat("playerPositionX"), PlayerPrefs.GetFloat("playerPositionY"), PlayerPrefs.GetFloat("playerPositionZ"));
         cameraHolderTransform.position = cameraPositionTransform.position;
         cameraHolderTransform.rotation = Quaternion.Euler(PlayerCameraManager.xRotation, PlayerCameraManager.yRotation, 0);
         playerColliderTransform.rotation = Quaternion.Euler(0, PlayerCameraManager.yRotation, 0);
@@ -53,7 +54,6 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
         if (PlayerPrefs.GetInt("playerDied") == -1)
         {
             spawnProtection = true;
-            playerRigidbody.position = new Vector3(PlayerPrefs.GetFloat("playerPositionX"), PlayerPrefs.GetFloat("playerPositionY"), PlayerPrefs.GetFloat("playerPositionZ"));
             playerRigidbody.linearVelocity = new Vector3(PlayerPrefs.GetFloat("playerLinearVelocityX"), PlayerPrefs.GetFloat("playerLinearVelocityY"), PlayerPrefs.GetFloat("playerLinearVelocityZ"));
 
             if (PlayerPrefs.GetInt("playerCrouching") == -1)
@@ -79,7 +79,6 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
         else if (PlayerPrefs.GetInt("playerDied") == 1)
         {
             PlayerDespawning();
-            playerTransform.position = new Vector3(PlayerPrefs.GetFloat("playerPositionX"), PlayerPrefs.GetFloat("playerPositionY"), PlayerPrefs.GetFloat("playerPositionZ"));
         }
     }
 
@@ -109,7 +108,7 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
             }
         }
 
-        if (playerRigidbody.position.y < -100 && !playerDied)
+        if (playerTransform.position.y < -100 && !playerDied)
         {
             PlayerStatusManager.playerHealth = 0;
         }
@@ -138,18 +137,15 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
         if (!playerDied)
         {
             PlayerPrefs.SetInt("playerDied", -1);
-            PlayerPrefs.SetFloat("playerPositionX", playerRigidbody.position.x);
-            PlayerPrefs.SetFloat("playerPositionY", playerRigidbody.position.y);
-            PlayerPrefs.SetFloat("playerPositionZ", playerRigidbody.position.z);
         }
         else
         {
             PlayerPrefs.SetInt("playerDied", 1);
-            PlayerPrefs.SetFloat("playerPositionX", playerTransform.position.x);
-            PlayerPrefs.SetFloat("playerPositionY", playerTransform.position.y);
-            PlayerPrefs.SetFloat("playerPositionZ", playerTransform.position.z);
         }
 
+        PlayerPrefs.SetFloat("playerPositionX", playerTransform.position.x);
+        PlayerPrefs.SetFloat("playerPositionY", playerTransform.position.y);
+        PlayerPrefs.SetFloat("playerPositionZ", playerTransform.position.z);
         PlayerPrefs.SetFloat("playerLinearVelocityX", playerRigidbody.linearVelocity.x);
         PlayerPrefs.SetFloat("playerLinearVelocityY", playerRigidbody.linearVelocity.y);
         PlayerPrefs.SetFloat("playerLinearVelocityZ", playerRigidbody.linearVelocity.z);
@@ -195,7 +191,7 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
         frontBumpingDetectorTransform.localScale = new Vector3(frontBumpingDetectorTransform.localScale.x, PlayerMovementManager.frontBumpingDetectorLocalScaleWhenNotCrouched, frontBumpingDetectorTransform.localScale.z);
         playerCapsuleModelTransform.localScale = new Vector3(playerCapsuleModelTransform.localScale.x, PlayerMovementManager.playerHeight / 2, playerCapsuleModelTransform.localScale.z);
         PlayerMovementManager.crouching = false;
-        playerRigidbody.position = Vector3.zero;
+        playerTransform.position = Vector3.zero;
         playerRigidbody.linearVelocity = Vector3.zero;
         PlayerCameraManager.xRotation = 0;
         PlayerCameraManager.yRotation = 0;
