@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerInteractionManager : MonoBehaviour
 {
-    //* Attach this script to the Player gameobject.
+    //* Attach this script to the Player game object.
     //* In Unity Editor, layer 7 should be "Movable Normal Layer".
     //* In Unity Editor, layer 8 should be "Movable Bouncy Layer".
     //* Make sure that movable objects have a Rigidbody.
@@ -23,10 +23,8 @@ public class PlayerInteractionManager : MonoBehaviour
     [SerializeField] int throwForce = 60;
     [SerializeField] int maxHoldingObjectCanBeOffsetDistance = 10;
     [SerializeField] int normalHoldingObjectDistance = 4;
-    [SerializeField] float maxHoldingObjectDistance = 6;
-    [SerializeField] float minHoldingObjectDistance = 2.5f;
+    [SerializeField] float maxHoldingObjectDistance = 6, minHoldingObjectDistance = 2.5f;
     [SerializeField] Transform holdedObjectPositionTransform;
-    [SerializeField] Transform cameraHolderTransform;
     [SerializeField] Camera mainCamera;
     [SerializeField] LayerMask movableNormalLayer, movableBouncyLayer;
 

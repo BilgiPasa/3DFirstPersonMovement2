@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerFrontBumpingManager : MonoBehaviour
 {
-    //* Attach this script to the FrontBumpingDetector gameobject.
+    //* Attach this script to the FrontBumpingDetector game object.
     //* In Unity Editor, layer 3 should be "Static Normal Layer".
     //* In Unity Editor, layer 6 should be "Static Bouncy Layer".
     //* In Unity Editor, layer 7 should be "Movable Normal Layer".

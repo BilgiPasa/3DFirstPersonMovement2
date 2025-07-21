@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlayerMovementManager : MonoBehaviour
 {
-    //* Attach this script to the Player gameobject.
+    //* Attach this script to the Player game object.
     //* In Unity Editor, make the gravity "-60".
     //* In Unity Editor, layer 3 should be "Static Normal Layer".
     //* In Unity Editor, layer 6 should be "Static Bouncy Layer".
@@ -30,8 +30,9 @@ public class PlayerMovementManager : MonoBehaviour
     RaycastHit slopeHit;
 
     [Header("Crouch")]
-    public static float playerHeight = 3, crouchHeight = 2, playerWidthRadius = 0.5f;
+    public static float playerHeight = 3, crouchHeight = 2, cameraPositionLocalPositionWhenNotCrouched, cameraPositionLocalPositionWhenCrouched, frontBumpingDetectorLocalScaleWhenNotCrouched, frontBumpingDetectorLocalScaleWhenCrouched;
     public static bool crouching;
+    const float playerWidthRadius = 0.5f, ifPlayerHeightWouldBe2AndPlayerTransformWouldBeVector3ZeroThenYLocalPositionOfCameraPositionWouldBe = 0.7f, ifPlayerHeightWouldBe2ThenYLocalScaleOfFrontBumpingDetectorWouldBe = 1.25f;
     bool dontUncrouch;
 
     [Header("Coyote Time")]
@@ -51,8 +52,11 @@ public class PlayerMovementManager : MonoBehaviour
     KeyCode forwardKey = KeyCode.W, leftKey = KeyCode.A, backwardKey = KeyCode.S, rightKey = KeyCode.D, jumpKey = KeyCode.Space, crouchKey = KeyCode.LeftShift;
 
     [Header("Inputs")]
-    [SerializeField] Transform playerModelTransform;
-    [SerializeField] CapsuleCollider playerCapsuleCollider;
+    [SerializeField] Transform playerColliderTransform;
+    [SerializeField] Transform cameraPositionTransform;
+    [SerializeField] Transform frontBumpingDetectorTransform;
+    [SerializeField] Transform playerCapsuleModelTransform;
+    [SerializeField] CapsuleCollider playerColliderCapsuleCollider;
     [SerializeField] ParticleSystem jumpingDownParticles;
     [SerializeField] LayerMask staticNormalLayer, staticBouncyLayer, movableNormalLayer, movableBouncyLayer;
     [SerializeField] PlayerInteractionManager playerInteractionManagerScript;
@@ -60,8 +64,11 @@ public class PlayerMovementManager : MonoBehaviour
     void Awake()
     {
         playerTransform = transform;
-        playerCapsuleCollider.height = 2;
-        playerCapsuleCollider.radius = 0.5f;
+        playerColliderCapsuleCollider.radius = playerWidthRadius;
+        cameraPositionLocalPositionWhenNotCrouched = ifPlayerHeightWouldBe2AndPlayerTransformWouldBeVector3ZeroThenYLocalPositionOfCameraPositionWouldBe * playerHeight / 2;
+        cameraPositionLocalPositionWhenCrouched = ifPlayerHeightWouldBe2AndPlayerTransformWouldBeVector3ZeroThenYLocalPositionOfCameraPositionWouldBe * crouchHeight / 2;
+        frontBumpingDetectorLocalScaleWhenNotCrouched = ifPlayerHeightWouldBe2ThenYLocalScaleOfFrontBumpingDetectorWouldBe * playerHeight / 2;
+        frontBumpingDetectorLocalScaleWhenCrouched = ifPlayerHeightWouldBe2ThenYLocalScaleOfFrontBumpingDetectorWouldBe * crouchHeight / 2;
         playerRigidbody = GetComponent<Rigidbody>();
         playerRigidbody.interpolation = RigidbodyInterpolation.Interpolate;
         playerRigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
@@ -288,7 +295,10 @@ public class PlayerMovementManager : MonoBehaviour
 
         if (!crouching && Input.GetKey(crouchKey))
         {
-            playerTransform.localScale = new Vector3(playerWidthRadius * 2, crouchHeight / 2, playerWidthRadius * 2);
+            playerColliderCapsuleCollider.height = crouchHeight;
+            cameraPositionTransform.localPosition = new Vector3(cameraPositionTransform.localPosition.x, cameraPositionLocalPositionWhenCrouched, cameraPositionTransform.localPosition.z);
+            frontBumpingDetectorTransform.localScale = new Vector3(frontBumpingDetectorTransform.localScale.x, frontBumpingDetectorLocalScaleWhenCrouched, frontBumpingDetectorTransform.localScale.z);
+            playerCapsuleModelTransform.localScale = new Vector3(playerCapsuleModelTransform.localScale.x, crouchHeight / 2, playerCapsuleModelTransform.localScale.z);
 
             if (groundedForAll)
             {
@@ -309,7 +319,10 @@ public class PlayerMovementManager : MonoBehaviour
                     playerRigidbody.position = new Vector3(playerTransform.position.x, playerTransform.position.y + (playerHeight / 2 - crouchHeight / 2), playerTransform.position.z);
                 }
 
-                playerTransform.localScale = new Vector3(playerWidthRadius * 2, playerHeight / 2, playerWidthRadius * 2);
+                playerColliderCapsuleCollider.height = playerHeight;
+                cameraPositionTransform.localPosition = new Vector3(cameraPositionTransform.localPosition.x, cameraPositionLocalPositionWhenNotCrouched, cameraPositionTransform.localPosition.z);
+                frontBumpingDetectorTransform.localScale = new Vector3(frontBumpingDetectorTransform.localScale.x, frontBumpingDetectorLocalScaleWhenNotCrouched, frontBumpingDetectorTransform.localScale.z);
+                playerCapsuleModelTransform.localScale = new Vector3(playerCapsuleModelTransform.localScale.x, playerHeight / 2, playerCapsuleModelTransform.localScale.z);
                 crouching = false;
                 PlayerPrefs.SetInt("playerCrouching", -1);
             }
@@ -330,8 +343,8 @@ public class PlayerMovementManager : MonoBehaviour
 
     void Movement()
     {
-        normalizedMoveDirection = (playerModelTransform.forward * vertical + playerModelTransform.right * horizontal).normalized;
-        onSlope = ((!crouching && Physics.Raycast(playerTransform.position, Vector3.down, out slopeHit, playerHeight / 2 + groundedSphereRadius * 2)) || (crouching && Physics.Raycast(playerTransform.position, Vector3.down, out slopeHit, crouchHeight / 2 + groundedSphereRadius * 2))) && slopeHit.normal != Vector3.up; // slopeHit.normal kısmını sona koyman lazım çünkü Raycast'i bilmeden hit olan şeyi hesaplamaya çalışırsan olmaz.
+        normalizedMoveDirection = (playerColliderTransform.forward * vertical + playerColliderTransform.right * horizontal).normalized;
+        onSlope = ((!crouching && Physics.Raycast(playerTransform.position, -playerTransform.up, out slopeHit, playerHeight / 2 + groundedSphereRadius * 2)) || (crouching && Physics.Raycast(playerTransform.position, -playerTransform.up, out slopeHit, crouchHeight / 2 + groundedSphereRadius * 2))) && slopeHit.normal != playerTransform.up; // slopeHit.normal kısmını sona koyman lazım çünkü Raycast'i bilmeden hit olan şeyi hesaplamaya çalışırsan olmaz.
 
         if (playerRigidbody.linearDamping != airLinearDamping)
         {
@@ -347,7 +360,7 @@ public class PlayerMovementManager : MonoBehaviour
         }
         else
         {
-            flatRotationAngleInAir = playerModelTransform.rotation.eulerAngles.y;
+            flatRotationAngleInAir = playerColliderTransform.rotation.eulerAngles.y;
             flatVelocityRelativeToPlayerInAir = RelativeToPlayerConverter(playerRigidbody.linearVelocity.x, playerRigidbody.linearVelocity.z, flatRotationAngleInAir);
             normalizedMoveDirectionRelativeToPlayerInAir = RelativeToPlayerConverter(normalizedMoveDirection.x, normalizedMoveDirection.z, flatRotationAngleInAir);
             normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum = normalizedMoveDirectionRelativeToPlayerInAir.y > minimum;
@@ -384,11 +397,11 @@ public class PlayerMovementManager : MonoBehaviour
                         {
                             if (flatVelocityRelativeToPlayerInAir.x > theMoveSpeed)
                             {
-                                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.y / 2) * -playerModelTransform.right, ForceMode.Acceleration);
+                                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.y / 2) * -playerColliderTransform.right, ForceMode.Acceleration);
                             }
                             else if (flatVelocityRelativeToPlayerInAir.x < -theMoveSpeed)
                             {
-                                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.y / 2) * playerModelTransform.right, ForceMode.Acceleration);
+                                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.y / 2) * playerColliderTransform.right, ForceMode.Acceleration);
                             }
                         }
                     }
@@ -403,11 +416,11 @@ public class PlayerMovementManager : MonoBehaviour
                         {
                             if (flatVelocityRelativeToPlayerInAir.y > theMoveSpeed)
                             {
-                                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.x / 2) * -playerModelTransform.forward, ForceMode.Acceleration);
+                                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.x / 2) * -playerColliderTransform.forward, ForceMode.Acceleration);
                             }
                             else if (flatVelocityRelativeToPlayerInAir.y < -theMoveSpeed)
                             {
-                                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.x / 2) * playerModelTransform.forward, ForceMode.Acceleration);
+                                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.x / 2) * playerColliderTransform.forward, ForceMode.Acceleration);
                             }
                         }
                     }

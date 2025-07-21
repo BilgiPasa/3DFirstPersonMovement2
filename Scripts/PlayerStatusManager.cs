@@ -4,15 +4,13 @@ using TMPro;
 
 public class PlayerStatusManager : MonoBehaviour
 {
-    //* Attach this script to the UserInterface gameobject.
+    //* Attach this script to the UserInterface game object.
     //* HealthText'te Drop Shadow materyalinin Face'inin dilate'sini 0.2 ve Outline'ının thickness'ını 0.2 yap.
 
     public static int playerHealth;
     public static float flatVelocityMagnitude;
     public static bool idling, walking, running, jumpingUp, jumpingDown, goingUp, goingDown, crouchIdling, crouchWalking, crouchJumpingUp, crouchJumpingDown, crouchGoingUp, crouchGoingDown, sliding, fallDistanceIsBiggerThanMinimum;
     const float minimum = 0.1f;
-    int runSpeedFromPlayerMovementManager, verticalFromPlayerMovementManager;
-    bool playerDiedFromPlayerSpawnAndSaveManager, groundedForAllFromPlayerMovementManager;
     KeyCode runKey = KeyCode.R;
     [SerializeField] Transform playerTransform, playerGroundParticlesTransform;
     [SerializeField] Rigidbody playerRigidbody;
@@ -24,14 +22,10 @@ public class PlayerStatusManager : MonoBehaviour
     {// I didn't added the if not game paused condition because if game pauses, FixedUpdate pauses too.
         healthText.text = $"{playerHealth}";
         healthBarSlider.value = playerHealth;
-        playerDiedFromPlayerSpawnAndSaveManager = PlayerSpawnAndSaveManager.playerDied;
-        groundedForAllFromPlayerMovementManager = PlayerMovementManager.groundedForAll;
-        runSpeedFromPlayerMovementManager = PlayerMovementManager.runSpeed;
 
-        if (!playerDiedFromPlayerSpawnAndSaveManager)
+        if (!PlayerSpawnAndSaveManager.playerDied)
         {
             flatVelocityMagnitude = new Vector2(playerRigidbody.linearVelocity.x, playerRigidbody.linearVelocity.z).magnitude;
-            verticalFromPlayerMovementManager = PlayerMovementManager.vertical;
 
             if (!PlayerMovementManager.crouching)
             {
@@ -43,18 +37,18 @@ public class PlayerStatusManager : MonoBehaviour
                 crouchGoingUp = false;
                 crouchGoingDown = false;
                 sliding = false;
-                walking = flatVelocityMagnitude > minimum && (verticalFromPlayerMovementManager != 0 || PlayerMovementManager.horizontal != 0);
+                walking = flatVelocityMagnitude > minimum && (PlayerMovementManager.vertical != 0 || PlayerMovementManager.horizontal != 0);
 
-                if (walking && verticalFromPlayerMovementManager == 1 && (Input.GetKeyDown(runKey) || Input.GetKey(runKey)))
+                if (walking && PlayerMovementManager.vertical == 1 && (Input.GetKeyDown(runKey) || Input.GetKey(runKey)))
                 {
                     running = true;
                 }
-                else if (!walking || (PlayerFrontBumpingManager.frontBumping && !Input.GetKey(runKey)) || (walking && verticalFromPlayerMovementManager != 1))
+                else if (!walking || (PlayerFrontBumpingManager.frontBumping && !Input.GetKey(runKey)) || (walking && PlayerMovementManager.vertical != 1))
                 {
                     running = false;
                 }
 
-                if (groundedForAllFromPlayerMovementManager)
+                if (PlayerMovementManager.groundedForAll)
                 {
                     idling = flatVelocityMagnitude <= minimum;
                     jumpingUp = PlayerMovementManager.jumping && playerRigidbody.linearVelocity.y > minimum;
@@ -89,15 +83,15 @@ public class PlayerStatusManager : MonoBehaviour
                 jumpingDown = false;
                 goingUp = false;
                 goingDown = false;
-                crouchWalking = flatVelocityMagnitude > minimum && (verticalFromPlayerMovementManager != 0 || PlayerMovementManager.horizontal != 0);
+                crouchWalking = flatVelocityMagnitude > minimum && (PlayerMovementManager.vertical != 0 || PlayerMovementManager.horizontal != 0);
 
-                if (groundedForAllFromPlayerMovementManager)
+                if (PlayerMovementManager.groundedForAll)
                 {
                     crouchIdling = flatVelocityMagnitude <= minimum;
                     crouchJumpingUp = PlayerMovementManager.jumping && playerRigidbody.linearVelocity.y > minimum;
                     crouchGoingUp = false;
                     crouchGoingDown = false;
-                    sliding = flatVelocityMagnitude > runSpeedFromPlayerMovementManager || PlayerMovementManager.onSlope;
+                    sliding = flatVelocityMagnitude > PlayerMovementManager.runSpeed || PlayerMovementManager.onSlope;
                 }
                 else
                 {
@@ -141,11 +135,11 @@ public class PlayerStatusManager : MonoBehaviour
             runJumpParticles.Play();
         }
 
-        if (!runAndSlideParticles.isPlaying && groundedForAllFromPlayerMovementManager && !playerDiedFromPlayerSpawnAndSaveManager && flatVelocityMagnitude > runSpeedFromPlayerMovementManager / 4 && (sliding || running))
+        if (!runAndSlideParticles.isPlaying && PlayerMovementManager.groundedForAll && !PlayerSpawnAndSaveManager.playerDied && flatVelocityMagnitude > PlayerMovementManager.runSpeed / 4 && (sliding || running))
         {
             runAndSlideParticles.Play();
         }
-        else if (runAndSlideParticles.isPlaying && (!groundedForAllFromPlayerMovementManager || playerDiedFromPlayerSpawnAndSaveManager || flatVelocityMagnitude <= runSpeedFromPlayerMovementManager / 4 || !(sliding || running)))
+        else if (runAndSlideParticles.isPlaying && (!PlayerMovementManager.groundedForAll || PlayerSpawnAndSaveManager.playerDied || flatVelocityMagnitude <= PlayerMovementManager.runSpeed / 4 || !(sliding || running)))
         {
             runAndSlideParticles.Stop();
         }

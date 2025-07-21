@@ -2,14 +2,14 @@ using UnityEngine;
 
 public class PlayerCameraManager : MonoBehaviour
 {
-    //* Attach this script to the CameraHolder gameobject.
+    //* Attach this script to the CameraHolder game object.
 
     public static int sensitivity;
     public static float xRotation, yRotation, normalFOV;
     float sprintFOV, zoomFOV, zoomSprintFOV;
     KeyCode zoomKey = KeyCode.C;
     Transform cameraHolderTransform;
-    [SerializeField] Transform playerModelTransform, cameraPositionTransform;
+    [SerializeField] Transform playerColliderTransform, cameraPositionTransform;
     [SerializeField] Camera mainCamera;
 
     void Start()
@@ -47,11 +47,6 @@ public class PlayerCameraManager : MonoBehaviour
         }
     }
 
-    void CameraMovement()
-    {
-        cameraHolderTransform.position = cameraPositionTransform.position;
-    }
-
     void CameraLook()
     {
         if (!PlayerSpawnAndSaveManager.playerDied)
@@ -62,7 +57,7 @@ public class PlayerCameraManager : MonoBehaviour
         }
 
         cameraHolderTransform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
-        playerModelTransform.rotation = Quaternion.Euler(0, yRotation, 0);
+        playerColliderTransform.rotation = Quaternion.Euler(0, yRotation, 0);
     }
 
     void FOVChange()
@@ -93,5 +88,10 @@ public class PlayerCameraManager : MonoBehaviour
                 mainCamera.fieldOfView = mainCamera.fieldOfView > zoomSprintFOV - 0.01f && mainCamera.fieldOfView < zoomSprintFOV + 0.01f ? mainCamera.fieldOfView = zoomSprintFOV : mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView, zoomSprintFOV, 7.5f * Time.deltaTime);
             }
         }
+    }
+
+    void CameraMovement()
+    {
+        cameraHolderTransform.position = cameraPositionTransform.position;
     }
 }

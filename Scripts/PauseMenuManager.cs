@@ -5,7 +5,7 @@ using System.Linq;
 
 public class PauseMenuManager : MonoBehaviour
 {
-    //* Attach this script to the UserInterface gameobject.
+    //* Attach this script to the UserInterface game object.
     //* PauseMenu'yü aktive et ve SettingsButton'ın Text'ine gel. O text'in Outline materyalinin Face'inin Dilate'sini 0.05 yap. Outline'ının rengini bembeyaz yap ve Thickness'ını 0.05 yap. Ardından PauseMenu'yü inaktif yap.
 
     public static bool gamePaused, dynamicFOV, settingsMenuOpened;
@@ -206,6 +206,13 @@ public class PauseMenuManager : MonoBehaviour
         pauseMenuObject.SetActive(false);
         Time.timeScale = 1;
         gamePaused = false;
+    }
+
+    public void GoBackToPauseMenu()
+    {
+        settingsMenuObject.SetActive(false);
+        settingsMenuOpened = false;
+        pauseMenuObject.SetActive(true);
     }
 
     public void Settings()
@@ -548,13 +555,6 @@ public class PauseMenuManager : MonoBehaviour
         {
             PlayerPrefs.SetInt("speedTextObjectActive", -1);
         }
-    }
-
-    public void GoBackToPauseMenu()
-    {
-        settingsMenuObject.SetActive(false);
-        settingsMenuOpened = false;
-        pauseMenuObject.SetActive(true);
     }
 
     public void QuittingGame()
