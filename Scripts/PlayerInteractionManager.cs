@@ -118,9 +118,10 @@ public class PlayerInteractionManager : MonoBehaviour
                 {
                     grabbedObjectRigidbody.linearVelocity = Vector3.zero;
                     grabbedObjectRigidbody.useGravity = false;
-                    Invoke(nameof(HoldAgainReset), holdAgainCooldown);
                     Invoke(nameof(CanReleaseHoldedObjectWhenTouchedToPlayerActivator), canReleaseHoldedObjectWhenTouchedToPlayerCooldown);
                 }
+
+                Invoke(nameof(HoldAgainReset), holdAgainCooldown);
             }
         }
     }
@@ -133,13 +134,13 @@ public class PlayerInteractionManager : MonoBehaviour
         canReleaseHoldedObjectWhenTouchedToPlayer = false;
     }
 
-    void HoldAgainReset()
-    {
-        readyToHold = true;
-    }
-
     void CanReleaseHoldedObjectWhenTouchedToPlayerActivator()
     {
         canReleaseHoldedObjectWhenTouchedToPlayer = true;
+    }
+
+    void HoldAgainReset()
+    {
+        readyToHold = true;
     }
 }
