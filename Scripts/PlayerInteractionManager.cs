@@ -12,8 +12,8 @@ public class PlayerInteractionManager : MonoBehaviour
     [Header("Holding and Throwing")]
     [HideInInspector] public bool canReleaseHoldedObjectWhenTouchedToPlayer;
     [HideInInspector] public Rigidbody grabbedObjectRigidbody;
-    const int holdForce = 30;
-    const float grabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier = 0.3f, movingHoldingObjectWithScrollWheelSpeed = 7.5f, canReleaseHoldedObjectWhenTouchedToPlayerCooldown = 0.3f, holdAgainCooldown = 0.6f, crosshairBeingRedTime = 0.2f;
+    const int normalHoldingObjectDistance = 4, holdForce = 30, maxHoldingObjectCanBeOffsetDistance = 10, maxHoldingObjectDistance = 6, minHoldingObjectDistance = 3, movingHoldingObjectWithScrollWheelSpeed = 8;
+    const float grabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier = 0.3f, canReleaseHoldedObjectWhenTouchedToPlayerCooldown = 0.3f, holdAgainCooldown = 0.6f, crosshairBeingRedTime = 0.2f;
     float tempHoldingObjectDistance;
     bool readyToHold = true, interacionKeyPressed, throwKeyPressedWhileHoldingAnObject;
     Transform grabbedObjectTransform;
@@ -24,9 +24,6 @@ public class PlayerInteractionManager : MonoBehaviour
 
     [Header("Inputs")]
     [SerializeField] int throwForce = 60;
-    [SerializeField] int maxHoldingObjectCanBeOffsetDistance = 10;
-    [SerializeField] int normalHoldingObjectDistance = 4;
-    [SerializeField] float maxHoldingObjectDistance = 6, minHoldingObjectDistance = 2.5f;
     [SerializeField] Transform holdedObjectPositionTransform;
     [SerializeField] Camera mainCamera;
     [SerializeField] LayerMask movableNormalLayer, movableBouncyLayer;
@@ -69,7 +66,7 @@ public class PlayerInteractionManager : MonoBehaviour
     {
         if (grabbedObjectRigidbody)
         {
-            grabbedObjectRigidbody.AddForce(holdForce * (holdedObjectPositionTransform.position - grabbedObjectTransform.position), ForceMode.Impulse);
+            grabbedObjectRigidbody.AddForce(holdForce * (holdedObjectPositionTransform.position - grabbedObjectTransform.position), ForceMode.VelocityChange);
             grabbedObjectRigidbody.linearVelocity *= grabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier;
             grabbedObjectRigidbody.angularVelocity *= grabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier;
 
@@ -104,6 +101,15 @@ public class PlayerInteractionManager : MonoBehaviour
                 {
                     tempHoldingObjectDistance += movingHoldingObjectWithScrollWheelSpeed * Input.GetAxis("Mouse ScrollWheel");
                 }
+            }
+
+            if (tempHoldingObjectDistance > maxHoldingObjectDistance)
+            {
+                tempHoldingObjectDistance = maxHoldingObjectDistance;
+            }
+            else if (tempHoldingObjectDistance < minHoldingObjectDistance)
+            {
+                tempHoldingObjectDistance = minHoldingObjectDistance;
             }
 
             holdedObjectPositionTransform.localPosition = new Vector3(0, 0, tempHoldingObjectDistance);

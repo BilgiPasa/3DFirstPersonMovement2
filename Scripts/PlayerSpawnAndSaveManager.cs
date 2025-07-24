@@ -7,8 +7,8 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
     //* Attach this script to the UserInterface game object.
 
     [HideInInspector] public bool playerDied, spawnProtection;
-    int normalSavingTheGameDelay = 20, pressingAltSavingTheGameDelay = 2, spawnProtectionSeconds = 3;
-    float normalSavingTheGameTimer, pressingAltSavingTheGameTimer;
+    int savingTheGameDelay = 20, spawnProtectionSeconds = 3;
+    float savingTheGameTimer;
     bool respawnButtonPressed;
     Transform playerTransform;
     PlayerStatusManager playerStatusManagerScript;
@@ -93,14 +93,14 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
     void FixedUpdate()
     {
         // Autosave
-        if (normalSavingTheGameTimer > 0)
+        if (savingTheGameTimer > 0)
         {
-            normalSavingTheGameTimer -= Time.fixedDeltaTime;
+            savingTheGameTimer -= Time.fixedDeltaTime;
         }
         else
         {
             SavingTheGame();
-            normalSavingTheGameTimer = normalSavingTheGameDelay;
+            savingTheGameTimer = savingTheGameDelay;
         }
 
         if (playerStatusManagerScript.playerHealth <= 0)
@@ -119,24 +119,6 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
         if (playerTransform.position.y < -100 && !playerDied)
         {
             playerStatusManagerScript.playerHealth = 0;
-        }
-
-        // Preventing not saving the game from Alt + F4
-        if (pressingAltSavingTheGameTimer <= 0)
-        {
-            if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
-            {
-                SavingTheGame();
-                pressingAltSavingTheGameTimer = pressingAltSavingTheGameDelay;
-            }
-            else
-            {
-                pressingAltSavingTheGameTimer = 0;
-            }
-        }
-        else
-        {
-            pressingAltSavingTheGameTimer -= Time.fixedDeltaTime;
         }
     }
 

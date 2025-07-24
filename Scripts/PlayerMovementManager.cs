@@ -13,13 +13,12 @@ public class PlayerMovementManager : MonoBehaviour
     //* In Unity Editor, layer 8 should be "Movable Bouncy Layer".
     //* In the project settings, make the default Physics material a frictionless and not bouncy material.
     //* Make sure that movable objects have a Rigidbody.
-    //* Don't change any constants' values if not necessary.
 
     [Header("Horizontal and Vertical")]
     [HideInInspector] public int vertical, horizontal, runSpeed = 12;
     [HideInInspector] public bool onSlope;
-    const int normalGroundLinearDamping = 10;
-    const float theMoveMultiplier = 625.005f, airMoveMultiplier = 0.16f, airLinearDamping = 0.04f, bouncyGroundLinearDamping = 12.5f, minimum = 0.1f;
+    const int normalGroundLinearDamping = 10; // Don't change this value if not necessary.
+    const float theMoveMultiplier = 625.005f, airMoveMultiplier = 0.16f, airLinearDamping = 0.04f, bouncyGroundLinearDamping = 12.5f, minimum = 0.1f; // Don't change these values if not necessary.
     int normalMoveSpeed = 9, crouchSpeed = 6, theMoveSpeed;
     float flatRotationAngleInAir;
     bool normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum;
