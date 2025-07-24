@@ -23,7 +23,7 @@ public class PlayerInteractionManager : MonoBehaviour
     KeyCode interactionKey = KeyCode.E, throwKey = KeyCode.Mouse0;
 
     [Header("Inputs")]
-    [SerializeField] int throwForce = 60;
+    [SerializeField] int throwForce = 30;
     [SerializeField] int maxHoldingObjectCanBeOffsetDistance = 10;
     [SerializeField] int normalHoldingObjectDistance = 4;
     [SerializeField] float maxHoldingObjectDistance = 6, minHoldingObjectDistance = 2.5f;
