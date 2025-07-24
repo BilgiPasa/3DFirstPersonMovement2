@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerInteractionManager : MonoBehaviour
 {
@@ -8,12 +10,13 @@ public class PlayerInteractionManager : MonoBehaviour
     //* Make sure that movable objects have a Rigidbody.
 
     [Header("Holding and Throwing")]
-    public static bool canReleaseHoldedObjectWhenTouchedToPlayer;
-    public static Rigidbody grabbedObjectRigidbody;
+    [HideInInspector] public bool canReleaseHoldedObjectWhenTouchedToPlayer;
+    [HideInInspector] public Rigidbody grabbedObjectRigidbody;
     const int holdForce = 30;
-    const float holdAgainCooldown = 0.6f, canReleaseHoldedObjectWhenTouchedToPlayerCooldown = 0.3f, movingHoldingObjectWithScrollWheelSpeed = 7.5f;
+    const float grabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier = 0.3f, movingHoldingObjectWithScrollWheelSpeed = 7.5f, canReleaseHoldedObjectWhenTouchedToPlayerCooldown = 0.3f, holdAgainCooldown = 0.6f, crosshairBeingRedTime = 0.2f;
     float tempHoldingObjectDistance;
     bool readyToHold = true, interacionKeyPressed, throwKeyPressedWhileHoldingAnObject;
+    Transform grabbedObjectTransform;
     RaycastHit holdInteractionHit;
 
     [Header("Keybinds")]
@@ -27,15 +30,18 @@ public class PlayerInteractionManager : MonoBehaviour
     [SerializeField] Transform holdedObjectPositionTransform;
     [SerializeField] Camera mainCamera;
     [SerializeField] LayerMask movableNormalLayer, movableBouncyLayer;
+    [SerializeField] Image crosshairImage;
+    [SerializeField] PauseMenuManager pauseMenuManagerScript;
 
     void Start()
     {
+        crosshairImage.color = Color.black;
         tempHoldingObjectDistance = normalHoldingObjectDistance;
     }
 
     void Update()
     {
-        if (!PauseMenuManager.gamePaused)
+        if (!pauseMenuManagerScript.gamePaused)
         {
             InteractionInputs();
         }
@@ -63,9 +69,9 @@ public class PlayerInteractionManager : MonoBehaviour
     {
         if (grabbedObjectRigidbody)
         {
-            grabbedObjectRigidbody.AddForce(holdForce * (holdedObjectPositionTransform.position - grabbedObjectRigidbody.position), ForceMode.Impulse);
-            grabbedObjectRigidbody.linearVelocity *= 0.25f;
-            grabbedObjectRigidbody.angularVelocity *= 0.25f;
+            grabbedObjectRigidbody.AddForce(holdForce * (holdedObjectPositionTransform.position - grabbedObjectTransform.position), ForceMode.Impulse);
+            grabbedObjectRigidbody.linearVelocity *= grabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier;
+            grabbedObjectRigidbody.angularVelocity *= grabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier;
 
             if (throwKeyPressedWhileHoldingAnObject)
             {
@@ -75,7 +81,7 @@ public class PlayerInteractionManager : MonoBehaviour
                 return;
             }
 
-            if ((holdedObjectPositionTransform.position - grabbedObjectRigidbody.position).magnitude > maxHoldingObjectCanBeOffsetDistance)
+            if ((holdedObjectPositionTransform.position - grabbedObjectTransform.position).magnitude > maxHoldingObjectCanBeOffsetDistance)
             {
                 ReleaseObject();
             }
@@ -116,6 +122,8 @@ public class PlayerInteractionManager : MonoBehaviour
 
                 if (grabbedObjectRigidbody)
                 {
+                    crosshairImage.color = Color.cyan;
+                    grabbedObjectTransform = grabbedObjectRigidbody.transform;
                     grabbedObjectRigidbody.linearVelocity = Vector3.zero;
                     grabbedObjectRigidbody.useGravity = false;
                     Invoke(nameof(CanReleaseHoldedObjectWhenTouchedToPlayerActivator), canReleaseHoldedObjectWhenTouchedToPlayerCooldown);
@@ -123,12 +131,20 @@ public class PlayerInteractionManager : MonoBehaviour
 
                 Invoke(nameof(HoldAgainReset), holdAgainCooldown);
             }
+            else if (readyToHold)
+            {
+                readyToHold = false;
+                StartCoroutine(CrosshairBeingRed());
+                Invoke(nameof(HoldAgainReset), crosshairBeingRedTime);
+            }
         }
     }
 
     public void ReleaseObject()
     {
+        crosshairImage.color = Color.black;
         grabbedObjectRigidbody.useGravity = true;
+        grabbedObjectTransform = null;
         grabbedObjectRigidbody = null;
         tempHoldingObjectDistance = normalHoldingObjectDistance;
         canReleaseHoldedObjectWhenTouchedToPlayer = false;
@@ -142,5 +158,12 @@ public class PlayerInteractionManager : MonoBehaviour
     void HoldAgainReset()
     {
         readyToHold = true;
+    }
+
+    IEnumerator CrosshairBeingRed()
+    {
+        crosshairImage.color = Color.red;
+        yield return new WaitForSeconds(crosshairBeingRedTime);
+        crosshairImage.color = Color.black;
     }
 }

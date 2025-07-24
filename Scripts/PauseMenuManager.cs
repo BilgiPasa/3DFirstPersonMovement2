@@ -8,19 +8,24 @@ public class PauseMenuManager : MonoBehaviour
     //* Attach this script to the UserInterface game object.
     //* PauseMenu'yü aktive et ve SettingsButton'ın Text'ine gel. O text'in Outline materyalinin Face'inin Dilate'sini 0.05 yap. Outline'ının rengini bembeyaz yap ve Thickness'ını 0.05 yap. Ardından PauseMenu'yü inaktif yap.
 
-    public static bool gamePaused, dynamicFOV, settingsMenuOpened;
+    [HideInInspector] public bool gamePaused, dynamicFOV, settingsMenuOpened;
     int[] last5FPS = new int[5];
     int counter;
     const KeyCode escapeKey = KeyCode.Escape;
+    PlayerSpawnAndSaveManager playerSpawnAndSaveManagerScript;
+    PlayerStatusManager playerStatusManagerScript;
     [SerializeField] GameObject pauseMenuObject, settingsMenuObject, speedTextObject, FPSTextObject;
     [SerializeField] RectTransform FPSTextRectTransform;
     [SerializeField] TextMeshProUGUI FOVText, mouseSensitivityText, maxFPSText, speedText, FPSText;
     [SerializeField] Toggle dynamicFOVToggle, speedTextToggle, increasedSensitivityToggle, showFPSToggle;
     [SerializeField] Slider FOVSlider, mouseSensitivitySlider, maxFPSSlider;
-    [SerializeField] PlayerSpawnAndSaveManager playerSpawnAndSaveManagerScript;
+    [SerializeField] PlayerCameraManager playerCameraManagerScript;
 
     void Start()
     {
+        playerSpawnAndSaveManagerScript = GetComponent<PlayerSpawnAndSaveManager>();
+        playerStatusManagerScript = GetComponent<PlayerStatusManager>();
+
         if (PlayerPrefs.GetInt("FOV") == 0)
         {
             PlayerPrefs.SetInt("FOV", 90);
@@ -56,8 +61,8 @@ public class PauseMenuManager : MonoBehaviour
             PlayerPrefs.SetInt("speedTextObjectActive", 1);
         }
 
-        PlayerCameraManager.normalFOV = PlayerPrefs.GetInt("FOV");
-        PlayerCameraManager.sensitivity = PlayerPrefs.GetInt("mouseSensitivity");
+        playerCameraManagerScript.normalFOV = PlayerPrefs.GetInt("FOV");
+        playerCameraManagerScript.sensitivity = PlayerPrefs.GetInt("mouseSensitivity");
 
         switch (PlayerPrefs.GetInt("maxFPS"))
         {
@@ -102,11 +107,11 @@ public class PauseMenuManager : MonoBehaviour
 
     void Update()
     {
-        if (!(gamePaused || PlayerSpawnAndSaveManager.playerDied))
+        if (!(gamePaused || playerSpawnAndSaveManagerScript.playerDied))
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-            speedText.text = $"Speed: {PlayerStatusManager.flatVelocityMagnitude}";
+            speedText.text = $"Speed: {playerStatusManagerScript.flatVelocityMagnitude}";
         }
         else
         {
@@ -129,7 +134,7 @@ public class PauseMenuManager : MonoBehaviour
             FPSText.text = $"FPS: {(int)Queryable.Average(last5FPS.AsQueryable())}";
         }
 
-        if (PlayerSpawnAndSaveManager.playerDied)
+        if (playerSpawnAndSaveManagerScript.playerDied)
         {
             return;
         }
@@ -153,8 +158,8 @@ public class PauseMenuManager : MonoBehaviour
             }
         }
 
-        PlayerCameraManager.normalFOV = PlayerPrefs.GetInt("FOV");
-        PlayerCameraManager.sensitivity = PlayerPrefs.GetInt("mouseSensitivity");
+        playerCameraManagerScript.normalFOV = PlayerPrefs.GetInt("FOV");
+        playerCameraManagerScript.sensitivity = PlayerPrefs.GetInt("mouseSensitivity");
 
         if (PlayerPrefs.GetInt("dynamicFOV") == 1)
         {
@@ -217,7 +222,7 @@ public class PauseMenuManager : MonoBehaviour
 
     public void Settings()
     {
-        switch (PlayerCameraManager.normalFOV)
+        switch (playerCameraManagerScript.normalFOV)
         {
             case 90:
                 FOVText.text = "FOV: Normal";
@@ -229,7 +234,7 @@ public class PauseMenuManager : MonoBehaviour
                 FOVText.text = "FOV: Telescope";
                 break;
             default:
-                FOVText.text = $"FOV: {PlayerCameraManager.normalFOV}";
+                FOVText.text = $"FOV: {playerCameraManagerScript.normalFOV}";
                 break;
         }
 
@@ -277,7 +282,7 @@ public class PauseMenuManager : MonoBehaviour
         {
             increasedSensitivityToggle.isOn = false;
 
-            switch (PlayerCameraManager.sensitivity)
+            switch (playerCameraManagerScript.sensitivity)
             {
                 case 100:
                     mouseSensitivityText.text = "Mouse Sensitivity: Normal";
@@ -289,17 +294,17 @@ public class PauseMenuManager : MonoBehaviour
                     mouseSensitivityText.text = "Mouse Sensitivity: Snail";
                     break;
                 default:
-                    mouseSensitivityText.text = $"Mouse Sensitivity: {PlayerCameraManager.sensitivity}";
+                    mouseSensitivityText.text = $"Mouse Sensitivity: {playerCameraManagerScript.sensitivity}";
                     break;
             }
 
-            mouseSensitivitySlider.value = PlayerCameraManager.sensitivity;
+            mouseSensitivitySlider.value = playerCameraManagerScript.sensitivity;
         }
         else if (PlayerPrefs.GetInt("increasedSensitivity") == 1)
         {
             increasedSensitivityToggle.isOn = true;
 
-            switch (PlayerCameraManager.sensitivity)
+            switch (playerCameraManagerScript.sensitivity)
             {
                 case 300:
                     mouseSensitivityText.text = "Mouse Sensitivity: VERY FAST";
@@ -308,11 +313,11 @@ public class PauseMenuManager : MonoBehaviour
                     mouseSensitivityText.text = "Mouse Sensitivity: MAXIMUM";
                     break;
                 default:
-                    mouseSensitivityText.text = $"Mouse Sensitivity: {PlayerCameraManager.sensitivity}";
+                    mouseSensitivityText.text = $"Mouse Sensitivity: {playerCameraManagerScript.sensitivity}";
                     break;
             }
 
-            mouseSensitivitySlider.value = PlayerCameraManager.sensitivity - 200;
+            mouseSensitivitySlider.value = playerCameraManagerScript.sensitivity - 200;
         }
 
         if (PlayerPrefs.GetInt("showFPS") == 1)
@@ -342,7 +347,7 @@ public class PauseMenuManager : MonoBehaviour
             speedTextToggle.isOn = false;
         }
 
-        FOVSlider.value = PlayerCameraManager.normalFOV;
+        FOVSlider.value = playerCameraManagerScript.normalFOV;
         pauseMenuObject.SetActive(false);
         settingsMenuObject.SetActive(true);
         settingsMenuOpened = true;

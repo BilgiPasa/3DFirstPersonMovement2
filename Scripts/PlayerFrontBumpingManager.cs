@@ -10,7 +10,7 @@ public class PlayerFrontBumpingManager : MonoBehaviour
     //* In Unity Editor, layer 7 should be "Movable Normal Layer".
     //* In Unity Editor, layer 8 should be "Movable Bouncy Layer".
 
-    public static bool frontBumping;
+    [HideInInspector] public bool frontBumping;
     BoxCollider frontBumpingDetectorBoxCollider;
 
     void Start()

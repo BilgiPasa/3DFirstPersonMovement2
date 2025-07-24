@@ -16,8 +16,8 @@ public class PlayerMovementManager : MonoBehaviour
     //* Don't change any constants' values if not necessary.
 
     [Header("Horizontal and Vertical")]
-    public static int vertical, horizontal, runSpeed = 12;
-    public static bool onSlope;
+    [HideInInspector] public int vertical, horizontal, runSpeed = 12;
+    [HideInInspector] public bool onSlope;
     const int normalGroundLinearDamping = 10;
     const float theMoveMultiplier = 625.005f, airMoveMultiplier = 0.16f, airLinearDamping = 0.04f, bouncyGroundLinearDamping = 12.5f, minimum = 0.1f;
     int normalMoveSpeed = 9, crouchSpeed = 6, theMoveSpeed;
@@ -30,8 +30,8 @@ public class PlayerMovementManager : MonoBehaviour
     RaycastHit slopeHit;
 
     [Header("Crouch")]
-    public static float playerHeight = 3, crouchHeight = 2, cameraPositionLocalPositionWhenNotCrouched, cameraPositionLocalPositionWhenCrouched, frontBumpingDetectorLocalScaleWhenNotCrouched, frontBumpingDetectorLocalScaleWhenCrouched;
-    public static bool crouching;
+    [HideInInspector] public float playerHeight = 3, crouchHeight = 2, cameraPositionLocalPositionWhenNotCrouched, cameraPositionLocalPositionWhenCrouched, frontBumpingDetectorLocalScaleWhenNotCrouched, frontBumpingDetectorLocalScaleWhenCrouched;
+    [HideInInspector] public bool crouching;
     const float playerWidthRadius = 0.5f, ifPlayerHeightWouldBe2AndPlayerTransformWouldBeVector3ZeroThenYLocalPositionOfCameraPositionWouldBe = 0.7f, ifPlayerHeightWouldBe2ThenYLocalScaleOfFrontBumpingDetectorWouldBe = 1.25f;
     bool dontUncrouch;
 
@@ -40,8 +40,8 @@ public class PlayerMovementManager : MonoBehaviour
     float coyoteTimeCounter;
 
     [Header("Jump And Fall")]
-    public static float startOfFall, endOfFall, fallDistance;
-    public static bool jumping, groundedForAll;
+    [HideInInspector] public float startOfFall, endOfFall, fallDistance;
+    [HideInInspector] public bool jumping, groundedForAll;
     const float groundedSphereRadius = 0.3f, jumpingCooldown = 0.1f, jumpAgainCooldown = 0.3f;
     int normalJumpForce = 21, bouncyJumpForce = 56, maxFallWithoutBouncyJumpCalculationByThisScript = 5, maxFallWithoutFallDamage = 15, maxFallWithoutParticles = 5;
     bool readyToJump = true, jumpingInput, groundedForBouncyEnvironment, playerTouchingToAnyGround, falling, wasFalling, wasGrounded, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment;
@@ -51,15 +51,19 @@ public class PlayerMovementManager : MonoBehaviour
     [Header("Keybinds")]
     KeyCode forwardKey = KeyCode.W, leftKey = KeyCode.A, backwardKey = KeyCode.S, rightKey = KeyCode.D, jumpKey = KeyCode.Space, crouchKey = KeyCode.LeftShift;
 
+    [Header("Other")]
+    [HideInInspector] public int playerHealthDecrease;
+    PlayerInteractionManager playerInteractionManagerScript;
+    PauseMenuManager pauseMenuManagerScript;
+    PlayerSpawnAndSaveManager playerSpawnAndSaveManagerScript;
+    PlayerStatusManager playerStatusManagerScript;
+
     [Header("Inputs")]
-    [SerializeField] Transform playerColliderTransform;
-    [SerializeField] Transform cameraPositionTransform;
-    [SerializeField] Transform frontBumpingDetectorTransform;
-    [SerializeField] Transform playerCapsuleModelTransform;
+    [SerializeField] GameObject userInterfaceObject;
+    [SerializeField] Transform playerColliderTransform, cameraPositionTransform, frontBumpingDetectorTransform, playerCapsuleModelTransform;
     [SerializeField] CapsuleCollider playerColliderCapsuleCollider;
     [SerializeField] ParticleSystem jumpingDownParticles;
     [SerializeField] LayerMask staticNormalLayer, staticBouncyLayer, movableNormalLayer, movableBouncyLayer;
-    [SerializeField] PlayerInteractionManager playerInteractionManagerScript;
 
     void Awake()
     {
@@ -73,11 +77,15 @@ public class PlayerMovementManager : MonoBehaviour
         playerRigidbody.interpolation = RigidbodyInterpolation.Interpolate;
         playerRigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
         playerRigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+        playerInteractionManagerScript = GetComponent<PlayerInteractionManager>();
+        pauseMenuManagerScript = userInterfaceObject.GetComponent<PauseMenuManager>();
+        playerSpawnAndSaveManagerScript = userInterfaceObject.GetComponent<PlayerSpawnAndSaveManager>();
+        playerStatusManagerScript = userInterfaceObject.GetComponent<PlayerStatusManager>();
     }
 
     void Update()
     {
-        if (!PauseMenuManager.gamePaused)
+        if (!pauseMenuManagerScript.gamePaused)
         {// I didn't added the if not player died condition because if player dies, this script does not work because it is attached to the player.
             MovementInputs();
         }
@@ -143,7 +151,7 @@ public class PlayerMovementManager : MonoBehaviour
                 objectRigidbodyThatPlayerIsStandingOn = whatMovableObjectIsPlayerStandingOnHit.rigidbody;
 
                 // Tuttuğun obje ile havada süzülerek inmeyi engellemek için
-                if (objectRigidbodyThatPlayerIsStandingOn && objectRigidbodyThatPlayerIsStandingOn.Equals(PlayerInteractionManager.grabbedObjectRigidbody) && PlayerInteractionManager.canReleaseHoldedObjectWhenTouchedToPlayer)
+                if (objectRigidbodyThatPlayerIsStandingOn && objectRigidbodyThatPlayerIsStandingOn.Equals(playerInteractionManagerScript.grabbedObjectRigidbody) && playerInteractionManagerScript.canReleaseHoldedObjectWhenTouchedToPlayer)
                 {
                     playerInteractionManagerScript.ReleaseObject();
                 }
@@ -166,7 +174,7 @@ public class PlayerMovementManager : MonoBehaviour
                 objectRigidbodyThatPlayerIsStandingOn = whatMovableObjectIsPlayerStandingOnHit.rigidbody;
 
                 // Tuttuğun obje ile havada süzülerek inmeyi engellemek için
-                if (objectRigidbodyThatPlayerIsStandingOn && objectRigidbodyThatPlayerIsStandingOn.Equals(PlayerInteractionManager.grabbedObjectRigidbody) && PlayerInteractionManager.canReleaseHoldedObjectWhenTouchedToPlayer)
+                if (objectRigidbodyThatPlayerIsStandingOn && objectRigidbodyThatPlayerIsStandingOn.Equals(playerInteractionManagerScript.grabbedObjectRigidbody) && playerInteractionManagerScript.canReleaseHoldedObjectWhenTouchedToPlayer)
                 {
                     playerInteractionManagerScript.ReleaseObject();
                 }
@@ -208,7 +216,7 @@ public class PlayerMovementManager : MonoBehaviour
 
         if (fallDistance > minimum)
         {
-            PlayerStatusManager.fallDistanceIsBiggerThanMinimum = true;
+            playerStatusManagerScript.fallDistanceIsBiggerThanMinimum = true;
 
             if (fallDistance > maxFallWithoutBouncyJumpCalculationByThisScript && groundedForBouncyEnvironment && !crouching && readyToJump && !jumping)
             {
@@ -220,9 +228,9 @@ public class PlayerMovementManager : MonoBehaviour
                 jumpingDownParticles.Play();
             }
 
-            if (fallDistance > maxFallWithoutFallDamage && groundedForAll && !groundedForBouncyEnvironment && !PlayerSpawnAndSaveManager.spawnProtection)
+            if (fallDistance > maxFallWithoutFallDamage && groundedForAll && !groundedForBouncyEnvironment && !playerSpawnAndSaveManagerScript.spawnProtection)
             {
-                PlayerStatusManager.playerHealth -= (int)fallDistance - maxFallWithoutFallDamage;
+                playerHealthDecrease += (int)fallDistance - maxFallWithoutFallDamage;
             }
 
             startOfFall = 0;
@@ -331,7 +339,7 @@ public class PlayerMovementManager : MonoBehaviour
 
     void LinearDamping()
     {
-        if (groundedForAll && !jumping && !PlayerStatusManager.sliding)
+        if (groundedForAll && !jumping && !playerStatusManagerScript.sliding)
         {
             playerRigidbody.linearDamping = !groundedForBouncyEnvironment ? normalGroundLinearDamping : bouncyGroundLinearDamping;
         }
@@ -459,7 +467,7 @@ public class PlayerMovementManager : MonoBehaviour
             {
                 playerRigidbody.AddForce(new Vector3(0, 50, 0), ForceMode.Acceleration);
             }
-            else if (PlayerStatusManager.sliding)
+            else if (playerStatusManagerScript.sliding)
             {
                 playerRigidbody.AddForce(new Vector3(0, 30, 0), ForceMode.Acceleration);
             }
@@ -473,7 +481,7 @@ public class PlayerMovementManager : MonoBehaviour
         {
             theMoveSpeed = crouchSpeed;
         }
-        else if (PlayerStatusManager.running)
+        else if (playerStatusManagerScript.running)
         {
             theMoveSpeed = runSpeed;
         }
@@ -514,7 +522,7 @@ public class PlayerMovementManager : MonoBehaviour
         if ((collision.gameObject.layer == 7 || collision.gameObject.layer == 8) && collision.rigidbody)
         {
             // Tuttuğun obje ile uçmayı ve sürüklenmeyi engellemek için
-            if (collision.rigidbody.Equals(PlayerInteractionManager.grabbedObjectRigidbody) && PlayerInteractionManager.canReleaseHoldedObjectWhenTouchedToPlayer)
+            if (collision.rigidbody.Equals(playerInteractionManagerScript.grabbedObjectRigidbody) && playerInteractionManagerScript.canReleaseHoldedObjectWhenTouchedToPlayer)
             {
                 playerInteractionManagerScript.ReleaseObject();
             }
