@@ -23,7 +23,7 @@ public class PlayerInteractionManager : MonoBehaviour
     KeyCode interactionKey = KeyCode.E, throwKey = KeyCode.Mouse0;
 
     [Header("Inputs")]
-    [SerializeField] int throwForce = 30;
+    [SerializeField] int throwForce = 60;
     [SerializeField] int maxHoldingObjectCanBeOffsetDistance = 10;
     [SerializeField] int normalHoldingObjectDistance = 4;
     [SerializeField] float maxHoldingObjectDistance = 6, minHoldingObjectDistance = 2.5f;
@@ -81,9 +81,13 @@ public class PlayerInteractionManager : MonoBehaviour
                 return;
             }
 
+            // Tutulan obje çok uzakta kalırsa (bir şeye sıkışır veya takılırsa) objenin hızını sıfırlayıp bıraksın.
             if ((holdedObjectPositionTransform.position - grabbedObjectTransform.position).magnitude > maxHoldingObjectCanBeOffsetDistance)
             {
+                grabbedObjectRigidbody.linearVelocity = Vector3.zero;
+                grabbedObjectRigidbody.angularVelocity = Vector3.zero;
                 ReleaseObject();
+                return;
             }
 
             if (Input.GetAxis("Mouse ScrollWheel") != 0)
