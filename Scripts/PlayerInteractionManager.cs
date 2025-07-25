@@ -12,7 +12,7 @@ public class PlayerInteractionManager : MonoBehaviour
     [Header("Holding and Throwing")]
     [HideInInspector] public bool canReleaseHoldedObjectWhenTouchedToPlayer;
     [HideInInspector] public Rigidbody grabbedObjectRigidbody;
-    const int normalHoldingObjectDistance = 4, holdForce = 30, maxHoldingObjectCanBeOffsetDistance = 10, maxHoldingObjectDistance = 6, minHoldingObjectDistance = 3, movingHoldingObjectWithScrollWheelSpeed = 8;
+    const int normalHoldingObjectDistance = 4, movingHoldingObjectWithScrollWheelSpeed = 4, holdForce = 30, maxHoldingObjectCanBeOffsetDistance = 10, maxHoldingObjectDistance = 6, minHoldingObjectDistance = 3;
     const float grabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier = 0.3f, canReleaseHoldedObjectWhenTouchedToPlayerCooldown = 0.3f, holdAgainCooldown = 0.6f, crosshairBeingRedTime = 0.2f;
     float tempHoldingObjectDistance;
     bool readyToHold = true, interacionKeyPressed, throwKeyPressedWhileHoldingAnObject;
@@ -60,6 +60,11 @@ public class PlayerInteractionManager : MonoBehaviour
         {
             throwKeyPressedWhileHoldingAnObject = true;
         }
+
+        if (Input.GetAxis("Mouse ScrollWheel") != 0)
+        {
+            tempHoldingObjectDistance += movingHoldingObjectWithScrollWheelSpeed * Input.GetAxis("Mouse ScrollWheel");
+        }
     }
 
     void HoldingAndThrowingObject()
@@ -85,22 +90,6 @@ public class PlayerInteractionManager : MonoBehaviour
                 grabbedObjectRigidbody.angularVelocity = Vector3.zero;
                 ReleaseObject();
                 return;
-            }
-
-            if (Input.GetAxis("Mouse ScrollWheel") != 0)
-            {
-                if (tempHoldingObjectDistance >= maxHoldingObjectDistance && Input.GetAxis("Mouse ScrollWheel") > 0)
-                {
-                    tempHoldingObjectDistance = maxHoldingObjectDistance;
-                }
-                else if (tempHoldingObjectDistance <= minHoldingObjectDistance && Input.GetAxis("Mouse ScrollWheel") < 0)
-                {
-                    tempHoldingObjectDistance = minHoldingObjectDistance;
-                }
-                else
-                {
-                    tempHoldingObjectDistance += movingHoldingObjectWithScrollWheelSpeed * Input.GetAxis("Mouse ScrollWheel");
-                }
             }
 
             if (tempHoldingObjectDistance > maxHoldingObjectDistance)

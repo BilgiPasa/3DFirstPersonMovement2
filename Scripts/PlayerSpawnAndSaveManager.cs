@@ -7,7 +7,7 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
     //* Attach this script to the UserInterface game object.
 
     [HideInInspector] public bool playerDied, spawnProtection;
-    int savingTheGameDelay = 20, spawnProtectionSeconds = 3;
+    int savingTheGameDelay = 15, spawnProtectionSeconds = 3;
     float savingTheGameTimer;
     bool respawnButtonPressed;
     Transform playerTransform;
