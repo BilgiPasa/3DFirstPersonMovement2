@@ -56,14 +56,17 @@ public class PlayerInteractionManager : MonoBehaviour
             interacionKeyPressed = true;
         }
 
-        if (Input.GetKeyDown(throwKey) && grabbedObjectRigidbody)
+        if (grabbedObjectRigidbody)
         {
-            throwKeyPressedWhileHoldingAnObject = true;
-        }
+            if (Input.GetAxis("Mouse ScrollWheel") != 0)
+            {
+                tempHoldingObjectDistance += movingHoldingObjectWithScrollWheelSpeed * Input.GetAxis("Mouse ScrollWheel");
+            }
 
-        if (Input.GetAxis("Mouse ScrollWheel") != 0)
-        {
-            tempHoldingObjectDistance += movingHoldingObjectWithScrollWheelSpeed * Input.GetAxis("Mouse ScrollWheel");
+            if (Input.GetKeyDown(throwKey))
+            {
+                throwKeyPressedWhileHoldingAnObject = true;
+            }
         }
     }
 
