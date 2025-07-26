@@ -50,7 +50,7 @@ public class PlayerMovementManager : MonoBehaviour
     [Header("Keybinds")]
     KeyCode forwardKey = KeyCode.W, leftKey = KeyCode.A, backwardKey = KeyCode.S, rightKey = KeyCode.D, jumpKey = KeyCode.Space, crouchKey = KeyCode.LeftShift;
 
-    [Header("Other")]
+    [Header("Other Things")]
     [HideInInspector] public int playerHealthDecrease;
     PlayerInteractionManager playerInteractionManagerScript;
     PauseMenuManager pauseMenuManagerScript;
