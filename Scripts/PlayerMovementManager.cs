@@ -217,14 +217,14 @@ public class PlayerMovementManager : MonoBehaviour
         {
             playerStatusManagerScript.fallDistanceIsBiggerThanMinimum = true;
 
-            if (fallDistance > maxFallWithoutBouncyJumpCalculationByThisScript && groundedForBouncyEnvironment && !crouching && readyToJump && !jumping)
-            {
-                Jumping(bouncyJumpForce);
-            }
-
             if (fallDistance > maxFallWithoutParticles && !jumpingDownParticles.isPlaying)
             {
                 jumpingDownParticles.Play();
+            }
+
+            if (fallDistance > maxFallWithoutBouncyJumpCalculationByThisScript && groundedForBouncyEnvironment && !crouching && readyToJump && !jumping)
+            {
+                Jumping(bouncyJumpForce);
             }
 
             if (fallDistance > maxFallWithoutFallDamage && groundedForAll && !groundedForBouncyEnvironment && !playerSpawnAndSaveManagerScript.spawnProtection)

@@ -117,20 +117,14 @@ public class PlayerInteractionManager : MonoBehaviour
                 return;
             }
 
-            if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out holdInteractionHit, maxHoldingObjectDistance, movableNormalLayer | movableBouncyLayer) && readyToHold && !holdInteractionHit.rigidbody.isKinematic)
+            if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out holdInteractionHit, maxHoldingObjectDistance, movableNormalLayer | movableBouncyLayer) && readyToHold && holdInteractionHit.rigidbody && !holdInteractionHit.rigidbody.isKinematic)
             {
                 readyToHold = false;
                 grabbedObjectRigidbody = holdInteractionHit.rigidbody;
-
-                if (grabbedObjectRigidbody)
-                {
-                    crosshairImage.color = Color.cyan;
-                    grabbedObjectTransform = grabbedObjectRigidbody.transform;
-                    grabbedObjectRigidbody.linearVelocity = Vector3.zero;
-                    grabbedObjectRigidbody.useGravity = false;
-                    Invoke(nameof(CanReleaseHoldedObjectWhenTouchedToPlayerActivator), canReleaseHoldedObjectWhenTouchedToPlayerCooldown);
-                }
-
+                grabbedObjectTransform = grabbedObjectRigidbody.transform;
+                grabbedObjectRigidbody.useGravity = false;
+                crosshairImage.color = Color.cyan;
+                Invoke(nameof(CanReleaseHoldedObjectWhenTouchedToPlayerActivator), canReleaseHoldedObjectWhenTouchedToPlayerCooldown);
                 Invoke(nameof(HoldAgainReset), holdAgainCooldown);
             }
             else if (readyToHold)
@@ -144,12 +138,12 @@ public class PlayerInteractionManager : MonoBehaviour
 
     public void ReleaseObject()
     {
-        crosshairImage.color = Color.black;
         grabbedObjectRigidbody.useGravity = true;
         grabbedObjectTransform = null;
         grabbedObjectRigidbody = null;
         tempHoldingObjectDistance = normalHoldingObjectDistance;
         canReleaseHoldedObjectWhenTouchedToPlayer = false;
+        crosshairImage.color = Color.black;
     }
 
     void CanReleaseHoldedObjectWhenTouchedToPlayerActivator()
