@@ -11,6 +11,7 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
     float savingTheGameTimer;
     bool respawnButtonPressed;
     Transform playerTransform;
+    Rigidbody playerRigidbody;
     PlayerStatusManager playerStatusManagerScript;
     PlayerInteractionManager playerInteractionManagerScript;
     PlayerMovementManager playerMovementManagerScript;
@@ -18,13 +19,13 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
     [SerializeField] Transform playerColliderTransform, cameraPositionTransform, cameraHolderTransform, frontBumpingDetectorTransform, playerCapsuleModelTransform;
     [SerializeField] Camera mainCamera;
     [SerializeField] CapsuleCollider playerColliderCapsuleCollider;
-    [SerializeField] Rigidbody playerRigidbody;
     [SerializeField] Image crosshairImage;
     [SerializeField] PlayerCameraManager playerCameraManagerScript;
 
     void Start()
     {
         playerTransform = playerObject.transform;
+        playerRigidbody = playerObject.GetComponent<Rigidbody>();
         playerStatusManagerScript = GetComponent<PlayerStatusManager>();
         playerInteractionManagerScript = playerObject.GetComponent<PlayerInteractionManager>();
         playerMovementManagerScript = playerObject.GetComponent<PlayerMovementManager>();

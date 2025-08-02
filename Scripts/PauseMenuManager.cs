@@ -12,17 +12,21 @@ public class PauseMenuManager : MonoBehaviour
     int[] last5FPS = new int[5];
     int counter;
     const KeyCode escapeKey = KeyCode.Escape;
+    RectTransform FPSTextRectTransform;
+    TextMeshProUGUI speedText, FPSText;
     PlayerSpawnAndSaveManager playerSpawnAndSaveManagerScript;
     PlayerStatusManager playerStatusManagerScript;
     [SerializeField] GameObject pauseMenuObject, settingsMenuObject, speedTextObject, FPSTextObject;
-    [SerializeField] RectTransform FPSTextRectTransform;
-    [SerializeField] TextMeshProUGUI FOVText, mouseSensitivityText, maxFPSText, speedText, FPSText;
+    [SerializeField] TextMeshProUGUI FOVText, mouseSensitivityText, maxFPSText;
     [SerializeField] Toggle dynamicFOVToggle, speedTextToggle, increasedSensitivityToggle, showFPSToggle;
     [SerializeField] Slider FOVSlider, mouseSensitivitySlider, maxFPSSlider;
     [SerializeField] PlayerCameraManager playerCameraManagerScript;
 
     void Start()
     {
+        FPSTextRectTransform = FPSTextObject.GetComponent<RectTransform>();
+        speedText = speedTextObject.GetComponent<TextMeshProUGUI>();
+        FPSText = FPSTextObject.GetComponent<TextMeshProUGUI>();
         playerSpawnAndSaveManagerScript = GetComponent<PlayerSpawnAndSaveManager>();
         playerStatusManagerScript = GetComponent<PlayerStatusManager>();
 
