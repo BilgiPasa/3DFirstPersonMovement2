@@ -2,7 +2,7 @@
 
 Yaptığım bu hareket sistemi ile ilgili videoyu izlemek istiyorsan: 
 
-Scripts klasöründe, üstte yazmış olduğum yorumları oku. O yorumlar, Unity projende bazı şeyleri yapmanı isteyecek.
+Scriptlerin üst satırlarında yazmış olduğum yorumları oku. O yorumlar, Unity projende bazı şeyleri yapmanı isteyecek.
 
 Ve bu arada scriptlerin içindeki kod yorumlarının bazıları Türkçe, bazıları İngilizce haberin olsun.
 
