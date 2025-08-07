@@ -1,7 +1,9 @@
 # 3DFirstPersonMovement2
 
-This is a Unity project that I made.
+Yaptığım bu hareket sistemi ile ilgili videoyu izlemek istiyorsan: 
 
-In the Scripts folder, open and read the top comments of the scripts. The comments tell you to do some things on your Unity project to use these scripts.
+Scripts klasöründe, üstte yazmış olduğum yorumları oku. O yorumlar, Unity projende bazı şeyleri yapmanı isteyecek.
 
-The "3D First Person Movement 2" project is in the 6000.0.51f1 version of the Unity game engine.
+Ve bu arada scriptlerin içindeki kod yorumlarının bazıları Türkçe, bazıları İngilizce haberin olsun.
+
+Ve son olarak; "3D First Person Movement 2" projem, Unity'nin 6000.0.51f1 versiyonuna ait haberin olsun (yani Unity package'ını kullanacaksan Unity 6'da kullan).
