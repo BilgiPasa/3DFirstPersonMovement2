@@ -107,6 +107,8 @@ public class PauseMenuManager : MonoBehaviour
                 Application.targetFrameRate = 60;
                 break;
         }
+
+        speedText.text = "Speed: 0";
     }
 
     void Update()
