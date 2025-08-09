@@ -464,11 +464,11 @@ public class PlayerMovementManager : MonoBehaviour
 
             if (!crouching && playerRigidbody.linearVelocity.y > minimum)
             {
-                playerRigidbody.AddForce(new Vector3(0, 50, 0), ForceMode.Acceleration);
+                playerRigidbody.AddForce(new Vector3(0, 50, 0), ForceMode.Acceleration); // Change this if you change gravity.
             }
             else if (playerStatusManagerScript.sliding)
             {
-                playerRigidbody.AddForce(new Vector3(0, 30, 0), ForceMode.Acceleration);
+                playerRigidbody.AddForce(new Vector3(0, 30, 0), ForceMode.Acceleration); // Change this if you change gravity.
             }
         }
         else

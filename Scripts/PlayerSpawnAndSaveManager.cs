@@ -55,14 +55,14 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
 
         playerCameraManagerScript.xRotation = PlayerPrefs.GetFloat("playerRotationX");
         playerCameraManagerScript.yRotation = PlayerPrefs.GetFloat("playerRotationY");
-        // I used playerRigidbody instead of playerTransform because if I use playerTransform, when the player is not dead, the player does not appear at it's last position but appears at Vector3.zero (and I don't know why this happens). What I mean is that using playerRigidbody here is intentional. Don't change this.
-        playerRigidbody.position = new Vector3(PlayerPrefs.GetFloat("playerPositionX"), PlayerPrefs.GetFloat("playerPositionY"), PlayerPrefs.GetFloat("playerPositionZ"));
-        cameraHolderTransform.position = cameraPositionTransform.position;
         cameraHolderTransform.rotation = Quaternion.Euler(playerCameraManagerScript.xRotation, playerCameraManagerScript.yRotation, 0);
         playerColliderTransform.rotation = Quaternion.Euler(0, playerCameraManagerScript.yRotation, 0);
 
         if (PlayerPrefs.GetInt("playerDied") == -1)
         {
+            // I used playerRigidbody instead of playerTransform because if I use playerTransform, when the player is not dead, the player does not appear at it's last position but appears at Vector3.zero (and I don't know why this happens). So, don't change this.
+            playerRigidbody.position = new Vector3(PlayerPrefs.GetFloat("playerPositionX"), PlayerPrefs.GetFloat("playerPositionY"), PlayerPrefs.GetFloat("playerPositionZ"));
+            cameraHolderTransform.position = cameraPositionTransform.position;
             spawnProtection = true;
             playerRigidbody.linearVelocity = new Vector3(PlayerPrefs.GetFloat("playerLinearVelocityX"), PlayerPrefs.GetFloat("playerLinearVelocityY"), PlayerPrefs.GetFloat("playerLinearVelocityZ"));
 
@@ -88,6 +88,9 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
         }
         else if (PlayerPrefs.GetInt("playerDied") == 1)
         {
+            // I used playerTransform instead of playerRigidbody because if I use playerRigidbody, when the player is dead, the player does not appear at it's last position but appears at Vector3.zero. So, don't change this.
+            playerTransform.position = new Vector3(PlayerPrefs.GetFloat("playerPositionX"), PlayerPrefs.GetFloat("playerPositionY"), PlayerPrefs.GetFloat("playerPositionZ"));
+            cameraHolderTransform.position = cameraPositionTransform.position;
             PlayerDespawning();
         }
     }
