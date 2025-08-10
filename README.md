@@ -1,6 +1,6 @@
 # 3DFirstPersonMovement2
 
-Yaptığım bu hareket sistemi ile ilgili videoyu izlemek istiyorsan: (video üstünde çalışıyorum)
+Yaptığım bu hareket sistemi ile ilgili videoyu izlemek istiyorsan: https://youtu.be/6q3XmCUo-m0
 
 Scriptlerin üst satırlarında yazmış olduğum yorumları oku. O yorumlar, Unity projende bazı şeyleri yapmanı isteyecek.
 
