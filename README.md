@@ -2,6 +2,8 @@
 
 Yaptığım bu hareket sistemi hakkındaki videomu izlemek istiyorsan: https://youtu.be/6q3XmCUo-m0
 
+"3D First Person Movement 2 Windows" klasöründe, projenin .exe dosyası bulunuyor ve "3D First Person Movement 2 Linux" klasöründe, projenin .x86_64 dosyası bulunuyor. Yani denemek isterseniz çalıştırma dosyaları oradalar.
+
 Scriptlerin üst satırlarında yazmış olduğum yorumları oku. O yorumlar, Unity projende bazı şeyleri yapmanı isteyecek.
 
 Ve bu arada scriptlerin içindeki kod yorumlarının bazıları Türkçe, bazıları İngilizce haberin olsun.
