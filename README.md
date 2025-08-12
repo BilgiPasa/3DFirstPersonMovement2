@@ -6,6 +6,8 @@ Yaptığım bu hareket sistemi hakkındaki videomu izlemek istiyorsan: https://y
 
 Scriptlerin üst satırlarında yazmış olduğum yorumları oku. O yorumlar, Unity projende bazı şeyleri yapmanı isteyecek.
 
-Ve bu arada scriptlerin içindeki kod yorumlarının bazıları Türkçe, bazıları İngilizce haberin olsun.
+Scriptlerin içindeki kod yorumlarının bazıları Türkçe, bazıları İngilizce haberin olsun.
 
-Ve son olarak; "3D First Person Movement 2" projem, Unity'nin 6000.0.51f1 versiyonuna ait haberin olsun (yani Unity package'ını kullanacaksan Unity 6'da kullan).
+Projemde hiç AI kullanmadım (AI dediğim, Generitive AI. Yani ChatGPT, Deepseek, Claude gibi AI'lar). Yani kodların ve yorum satırlarının hepsini kendim yazdım ama tabiki internette bulduğum tutorial'lardan yardım aldığım oldu.
+
+Son olarak; "3D First Person Movement 2" projem, Unity'nin 6000.0.51f1 versiyonuna ait haberin olsun (yani Unity package'ını kullanacaksan Unity 6'da kullan).
