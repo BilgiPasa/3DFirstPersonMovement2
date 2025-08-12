@@ -6,7 +6,9 @@ Yaptığım bu hareket sistemi hakkındaki videomu izlemek istiyorsan: https://y
 
 Scriptlerin üst satırlarında yazmış olduğum yorumları oku. O yorumlar, Unity projende bazı şeyleri yapmanı isteyecek.
 
-Projemde hiç AI kullanmadım (AI dediğim, Generitive AI. Yani ChatGPT, Deepseek, Claude gibi AI'lar). Yani kodların ve yorum satırlarının hepsini kendim yazdım ama tabiki internette bulduğum tutorial'lardan yardım aldığım oldu.
+Projemde hiç AI kullanmadım (AI dediğim, Generitive AI. Yani ChatGPT, Deepseek, Claude gibi AI'lar).
+
+Kodların ve yorum satırlarının hepsini kendim yazdım ama tabiki internette bulduğum tutorial'lardan yardım aldığım oldu.
 
 Scriptlerin içindeki kod yorumlarının bazıları Türkçe, bazıları İngilizce haberin olsun.
 
