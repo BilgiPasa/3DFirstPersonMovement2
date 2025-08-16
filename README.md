@@ -2,9 +2,9 @@
 
 Yaptığım bu hareket sistemi hakkındaki videomu izlemek istiyorsan: https://youtu.be/6q3XmCUo-m0
 
-"3D First Person Movement 2 Windows" klasöründe, projenin .exe dosyası bulunuyor ve "3D First Person Movement 2 Linux" klasöründe, projenin .x86_64 dosyası bulunuyor. Yani projemi denemek isterseniz çalıştırma dosyaları oradalar.
+Projemi denemek isterseniz, Releases kısmında projemin çalıştırma dosyaları (Windows için .exe, Linux için .x86_64 dosyaları) bulunuyor.
 
-Scriptlerin üst satırlarında yazmış olduğum yorumları oku. O yorumlar, Unity projende bazı şeyleri yapmanı isteyecek.
+Scriptlerin üst satırlarında yazmış olduğum yorumları oku. O yorumlar, Unity editöründe bazı şeyleri yapmanı isteyecek.
 
 Projemi yaparken ChatGPT, Deepseek, Claude gibi yapay zekaları KULLANMADIM. Ki zaten Generitive AI kullanmayı sevmiyorum ve tavsiye etmiyorum da.
 
