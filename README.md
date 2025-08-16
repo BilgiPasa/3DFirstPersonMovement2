@@ -12,4 +12,6 @@ Kodların ve yorum satırlarının hepsini kendim yazdım ama tabiki internette 
 
 Scriptlerin içindeki kod yorumlarının bazıları Türkçe, bazıları İngilizce haberin olsun.
 
+Projede "Gridbox Prototype Materials" ücretsiz assetini kullandım Unity Asset Store'dan.
+
 Son olarak; "3D First Person Movement 2" projem, Unity'nin 6000.0.51f1 versiyonuna ait haberin olsun (yani Unity package'ını kullanacaksan Unity 6'da kullan).
