@@ -19,8 +19,11 @@ public class PlayerInteractionManager : MonoBehaviour
     Transform grabbedObjectTransform;
     RaycastHit holdInteractionHit;
 
+    [Header("Granade")]
+    bool removingPinKeyPressedWhileHoldingGranade;
+
     [Header("Keybinds")]
-    KeyCode interactionKey = KeyCode.E, throwKey = KeyCode.Mouse0;
+    KeyCode interactionKey = KeyCode.E, throwKey = KeyCode.Mouse0, removingPinKey = KeyCode.Mouse1;
 
     [Header("Inputs")]
     [SerializeField] int throwForce = 60;
@@ -47,6 +50,12 @@ public class PlayerInteractionManager : MonoBehaviour
     void FixedUpdate()
     {
         HoldingAndThrowingObject();
+
+        if (removingPinKeyPressedWhileHoldingGranade)
+        {
+            RemovingPinOfHoldedGranage();
+            removingPinKeyPressedWhileHoldingGranade = false;
+        }
     }
 
     void InteractionInputs()
@@ -66,6 +75,11 @@ public class PlayerInteractionManager : MonoBehaviour
             if (Input.GetKeyDown(throwKey))
             {
                 throwKeyPressedWhileHoldingAnObject = true;
+            }
+
+            if (Input.GetKeyDown(removingPinKey) && grabbedObjectRigidbody.GetComponent<GranadeManager>())
+            {
+                removingPinKeyPressedWhileHoldingGranade = true;
             }
         }
     }
@@ -161,5 +175,10 @@ public class PlayerInteractionManager : MonoBehaviour
         crosshairImage.color = Color.red;
         yield return new WaitForSeconds(crosshairBeingRedTime);
         crosshairImage.color = Color.black;
+    }
+
+    void RemovingPinOfHoldedGranage()
+    {
+        grabbedObjectRigidbody.GetComponent<GranadeManager>().removePin = true;
     }
 }

@@ -7,7 +7,7 @@ public class PlayerCameraManager : MonoBehaviour
     [HideInInspector] public int sensitivity;
     [HideInInspector] public float xRotation, yRotation, normalFOV;
     int normalCameraRotationMultiplier = 1;
-    float theCameraRotationMultiplier, sprintFOV, zoomFOV, zoomSprintFOV, zoomedCameraRotationMultiplier = 0.5f;
+    float zoomedCameraRotationMultiplier = 0.5f, theCameraRotationMultiplier, sprintFOV, zoomFOV, zoomSprintFOV;
     KeyCode zoomKey = KeyCode.C;
     Transform cameraHolderTransform;
     PauseMenuManager pauseMenuManagerScript;
