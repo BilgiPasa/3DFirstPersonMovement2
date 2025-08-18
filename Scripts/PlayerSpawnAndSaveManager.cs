@@ -9,7 +9,7 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
     [HideInInspector] public bool playerDied, spawnProtection;
     int savingTheGameDelay = 15, spawnProtectionSeconds = 3;
     float savingTheGameTimer;
-    bool respawnButtonPressed;
+    bool thePlayerDiedSaveValueWasZero, respawnButtonPressed;
     Transform playerTransform;
     Rigidbody playerRigidbody;
     PlayerStatusManager playerStatusManagerScript;
@@ -47,6 +47,7 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
         if (PlayerPrefs.GetInt("playerDied") == 0)
         {
             PlayerPrefs.SetInt("playerDied", -1);
+            thePlayerDiedSaveValueWasZero = true;
         }
 
         if (PlayerPrefs.GetInt("playerCrouching") == 0)
@@ -70,9 +71,16 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
 
         if (PlayerPrefs.GetInt("playerDied") == -1)
         {
-            // I used playerRigidbody instead of playerTransform because if I use playerTransform, when the player is not dead, the player does not appear at it's last position but appears at Vector3.zero (and I don't know why this happens). So, don't change this.
-            playerRigidbody.position = new Vector3(PlayerPrefs.GetFloat("playerPositionX"), PlayerPrefs.GetFloat("playerPositionY"), PlayerPrefs.GetFloat("playerPositionZ"));
-            playerMovementManagerScript.startOfFall = playerRigidbody.position.y;
+            if (!thePlayerDiedSaveValueWasZero) // If thePlayerDiedSaveValueWasZero is false, it means that there must be a save.
+            {
+                playerRigidbody.position = new Vector3(PlayerPrefs.GetFloat("playerPositionX"), PlayerPrefs.GetFloat("playerPositionY"), PlayerPrefs.GetFloat("playerPositionZ")); // I used playerRigidbody instead of playerTransform because if I use playerTransform, when the player is not dead, the player does not appear at it's last position but appears at Vector3.zero (and I don't know why this happens). So, don't change this.
+            }
+            else
+            {
+                playerRigidbody.position = playerInitialPosition;
+            }
+
+            playerMovementManagerScript.startOfFall = playerRigidbody.position.y; // Setting the start of fall to player's y position because if not, the PlayerMovementManager script does not know it's initial falling position at the start of the game.
             cameraHolderTransform.position = cameraPositionTransform.position;
             spawnProtection = true;
             playerRigidbody.linearVelocity = new Vector3(PlayerPrefs.GetFloat("playerLinearVelocityX"), PlayerPrefs.GetFloat("playerLinearVelocityY"), PlayerPrefs.GetFloat("playerLinearVelocityZ"));
@@ -99,8 +107,7 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
         }
         else if (PlayerPrefs.GetInt("playerDied") == 1)
         {
-            // I used playerTransform instead of playerRigidbody because if I use playerRigidbody, when the player is dead, the player does not appear at it's last position but appears at Vector3.zero. So, don't change this.
-            playerTransform.position = new Vector3(PlayerPrefs.GetFloat("playerPositionX"), PlayerPrefs.GetFloat("playerPositionY"), PlayerPrefs.GetFloat("playerPositionZ"));
+            playerTransform.position = new Vector3(PlayerPrefs.GetFloat("playerPositionX"), PlayerPrefs.GetFloat("playerPositionY"), PlayerPrefs.GetFloat("playerPositionZ")); // I used playerTransform instead of playerRigidbody because if I use playerRigidbody, when the player is dead, the player does not appear at it's last position but appears at Vector3.zero. So, don't change this.
             cameraHolderTransform.position = cameraPositionTransform.position;
             PlayerDespawning();
         }
@@ -110,7 +117,7 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
     {
         playerStatusManagerScript.playerHealth = 100;
         playerRigidbody.position = playerInitialPosition;
-        playerMovementManagerScript.startOfFall = playerInitialPosition.y;
+        playerMovementManagerScript.startOfFall = playerRigidbody.position.y; // Setting the start of fall to player's y position because if not, the PlayerMovementManager script does not know it's initial falling position at the start of the game.
         spawnProtection = true;
         yield return new WaitForSeconds(spawnProtectionSeconds);
         spawnProtection = false;
@@ -202,7 +209,7 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
         spawnProtection = true;
         playerTransform.position = playerInitialPosition;
         playerRigidbody.linearVelocity = Vector3.zero;
-        playerMovementManagerScript.startOfFall = playerInitialPosition.y;
+        playerMovementManagerScript.startOfFall = playerTransform.position.y; // Setting the start of fall to player's y position because if not, the PlayerMovementManager script does not know it's initial falling position when respawned.
         playerMovementManagerScript.endOfFall = playerMovementManagerScript.fallDistance = playerCameraManagerScript.xRotation = playerCameraManagerScript.yRotation = 0;
         playerColliderCapsuleCollider.height = playerMovementManagerScript.playerHeight;
         cameraPositionTransform.localPosition = new Vector3(cameraPositionTransform.localPosition.x, playerMovementManagerScript.cameraPositionLocalPositionWhenNotCrouched, cameraPositionTransform.localPosition.z);
