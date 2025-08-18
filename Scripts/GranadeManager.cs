@@ -57,7 +57,7 @@ public class GranadeManager : MonoBehaviour
                     {
                         playerInteractionManagerScriptFromPlayerThatEffectedFromExplosion = objectRigidbodyThatEffectedFromExplosion.GetComponent<PlayerInteractionManager>();
 
-                        if (granadeRigidbody.Equals(playerInteractionManagerScriptFromPlayerThatEffectedFromExplosion.grabbedObjectRigidbody))
+                        if (granadeRigidbody.Equals(playerInteractionManagerScriptFromPlayerThatEffectedFromExplosion.grabbedObjectRigidbody)) // To relese the object that player is holding when the object explodes
                         {
                             playerInteractionManagerScriptFromPlayerThatEffectedFromExplosion.ReleaseObject();
                         }

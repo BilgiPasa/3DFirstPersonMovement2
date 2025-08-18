@@ -103,8 +103,7 @@ public class PlayerInteractionManager : MonoBehaviour
             // Tutulan obje çok uzakta kalırsa (bir şeye sıkışır veya takılırsa) objenin hızını sıfırlayıp bıraksın.
             if ((holdedObjectPositionTransform.position - grabbedObjectTransform.position).magnitude > maxHoldingObjectCanBeOffsetDistance)
             {
-                grabbedObjectRigidbody.linearVelocity = Vector3.zero;
-                grabbedObjectRigidbody.angularVelocity = Vector3.zero;
+                grabbedObjectRigidbody.linearVelocity = grabbedObjectRigidbody.angularVelocity = Vector3.zero;
                 ReleaseObject();
                 return;
             }

@@ -31,8 +31,6 @@ public class PlayerCameraManager : MonoBehaviour
 
     void Update()
     {
-        CameraFOVAssign();
-
         if (!pauseMenuManagerScript.gamePaused)
         {
             CameraLook();
@@ -42,19 +40,16 @@ public class PlayerCameraManager : MonoBehaviour
                 FOVChange();
             }
         }
-    }
 
-    void LateUpdate()
-    {// I didn't pause the camera movement for not to see your body when you pause the game
-        CameraMovement();
-    }
-
-    void CameraFOVAssign()
-    {
-        if (pauseMenuManagerScript.settingsMenuOpened && normalFOV != mainCamera.fieldOfView)
+        if (pauseMenuManagerScript.settingsMenuOpened)
         {
             mainCamera.fieldOfView = normalFOV;
         }
+    }
+
+    void LateUpdate()
+    {// I didn't pause the camera position change for not to see your body when you pause the game.
+        cameraHolderTransform.position = cameraPositionTransform.position;
     }
 
     void CameraLook()
@@ -72,10 +67,6 @@ public class PlayerCameraManager : MonoBehaviour
 
     void FOVChange()
     {
-        sprintFOV = normalFOV + 10;
-        zoomFOV = normalFOV / 5;
-        zoomSprintFOV = sprintFOV / 5;
-
         if (!Input.GetKey(zoomKey))
         {
             theCameraRotationMultiplier = normalCameraRotationMultiplier;
@@ -86,6 +77,7 @@ public class PlayerCameraManager : MonoBehaviour
             }
             else
             {
+                sprintFOV = normalFOV + 10;
                 mainCamera.fieldOfView = mainCamera.fieldOfView > sprintFOV - 0.01f ? mainCamera.fieldOfView = sprintFOV : mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView, sprintFOV, 7.5f * Time.deltaTime);
             }
         }
@@ -95,17 +87,14 @@ public class PlayerCameraManager : MonoBehaviour
 
             if (!(pauseMenuManagerScript.dynamicFOV && (playerStatusManagerScript.running || (playerStatusManagerScript.sliding && playerStatusManagerScript.flatVelocityMagnitude > playerMovementManagerScript.runSpeed))))
             {
+                zoomFOV = normalFOV / 5;
                 mainCamera.fieldOfView = mainCamera.fieldOfView < zoomFOV + 0.01f ? mainCamera.fieldOfView = zoomFOV : mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView, zoomFOV, 7.5f * Time.deltaTime);
             }
             else
             {
+                zoomSprintFOV = sprintFOV / 5;
                 mainCamera.fieldOfView = mainCamera.fieldOfView > zoomSprintFOV - 0.01f && mainCamera.fieldOfView < zoomSprintFOV + 0.01f ? mainCamera.fieldOfView = zoomSprintFOV : mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView, zoomSprintFOV, 7.5f * Time.deltaTime);
             }
         }
-    }
-
-    void CameraMovement()
-    {
-        cameraHolderTransform.position = cameraPositionTransform.position;
     }
 }

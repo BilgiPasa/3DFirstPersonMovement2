@@ -9,7 +9,7 @@ public class PlayerStatusManager : MonoBehaviour
 
     [HideInInspector] public int playerHealth;
     [HideInInspector] public float flatVelocityMagnitude;
-    [HideInInspector] public bool idling, walking, running, jumpingUp, jumpingDown, goingUp, goingDown, crouchIdling, crouchWalking, crouchJumpingUp, crouchJumpingDown, crouchGoingUp, crouchGoingDown, sliding, fallDistanceIsBiggerThanMinimum;
+    [HideInInspector] public bool walking, running, jumpingUp, sliding;
     const float minimum = 0.1f;
     KeyCode runKey = KeyCode.R;
     Transform playerTransform;
@@ -47,104 +47,30 @@ public class PlayerStatusManager : MonoBehaviour
             if (!playerMovementManagerScript.crouching)
             {
                 playerGroundParticlesTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (playerMovementManagerScript.playerHeight / 2), playerTransform.position.z);
-                crouchIdling = false;
-                crouchWalking = false;
-                crouchJumpingUp = false;
-                crouchJumpingDown = false;
-                crouchGoingUp = false;
-                crouchGoingDown = false;
                 sliding = false;
                 walking = flatVelocityMagnitude > minimum && (playerMovementManagerScript.vertical != 0 || playerMovementManagerScript.horizontal != 0);
 
-                if (walking && playerMovementManagerScript.vertical == 1 && (Input.GetKeyDown(runKey) || Input.GetKey(runKey)))
+                if (Input.GetKey(runKey) && playerMovementManagerScript.vertical == 1 && walking)
                 {
                     running = true;
                 }
-                else if (!walking || (playerFrontBumpingManagerScript.frontBumping && !Input.GetKey(runKey)) || (walking && playerMovementManagerScript.vertical != 1))
+                else if (!walking || (playerMovementManagerScript.vertical != 1 && walking) || (playerFrontBumpingManagerScript.frontBumping && !Input.GetKey(runKey)))
                 {
                     running = false;
                 }
 
-                if (playerMovementManagerScript.groundedForAll)
-                {
-                    idling = flatVelocityMagnitude <= minimum;
-                    jumpingUp = playerMovementManagerScript.jumping && playerRigidbody.linearVelocity.y > minimum;
-                    goingUp = false;
-                    goingDown = false;
-                }
-                else
-                {
-                    idling = false;
-                    jumpingUp = false;
-                    goingUp = playerRigidbody.linearVelocity.y > minimum;
-                    goingDown = playerRigidbody.linearVelocity.y < -minimum;
-                }
-
-                if (fallDistanceIsBiggerThanMinimum) // This variable is controlled by the movement script.
-                {
-                    jumpingDown = true;
-                    fallDistanceIsBiggerThanMinimum = false;
-                }
-                else
-                {
-                    jumpingDown = false;
-                }
+                jumpingUp = playerMovementManagerScript.jumping && playerRigidbody.linearVelocity.y > minimum && playerMovementManagerScript.groundedForAll;
             }
             else
             {
                 playerGroundParticlesTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (playerMovementManagerScript.crouchHeight / 2), playerTransform.position.z);
-                idling = false;
-                walking = false;
-                running = false;
-                jumpingUp = false;
-                jumpingDown = false;
-                goingUp = false;
-                goingDown = false;
-                crouchWalking = flatVelocityMagnitude > minimum && (playerMovementManagerScript.vertical != 0 || playerMovementManagerScript.horizontal != 0);
-
-                if (playerMovementManagerScript.groundedForAll)
-                {
-                    crouchIdling = flatVelocityMagnitude <= minimum;
-                    crouchJumpingUp = playerMovementManagerScript.jumping && playerRigidbody.linearVelocity.y > minimum;
-                    crouchGoingUp = false;
-                    crouchGoingDown = false;
-                    sliding = flatVelocityMagnitude > playerMovementManagerScript.runSpeed || playerMovementManagerScript.onSlope;
-                }
-                else
-                {
-                    crouchIdling = false;
-                    crouchJumpingUp = false;
-                    crouchGoingUp = playerRigidbody.linearVelocity.y > minimum;
-                    crouchGoingDown = playerRigidbody.linearVelocity.y < -minimum;
-                }
-
-                if (fallDistanceIsBiggerThanMinimum) // This variable is controlled by the movement script.
-                {
-                    crouchJumpingDown = true;
-                    fallDistanceIsBiggerThanMinimum = false;
-                }
-                else
-                {
-                    crouchJumpingDown = false;
-                }
+                walking = running = jumpingUp = false;
+                sliding = (flatVelocityMagnitude > playerMovementManagerScript.runSpeed || playerMovementManagerScript.onSlope) && playerMovementManagerScript.groundedForAll;
             }
         }
         else
         {
-            idling = false;
-            walking = false;
-            running = false;
-            jumpingUp = false;
-            jumpingDown = false;
-            goingUp = false;
-            goingDown = false;
-            crouchIdling = false;
-            crouchWalking = false;
-            crouchJumpingUp = false;
-            crouchJumpingDown = false;
-            crouchGoingUp = false;
-            crouchGoingDown = false;
-            sliding = false;
+            walking = running = jumpingUp = sliding = false;
         }
 
         if (running && jumpingUp && !runJumpParticles.isPlaying)
@@ -152,11 +78,11 @@ public class PlayerStatusManager : MonoBehaviour
             runJumpParticles.Play();
         }
 
-        if (!runAndSlideParticles.isPlaying && playerMovementManagerScript.groundedForAll && !playerSpawnAndSaveManagerScript.playerDied && flatVelocityMagnitude > playerMovementManagerScript.runSpeed / 4 && (sliding || running))
+        if ((sliding || running) && flatVelocityMagnitude > playerMovementManagerScript.runSpeed / 4 && playerMovementManagerScript.groundedForAll && !runAndSlideParticles.isPlaying)
         {
             runAndSlideParticles.Play();
         }
-        else if (runAndSlideParticles.isPlaying && (!playerMovementManagerScript.groundedForAll || playerSpawnAndSaveManagerScript.playerDied || flatVelocityMagnitude <= playerMovementManagerScript.runSpeed / 4 || !(sliding || running)))
+        else if ((!(sliding || running) || flatVelocityMagnitude <= playerMovementManagerScript.runSpeed / 4 || !playerMovementManagerScript.groundedForAll) && runAndSlideParticles.isPlaying)
         {
             runAndSlideParticles.Stop();
         }

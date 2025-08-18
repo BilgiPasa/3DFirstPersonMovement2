@@ -215,8 +215,6 @@ public class PlayerMovementManager : MonoBehaviour
 
         if (fallDistance > minimum)
         {
-            playerStatusManagerScript.fallDistanceIsBiggerThanMinimum = true;
-
             if (fallDistance > maxFallWithoutParticles && !jumpingDownParticles.isPlaying)
             {
                 jumpingDownParticles.Play();
@@ -232,11 +230,8 @@ public class PlayerMovementManager : MonoBehaviour
                 playerHealthDecrease += (int)fallDistance - maxFallWithoutFallDamage;
             }
 
-            startOfFall = 0;
-            endOfFall = 0;
-            fallDistance = 0;
-            wasFalling = true;
-            wasGrounded = true;
+            startOfFall = endOfFall = fallDistance = 0;
+            wasFalling = wasGrounded = true;
         }
 
         if (groundedForAll)
@@ -389,8 +384,7 @@ public class PlayerMovementManager : MonoBehaviour
             {
                 if ((normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum && flatVelocityRelativeToPlayerInAir.y < theMoveSpeed && flatVelocityRelativeToPlayerInAir.y > theMoveSpeed * 0.4f && normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum && flatVelocityRelativeToPlayerInAir.x < theMoveSpeed && flatVelocityRelativeToPlayerInAir.x > theMoveSpeed * 0.4f) || (normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum && flatVelocityRelativeToPlayerInAir.y < theMoveSpeed && flatVelocityRelativeToPlayerInAir.y > theMoveSpeed * 0.4f && normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum && flatVelocityRelativeToPlayerInAir.x > -theMoveSpeed && flatVelocityRelativeToPlayerInAir.x < -theMoveSpeed * 0.4f) || (normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum && flatVelocityRelativeToPlayerInAir.y > -theMoveSpeed && flatVelocityRelativeToPlayerInAir.y < -theMoveSpeed * 0.4f && normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum && flatVelocityRelativeToPlayerInAir.x < theMoveSpeed && flatVelocityRelativeToPlayerInAir.x > theMoveSpeed * 0.4f) || (normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum && flatVelocityRelativeToPlayerInAir.y > -theMoveSpeed && flatVelocityRelativeToPlayerInAir.y < -theMoveSpeed * 0.4f && normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum && flatVelocityRelativeToPlayerInAir.x > -theMoveSpeed && flatVelocityRelativeToPlayerInAir.x < -theMoveSpeed * 0.4f))
                 {
-                    normalizedMoveDirectionRelativeToPlayerInAir.y = 0;
-                    normalizedMoveDirectionRelativeToPlayerInAir.x = 0;
+                    normalizedMoveDirectionRelativeToPlayerInAir.y = normalizedMoveDirectionRelativeToPlayerInAir.x = 0;
                 }
                 else
                 {
