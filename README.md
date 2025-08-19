@@ -1,5 +1,7 @@
 # 3DFirstPersonMovement2
 
+UYARI: Projeyi denediğimde, bir sıkıntı ile karşılaştım. Bu akşam v1.1.5 versiyonu ile o sıkıntıyı düzeltmeye çalışacağım. O zamana kadar v1.1.3 halinin koduna bakmanızı öneririm.
+
 Yaptığım bu hareket sistemi hakkındaki videomu izlemek istiyorsan: https://youtu.be/6q3XmCUo-m0
 
 Projemi denemek isterseniz, "Releases" kısmında projemin çalıştırma dosyaları (Windows için .exe, Linux için .x86_64 dosyaları) bulunuyor.
