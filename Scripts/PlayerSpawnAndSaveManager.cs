@@ -180,7 +180,7 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
     void PlayerDeath()
     {
         PlayerDespawning();
-        // Making death effects and writing "player died" to chat or something like that.
+        // Instantiating a player death effect and writing "player died" to chat or something like that.
         SavingTheGame();
     }
 

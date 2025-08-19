@@ -16,7 +16,7 @@ public class PlayerMovementManager : MonoBehaviour
 
     [Header("Horizontal and Vertical")]
     [HideInInspector] public int vertical, horizontal, runSpeed = 12;
-    [HideInInspector] public bool onSlope, playerStandingOnMovingObject;
+    [HideInInspector] public bool onSlope, playerIsStandingOnMovingObject;
     [HideInInspector] public Rigidbody objectRigidbodyThatPlayerIsStandingOn;
     const int normalGroundLinearDamping = 10; // Don't change this value if not necessary.
     const float theMoveMultiplier = 625.005f, airMoveMultiplier = 0.16f, airLinearDamping = 0.04f, bouncyGroundLinearDamping = 12.5f, minimum = 0.1f; // Don't change these values if not necessary.
@@ -44,7 +44,7 @@ public class PlayerMovementManager : MonoBehaviour
     [HideInInspector] public bool jumping, groundedForAll;
     const float groundedSphereRadius = 0.3f, jumpingCooldown = 0.1f, jumpAgainCooldown = 0.3f;
     int normalJumpForce = 21, bouncyJumpForce = 56, maxFallWithoutBouncyJumpCalculationByThisScript = 5, maxFallWithoutFallDamage = 15, maxFallWithoutParticles = 5;
-    bool readyToJump = true, jumpingInput, groundedForBouncyEnvironment, playerTouchingToAnyGround, falling, wasFalling, wasGrounded, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment;
+    bool readyToJump = true, jumpingInput, groundedForBouncyEnvironment, playerIsTouchingToAnyGround, falling, wasFalling, wasGrounded, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment;
 
     [Header("Keybinds")]
     KeyCode forwardKey = KeyCode.W, leftKey = KeyCode.A, backwardKey = KeyCode.S, rightKey = KeyCode.D, jumpKey = KeyCode.Space, crouchKey = KeyCode.LeftShift;
@@ -253,11 +253,11 @@ public class PlayerMovementManager : MonoBehaviour
     {
         if (jumpingInput && readyToJump && !jumping)
         {
-            if (justBeforeGroundedForNormalEnvironment && ((!groundedForAll && coyoteTimeCounter > 0) || (groundedForAll && !groundedForBouncyEnvironment && playerTouchingToAnyGround)))
+            if (justBeforeGroundedForNormalEnvironment && ((!groundedForAll && coyoteTimeCounter > 0) || (groundedForAll && !groundedForBouncyEnvironment && playerIsTouchingToAnyGround)))
             {
                 Jumping(normalJumpForce);
             }
-            else if (justBeforeGroundedForBouncyEnvironment && ((!groundedForAll && coyoteTimeCounter > 0) || (groundedForAll && groundedForBouncyEnvironment && playerTouchingToAnyGround)))
+            else if (justBeforeGroundedForBouncyEnvironment && ((!groundedForAll && coyoteTimeCounter > 0) || (groundedForAll && groundedForBouncyEnvironment && playerIsTouchingToAnyGround)))
             {
                 Jumping(bouncyJumpForce);
             }
@@ -451,17 +451,17 @@ public class PlayerMovementManager : MonoBehaviour
 
     void GravityAndSpeedControl()
     {
-        if (groundedForAll && playerTouchingToAnyGround && onSlope)
+        if (groundedForAll && playerIsTouchingToAnyGround && onSlope)
         {
             playerRigidbody.useGravity = crouching || playerRigidbody.linearVelocity.y > minimum;
 
             if (!crouching && playerRigidbody.linearVelocity.y > minimum)
             {
-                playerRigidbody.AddForce(new Vector3(0, 50, 0), ForceMode.Acceleration); // Change this if you change gravity.
+                playerRigidbody.AddForce(new Vector3(0, 50, 0), ForceMode.Acceleration); // Change the "50" value if you change the gravity value.
             }
             else if (playerStatusManagerScript.sliding)
             {
-                playerRigidbody.AddForce(new Vector3(0, 30, 0), ForceMode.Acceleration); // Change this if you change gravity.
+                playerRigidbody.AddForce(new Vector3(0, 30, 0), ForceMode.Acceleration); // Change the "30" value if you change the gravity value.
             }
         }
         else
@@ -508,7 +508,7 @@ public class PlayerMovementManager : MonoBehaviour
     {
         if (collision.gameObject.layer == 3 || collision.gameObject.layer == 6 || collision.gameObject.layer == 7 || collision.gameObject.layer == 8)
         {
-            playerTouchingToAnyGround = true;
+            playerIsTouchingToAnyGround = true;
         }
 
         if ((collision.gameObject.layer == 7 || collision.gameObject.layer == 8) && collision.rigidbody)
@@ -522,7 +522,7 @@ public class PlayerMovementManager : MonoBehaviour
             // Üstünde durduğun hareketli yüzeyin hızına göre hareket etmek için
             if (collision.rigidbody.Equals(objectRigidbodyThatPlayerIsStandingOn) && collision.rigidbody.linearVelocity.magnitude > minimum)
             {
-                playerStandingOnMovingObject = true;
+                playerIsStandingOnMovingObject = true;
 
                 if (playerRigidbody.linearDamping == normalGroundLinearDamping)
                 {
@@ -539,7 +539,7 @@ public class PlayerMovementManager : MonoBehaviour
             }
             else
             {
-                playerStandingOnMovingObject = false;
+                playerIsStandingOnMovingObject = false;
             }
         }
     }
@@ -548,8 +548,8 @@ public class PlayerMovementManager : MonoBehaviour
     {
         if (collision.gameObject.layer == 3 || collision.gameObject.layer == 6 || collision.gameObject.layer == 7 || collision.gameObject.layer == 8)
         {
-            playerTouchingToAnyGround = false;
-            playerStandingOnMovingObject = false;
+            playerIsTouchingToAnyGround = false;
+            playerIsStandingOnMovingObject = false;
         }
     }
 }
