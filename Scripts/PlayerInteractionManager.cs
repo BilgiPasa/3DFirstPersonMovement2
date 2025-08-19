@@ -132,7 +132,7 @@ public class PlayerInteractionManager : MonoBehaviour
 
             if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out holdInteractionHit, maxHoldingObjectDistance, movableNormalLayer | movableBouncyLayer) && readyToHold && holdInteractionHit.rigidbody && !holdInteractionHit.rigidbody.isKinematic)
             {
-                readyToHold = false;
+                readyToHold = canReleaseHoldedObjectWhenTouchedToPlayer = false;
                 grabbedObjectRigidbody = holdInteractionHit.rigidbody;
                 grabbedObjectTransform = grabbedObjectRigidbody.transform;
                 grabbedObjectRigidbody.useGravity = false;
@@ -155,7 +155,6 @@ public class PlayerInteractionManager : MonoBehaviour
         grabbedObjectTransform = null;
         grabbedObjectRigidbody = null;
         tempHoldingObjectDistance = normalHoldingObjectDistance;
-        canReleaseHoldedObjectWhenTouchedToPlayer = false;
         crosshairImage.color = Color.black;
     }
 

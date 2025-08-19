@@ -67,7 +67,7 @@ public class PlayerStatusManager : MonoBehaviour
             {
                 playerGroundParticlesTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (playerMovementManagerScript.crouchHeight / 2), playerTransform.position.z);
                 walking = running = jumpingUp = false;
-                sliding = flatVelocityMagnitude > playerMovementManagerScript.runSpeed || playerMovementManagerScript.onSlope; // BURAYA, "playerMovementManagerScript.groundedForAll" ŞARTINI EKLEME! Çünkü eklersen; eğimli yüzeyden eğilerek kayıp düz zemine (hala eğilirken) çartığında, hızının bir kısmını kaybedebiliyorsun (ama normalde kaybetmemen lazım). Bence bunun olmasının sebebi; yere çarptığında, bir anlığına movement scriptinin, oyuncunun kaymıyor olduğunu zannettiği için olabilir. Ve evet; yere değme şartını eklemediğim için, oyuncu havada hızlı giderken eğilirse kayıyor sayılıyor ki böyle olmasında bence bir sorun yok.
+                sliding = relativeFlatVelocityMagnitude > playerMovementManagerScript.runSpeed || playerMovementManagerScript.onSlope; // BURAYA, "playerMovementManagerScript.groundedForAll" ŞARTINI EKLEME! Çünkü eklersen; eğimli yüzeyden eğilerek kayıp düz zemine (hala eğilirken) çartığında, hızının bir kısmını kaybedebiliyorsun (ama normalde kaybetmemen lazım). Bence bunun olmasının sebebi; yere çarptığında, bir anlığına movement scriptinin, oyuncunun kaymıyor olduğunu zannettiği için olabilir. Ve evet; yere değme şartını eklemediğim için, oyuncu havada hızlı giderken eğilirse kayıyor sayılıyor ki böyle olmasında bence bir sorun yok.
             }
         }
         else
