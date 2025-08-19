@@ -1,6 +1,6 @@
 # 3DFirstPersonMovement2
 
-UYARI: Projeyi denediğimde, bir sıkıntı ile karşılaştım. Bu akşam v1.1.5 versiyonu ile o sıkıntıyı düzeltmeye çalışacağım. O zamana kadar v1.1.2 halinin koduna bakmanızı öneririm.
+UYARI: Projeyi denediğimde, bir sıkıntı ile karşılaştım. Bu akşam v1.1.5 versiyonu ile o sıkıntıyı düzeltmeye çalışacağım. O zamana kadar v1.1.1 halinin koduna bakmanızı öneririm.
 
 Yaptığım bu hareket sistemi hakkındaki videomu izlemek istiyorsan: https://youtu.be/6q3XmCUo-m0
 
