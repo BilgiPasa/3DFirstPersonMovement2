@@ -16,7 +16,8 @@ public class PlayerMovementManager : MonoBehaviour
 
     [Header("Horizontal and Vertical")]
     [HideInInspector] public int vertical, horizontal, runSpeed = 12;
-    [HideInInspector] public bool onSlope;
+    [HideInInspector] public bool onSlope, playerStandingOnMovingObject;
+    [HideInInspector] public Rigidbody objectRigidbodyThatPlayerIsStandingOn;
     const int normalGroundLinearDamping = 10; // Don't change this value if not necessary.
     const float theMoveMultiplier = 625.005f, airMoveMultiplier = 0.16f, airLinearDamping = 0.04f, bouncyGroundLinearDamping = 12.5f, minimum = 0.1f; // Don't change these values if not necessary.
     int normalMoveSpeed = 9, crouchSpeed = 6, theMoveSpeed;
@@ -26,7 +27,7 @@ public class PlayerMovementManager : MonoBehaviour
     Vector3 normalizedMoveDirection, normalizedSlopeMoveDirection;
     Transform playerTransform;
     Rigidbody playerRigidbody;
-    RaycastHit slopeHit;
+    RaycastHit slopeHit, whatMovableObjectIsPlayerStandingOnHit;
 
     [Header("Crouch")]
     [HideInInspector] public float playerHeight = 3, crouchHeight = 2, cameraPositionLocalPositionWhenNotCrouched, cameraPositionLocalPositionWhenCrouched, frontBumpingDetectorLocalScaleWhenNotCrouched, frontBumpingDetectorLocalScaleWhenCrouched;
@@ -44,8 +45,6 @@ public class PlayerMovementManager : MonoBehaviour
     const float groundedSphereRadius = 0.3f, jumpingCooldown = 0.1f, jumpAgainCooldown = 0.3f;
     int normalJumpForce = 21, bouncyJumpForce = 56, maxFallWithoutBouncyJumpCalculationByThisScript = 5, maxFallWithoutFallDamage = 15, maxFallWithoutParticles = 5;
     bool readyToJump = true, jumpingInput, groundedForBouncyEnvironment, playerTouchingToAnyGround, falling, wasFalling, wasGrounded, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment;
-    Rigidbody objectRigidbodyThatPlayerIsStandingOn;
-    RaycastHit whatMovableObjectIsPlayerStandingOnHit;
 
     [Header("Keybinds")]
     KeyCode forwardKey = KeyCode.W, leftKey = KeyCode.A, backwardKey = KeyCode.S, rightKey = KeyCode.D, jumpKey = KeyCode.Space, crouchKey = KeyCode.LeftShift;
@@ -398,11 +397,11 @@ public class PlayerMovementManager : MonoBehaviour
                         {
                             if (flatVelocityRelativeToPlayerInAir.x > theMoveSpeed)
                             {
-                                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.y / 2) * -playerColliderTransform.right, ForceMode.Acceleration);
+                                playerRigidbody.AddForce(theMoveSpeed / 2 * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.y) * -playerColliderTransform.right, ForceMode.Acceleration);
                             }
                             else if (flatVelocityRelativeToPlayerInAir.x < -theMoveSpeed)
                             {
-                                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.y / 2) * playerColliderTransform.right, ForceMode.Acceleration);
+                                playerRigidbody.AddForce(theMoveSpeed / 2 * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.y) * playerColliderTransform.right, ForceMode.Acceleration);
                             }
                         }
                     }
@@ -417,11 +416,11 @@ public class PlayerMovementManager : MonoBehaviour
                         {
                             if (flatVelocityRelativeToPlayerInAir.y > theMoveSpeed)
                             {
-                                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.x / 2) * -playerColliderTransform.forward, ForceMode.Acceleration);
+                                playerRigidbody.AddForce(theMoveSpeed / 2 * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.x) * -playerColliderTransform.forward, ForceMode.Acceleration);
                             }
                             else if (flatVelocityRelativeToPlayerInAir.y < -theMoveSpeed)
                             {
-                                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.x / 2) * playerColliderTransform.forward, ForceMode.Acceleration);
+                                playerRigidbody.AddForce(theMoveSpeed / 2 * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.x) * playerColliderTransform.forward, ForceMode.Acceleration);
                             }
                         }
                     }
@@ -521,20 +520,26 @@ public class PlayerMovementManager : MonoBehaviour
             }
 
             // Üstünde durduğun hareketli yüzeyin hızına göre hareket etmek için
-            if (collision.rigidbody.Equals(objectRigidbodyThatPlayerIsStandingOn))
+            if (collision.rigidbody.Equals(objectRigidbodyThatPlayerIsStandingOn) && collision.rigidbody.linearVelocity.magnitude > minimum)
             {
+                playerStandingOnMovingObject = true;
+
                 if (playerRigidbody.linearDamping == normalGroundLinearDamping)
                 {
                     playerRigidbody.AddForce(theMoveMultiplier * Time.fixedDeltaTime * objectRigidbodyThatPlayerIsStandingOn.linearVelocity, ForceMode.Acceleration);
                 }
                 else if (playerRigidbody.linearDamping == bouncyGroundLinearDamping)
                 {
-                    playerRigidbody.AddForce(theMoveMultiplier * (Time.fixedDeltaTime * 4 / 3) * objectRigidbodyThatPlayerIsStandingOn.linearVelocity, ForceMode.Acceleration); // Evet, "* 4 / 3"ü deneyerek buldum.
+                    playerRigidbody.AddForce(theMoveMultiplier * 4 / 3 * Time.fixedDeltaTime * objectRigidbodyThatPlayerIsStandingOn.linearVelocity, ForceMode.Acceleration); // Evet, "* 4 / 3"ü deneyerek buldum.
                 }
                 else
                 {
-                    playerRigidbody.AddForce(theMoveMultiplier * airMoveMultiplier * (Time.fixedDeltaTime / 49.96f) * objectRigidbodyThatPlayerIsStandingOn.linearVelocity, ForceMode.Acceleration); // Evet, "/ 49.96f"i de deneyerek buldum.
+                    playerRigidbody.AddForce(theMoveMultiplier / 49.96f * airMoveMultiplier * Time.fixedDeltaTime * objectRigidbodyThatPlayerIsStandingOn.linearVelocity, ForceMode.Acceleration); // Evet, "/ 49.96f"i de deneyerek buldum.
                 }
+            }
+            else
+            {
+                playerStandingOnMovingObject = false;
             }
         }
     }
@@ -544,6 +549,7 @@ public class PlayerMovementManager : MonoBehaviour
         if (collision.gameObject.layer == 3 || collision.gameObject.layer == 6 || collision.gameObject.layer == 7 || collision.gameObject.layer == 8)
         {
             playerTouchingToAnyGround = false;
+            playerStandingOnMovingObject = false;
         }
     }
 }

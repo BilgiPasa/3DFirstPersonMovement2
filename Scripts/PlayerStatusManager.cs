@@ -11,6 +11,7 @@ public class PlayerStatusManager : MonoBehaviour
     [HideInInspector] public float flatVelocityMagnitude;
     [HideInInspector] public bool walking, running, jumpingUp, sliding;
     const float minimum = 0.1f;
+    float relativeFlatVelocityMagnitude;
     KeyCode runKey = KeyCode.R;
     Transform playerTransform;
     PlayerSpawnAndSaveManager playerSpawnAndSaveManagerScript;
@@ -43,12 +44,13 @@ public class PlayerStatusManager : MonoBehaviour
         if (!playerSpawnAndSaveManagerScript.playerDied)
         {
             flatVelocityMagnitude = new Vector2(playerRigidbody.linearVelocity.x, playerRigidbody.linearVelocity.z).magnitude;
+            relativeFlatVelocityMagnitude = !playerMovementManagerScript.playerStandingOnMovingObject ? flatVelocityMagnitude : new Vector2(playerRigidbody.linearVelocity.x - playerMovementManagerScript.objectRigidbodyThatPlayerIsStandingOn.linearVelocity.x, playerRigidbody.linearVelocity.z - playerMovementManagerScript.objectRigidbodyThatPlayerIsStandingOn.linearVelocity.z).magnitude;
 
             if (!playerMovementManagerScript.crouching)
             {
                 playerGroundParticlesTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (playerMovementManagerScript.playerHeight / 2), playerTransform.position.z);
                 sliding = false;
-                walking = flatVelocityMagnitude > minimum && (playerMovementManagerScript.vertical != 0 || playerMovementManagerScript.horizontal != 0);
+                walking = (playerMovementManagerScript.vertical != 0 || playerMovementManagerScript.horizontal != 0) && relativeFlatVelocityMagnitude > minimum;
 
                 if (Input.GetKey(runKey) && playerMovementManagerScript.vertical == 1 && walking)
                 {
@@ -65,7 +67,7 @@ public class PlayerStatusManager : MonoBehaviour
             {
                 playerGroundParticlesTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (playerMovementManagerScript.crouchHeight / 2), playerTransform.position.z);
                 walking = running = jumpingUp = false;
-                sliding = (flatVelocityMagnitude > playerMovementManagerScript.runSpeed || playerMovementManagerScript.onSlope) && playerMovementManagerScript.groundedForAll;
+                sliding = (relativeFlatVelocityMagnitude > playerMovementManagerScript.runSpeed || playerMovementManagerScript.onSlope) && playerMovementManagerScript.groundedForAll;
             }
         }
         else
@@ -78,11 +80,11 @@ public class PlayerStatusManager : MonoBehaviour
             runJumpParticles.Play();
         }
 
-        if ((sliding || running) && flatVelocityMagnitude > playerMovementManagerScript.runSpeed / 4 && playerMovementManagerScript.groundedForAll && !runAndSlideParticles.isPlaying)
+        if ((sliding || running) && relativeFlatVelocityMagnitude > playerMovementManagerScript.runSpeed / 4 && playerMovementManagerScript.groundedForAll && !runAndSlideParticles.isPlaying)
         {
             runAndSlideParticles.Play();
         }
-        else if ((!(sliding || running) || flatVelocityMagnitude <= playerMovementManagerScript.runSpeed / 4 || !playerMovementManagerScript.groundedForAll) && runAndSlideParticles.isPlaying)
+        else if ((!(sliding || running) || relativeFlatVelocityMagnitude <= playerMovementManagerScript.runSpeed / 4 || !playerMovementManagerScript.groundedForAll) && runAndSlideParticles.isPlaying)
         {
             runAndSlideParticles.Stop();
         }
