@@ -67,7 +67,7 @@ public class PlayerStatusManager : MonoBehaviour
             {
                 playerGroundParticlesTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (playerMovementManagerScript.crouchHeight / 2), playerTransform.position.z);
                 walking = running = jumpingUp = false;
-                sliding = (relativeFlatVelocityMagnitude > playerMovementManagerScript.runSpeed || playerMovementManagerScript.onSlope) && playerMovementManagerScript.groundedForAll;
+                sliding = flatVelocityMagnitude > playerMovementManagerScript.runSpeed || playerMovementManagerScript.onSlope; // BURAYA, YERE DEĞİYOR MU ŞARTINI EKLEME! Çünkü eklersen; eğimli yüzeyde kayıp yere çarptığında, hızının bir kısmını kaybediyorsun. Bence bunun olmasının sebebi; yere çarptığında, bir anlığına movement scriptinin kaymıyor olduğunu ama sonrasında bu script çalışıp sonraki fixed update tick'ine geçince kayıyor olduğunu anladığı için olabilir. Ve evet; yere değme şartını eklemediğim için, karakter havada hızlı giderken eğilirse kayıyor sayılcak ki böyle olmasında bir sorun yok bence.
             }
         }
         else

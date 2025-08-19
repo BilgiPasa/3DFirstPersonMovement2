@@ -6,7 +6,7 @@ public class PlayerCameraManager : MonoBehaviour
 
     [HideInInspector] public int sensitivity;
     [HideInInspector] public float xRotation, yRotation, normalFOV;
-    int normalCameraRotationMultiplier = 1;
+    int normalCameraRotationMultiplier = 1, zoomingSpeed = 10;
     float zoomedCameraRotationMultiplier = 0.5f, theCameraRotationMultiplier, sprintFOV, zoomFOV, zoomSprintFOV;
     KeyCode zoomKey = KeyCode.C;
     Transform cameraHolderTransform;
@@ -73,12 +73,12 @@ public class PlayerCameraManager : MonoBehaviour
 
             if (!(pauseMenuManagerScript.dynamicFOV && (playerStatusManagerScript.running || (playerStatusManagerScript.sliding && playerStatusManagerScript.flatVelocityMagnitude > playerMovementManagerScript.runSpeed))))
             {
-                mainCamera.fieldOfView = mainCamera.fieldOfView > normalFOV - 0.01f && mainCamera.fieldOfView < normalFOV + 0.01f ? normalFOV : Mathf.Lerp(mainCamera.fieldOfView, normalFOV, 10 * Time.deltaTime);
+                mainCamera.fieldOfView = mainCamera.fieldOfView > normalFOV - 0.01f && mainCamera.fieldOfView < normalFOV + 0.01f ? normalFOV : Mathf.Lerp(mainCamera.fieldOfView, normalFOV, zoomingSpeed * Time.deltaTime);
             }
             else
             {
                 sprintFOV = normalFOV + 10;
-                mainCamera.fieldOfView = mainCamera.fieldOfView > sprintFOV - 0.01f ? sprintFOV : Mathf.Lerp(mainCamera.fieldOfView, sprintFOV, 10 * Time.deltaTime);
+                mainCamera.fieldOfView = mainCamera.fieldOfView > sprintFOV - 0.01f ? sprintFOV : Mathf.Lerp(mainCamera.fieldOfView, sprintFOV, zoomingSpeed * Time.deltaTime);
             }
         }
         else
@@ -88,12 +88,12 @@ public class PlayerCameraManager : MonoBehaviour
             if (!(pauseMenuManagerScript.dynamicFOV && (playerStatusManagerScript.running || (playerStatusManagerScript.sliding && playerStatusManagerScript.flatVelocityMagnitude > playerMovementManagerScript.runSpeed))))
             {
                 zoomFOV = normalFOV / 5;
-                mainCamera.fieldOfView = mainCamera.fieldOfView < zoomFOV + 0.01f ? zoomFOV : Mathf.Lerp(mainCamera.fieldOfView, zoomFOV, 10 * Time.deltaTime);
+                mainCamera.fieldOfView = mainCamera.fieldOfView < zoomFOV + 0.01f ? zoomFOV : Mathf.Lerp(mainCamera.fieldOfView, zoomFOV, zoomingSpeed * Time.deltaTime);
             }
             else
             {
-                zoomSprintFOV = sprintFOV / 5;
-                mainCamera.fieldOfView = mainCamera.fieldOfView > zoomSprintFOV - 0.01f && mainCamera.fieldOfView < zoomSprintFOV + 0.01f ? zoomSprintFOV : Mathf.Lerp(mainCamera.fieldOfView, zoomSprintFOV, 10 * Time.deltaTime);
+                zoomSprintFOV = (normalFOV + 10) / 5;
+                mainCamera.fieldOfView = mainCamera.fieldOfView > zoomSprintFOV - 0.01f && mainCamera.fieldOfView < zoomSprintFOV + 0.01f ? zoomSprintFOV : Mathf.Lerp(mainCamera.fieldOfView, zoomSprintFOV, zoomingSpeed * Time.deltaTime);
             }
         }
     }
