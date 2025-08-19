@@ -549,6 +549,10 @@ public class PlayerMovementManager : MonoBehaviour
         if (collision.gameObject.layer == 3 || collision.gameObject.layer == 6 || collision.gameObject.layer == 7 || collision.gameObject.layer == 8)
         {
             playerIsTouchingToAnyGround = false;
+        }
+
+        if ((collision.gameObject.layer == 7 || collision.gameObject.layer == 8) && collision.rigidbody)
+        {
             playerIsStandingOnMovingObject = false;
         }
     }
