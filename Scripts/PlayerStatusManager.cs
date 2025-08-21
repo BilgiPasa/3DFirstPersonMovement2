@@ -44,7 +44,16 @@ public class PlayerStatusManager : MonoBehaviour
         if (!playerSpawnAndSaveManagerScript.playerDied)
         {
             flatVelocityMagnitude = new Vector2(playerRigidbody.linearVelocity.x, playerRigidbody.linearVelocity.z).magnitude;
-            relativeFlatVelocityMagnitude = !(playerMovementManagerScript.playerIsStandingOnMovingObject && playerMovementManagerScript.objectRigidbodyThatPlayerIsStandingOn) ? flatVelocityMagnitude : new Vector2(playerRigidbody.linearVelocity.x - playerMovementManagerScript.objectRigidbodyThatPlayerIsStandingOn.linearVelocity.x, playerRigidbody.linearVelocity.z - playerMovementManagerScript.objectRigidbodyThatPlayerIsStandingOn.linearVelocity.z).magnitude; // Oyuncu; hareketli objenin üstündeyken, hareketli objeye göre oyuncunun hızını hesaplamak için
+
+            if (!(playerMovementManagerScript.playerIsStandingOnMovingGround && playerMovementManagerScript.objectRigidbodyThatPlayerIsStandingOn))
+            {
+                relativeFlatVelocityMagnitude = flatVelocityMagnitude;
+                playerMovementManagerScript.playerIsStandingOnMovingGround = false;
+            }
+            else
+            {
+                relativeFlatVelocityMagnitude = new Vector2(playerRigidbody.linearVelocity.x - playerMovementManagerScript.objectRigidbodyThatPlayerIsStandingOn.linearVelocity.x, playerRigidbody.linearVelocity.z - playerMovementManagerScript.objectRigidbodyThatPlayerIsStandingOn.linearVelocity.z).magnitude; // Oyuncu; hareketli objenin üstündeyken, hareketli objeye göre oyuncunun hızını hesaplamak için
+            }
 
             if (!playerMovementManagerScript.crouching)
             {

@@ -16,7 +16,7 @@ public class PlayerMovementManager : MonoBehaviour
 
     [Header("Horizontal and Vertical")]
     [HideInInspector] public int vertical, horizontal, runSpeed = 12;
-    [HideInInspector] public bool onSlope, playerIsStandingOnMovingObject;
+    [HideInInspector] public bool onSlope, playerIsStandingOnMovingGround;
     [HideInInspector] public Rigidbody objectRigidbodyThatPlayerIsStandingOn;
     const int normalGroundLinearDamping = 10; // Don't change this value if not necessary.
     const float theMoveMultiplier = 625.005f, airMoveMultiplier = 0.16f, airLinearDamping = 0.04f, bouncyGroundLinearDamping = 12.5f, minimum = 0.1f; // Don't change these values if not necessary.
@@ -504,6 +504,15 @@ public class PlayerMovementManager : MonoBehaviour
         wasGrounded = groundedForAll;
     }
 
+    void OnCollisionEnter(Collision collision)
+    {
+        // Tuttuğun obje ile uçmayı ve sürüklenmeyi engellemek için
+        if ((collision.gameObject.layer == 7 || collision.gameObject.layer == 8) && collision.rigidbody && collision.rigidbody.Equals(playerInteractionManagerScript.grabbedObjectRigidbody) && playerInteractionManagerScript.canReleaseHoldedObjectWhenTouchedToPlayer)
+        {
+            playerInteractionManagerScript.ReleaseObjectWithResettingLinearAndAngularVelocity();
+        }
+    }
+
     void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.layer == 3 || collision.gameObject.layer == 6 || collision.gameObject.layer == 7 || collision.gameObject.layer == 8)
@@ -516,13 +525,13 @@ public class PlayerMovementManager : MonoBehaviour
             // Tuttuğun obje ile uçmayı ve sürüklenmeyi engellemek için
             if (collision.rigidbody.Equals(playerInteractionManagerScript.grabbedObjectRigidbody) && playerInteractionManagerScript.canReleaseHoldedObjectWhenTouchedToPlayer)
             {
-                playerInteractionManagerScript.ReleaseObject();
+                playerInteractionManagerScript.ReleaseObjectWithResettingLinearAndAngularVelocity();
             }
 
             // Üstünde durduğun hareketli yüzeyin hızına göre hareket etmek için
             if (collision.rigidbody.Equals(objectRigidbodyThatPlayerIsStandingOn) && collision.rigidbody.linearVelocity.magnitude > minimum)
             {
-                playerIsStandingOnMovingObject = true;
+                playerIsStandingOnMovingGround = true;
 
                 if (playerRigidbody.linearDamping == normalGroundLinearDamping)
                 {
@@ -539,8 +548,12 @@ public class PlayerMovementManager : MonoBehaviour
             }
             else
             {
-                playerIsStandingOnMovingObject = false;
+                playerIsStandingOnMovingGround = false;
             }
+        }
+        else
+        {
+            playerIsStandingOnMovingGround = false;
         }
     }
 
@@ -553,7 +566,7 @@ public class PlayerMovementManager : MonoBehaviour
 
         if ((collision.gameObject.layer == 7 || collision.gameObject.layer == 8) && collision.rigidbody)
         {
-            playerIsStandingOnMovingObject = false;
+            playerIsStandingOnMovingGround = false;
         }
     }
 }
