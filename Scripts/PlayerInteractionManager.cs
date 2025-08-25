@@ -16,7 +16,7 @@ public class PlayerInteractionManager : MonoBehaviour
     const float grabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier = 0.3f, canReleaseHoldedObjectWhenTouchedToPlayerCooldown = 0.06f, holdAgainCooldown = 0.6f, crosshairBeingRedTime = 0.3f;
     float tempHoldingObjectDistance;
     bool readyToHold = true, interacionKeyPressed, throwKeyPressedWhileHoldingAnObject;
-    Transform grabbedObjectTransform;
+    Transform grabbedObjectTransform, mainCameraTransform;
     RaycastHit holdInteractionHit;
 
     [Header("Granade")]
@@ -38,9 +38,10 @@ public class PlayerInteractionManager : MonoBehaviour
 
     void Start()
     {
-        playerMovementManagerScript = GetComponent<PlayerMovementManager>();
+        mainCameraTransform = mainCamera.transform;
         crosshairImage.color = Color.black;
         tempHoldingObjectDistance = normalHoldingObjectDistance;
+        playerMovementManagerScript = GetComponent<PlayerMovementManager>();
     }
 
     void Update()
@@ -99,7 +100,7 @@ public class PlayerInteractionManager : MonoBehaviour
             if (throwKeyPressedWhileHoldingAnObject)
             {
                 throwKeyPressedWhileHoldingAnObject = false;
-                grabbedObjectRigidbody.AddForce(throwForce * mainCamera.transform.forward, ForceMode.Impulse);
+                grabbedObjectRigidbody.AddForce(throwForce * mainCameraTransform.forward, ForceMode.Impulse);
                 ReleaseObject();
                 return;
             }
@@ -133,7 +134,7 @@ public class PlayerInteractionManager : MonoBehaviour
                 return;
             }
 
-            if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out holdInteractionHit, maxHoldingObjectDistance, movableNormalLayer | movableBouncyLayer) && readyToHold && holdInteractionHit.rigidbody && !holdInteractionHit.rigidbody.isKinematic && !holdInteractionHit.rigidbody.Equals(playerMovementManagerScript.objectRigidbodyThatPlayerIsStandingOn))
+            if (Physics.Raycast(mainCameraTransform.position, mainCameraTransform.forward, out holdInteractionHit, maxHoldingObjectDistance, movableNormalLayer | movableBouncyLayer) && readyToHold && holdInteractionHit.rigidbody && !holdInteractionHit.rigidbody.isKinematic && !holdInteractionHit.rigidbody.Equals(playerMovementManagerScript.objectRigidbodyThatPlayerIsStandingOn))
             {
                 readyToHold = canReleaseHoldedObjectWhenTouchedToPlayer = false;
                 grabbedObjectRigidbody = holdInteractionHit.rigidbody;

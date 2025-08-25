@@ -20,13 +20,13 @@ public class PlayerCameraManager : MonoBehaviour
 
     void Start()
     {
-        cameraHolderTransform = transform;
-        mainCamera.fieldOfView = normalFOV;
         mainCamera.nearClipPlane = 0.1f;
+        mainCamera.fieldOfView = normalFOV;
+        cameraHolderTransform = transform;
+        theCameraRotationMultiplier = normalCameraRotationMultiplier;
         pauseMenuManagerScript = userInterfaceObject.GetComponent<PauseMenuManager>();
         playerSpawnAndSaveManagerScript = userInterfaceObject.GetComponent<PlayerSpawnAndSaveManager>();
         playerStatusManagerScript = userInterfaceObject.GetComponent<PlayerStatusManager>();
-        theCameraRotationMultiplier = normalCameraRotationMultiplier;
     }
 
     void Update()

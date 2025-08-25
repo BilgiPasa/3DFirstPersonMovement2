@@ -44,6 +44,7 @@ public class PlayerMovementManager : MonoBehaviour
     [HideInInspector] public bool jumping, groundedForAll;
     const float groundedSphereRadius = 0.3f, jumpingCooldown = 0.1f, jumpAgainCooldown = 0.3f;
     int normalJumpForce = 21, bouncyJumpForce = 56, maxFallWithoutBouncyJumpCalculationByThisScript = 5, maxFallWithoutFallDamage = 15, maxFallWithoutParticles = 5;
+    float gravityForce = Physics.gravity.magnitude;
     bool readyToJump = true, jumpingInput, groundedForBouncyEnvironment, playerIsTouchingToAnyGround, falling, wasFalling, wasGrounded, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment;
 
     [Header("Keybinds")]
@@ -67,10 +68,10 @@ public class PlayerMovementManager : MonoBehaviour
     {
         playerTransform = transform;
         playerColliderCapsuleCollider.radius = playerWidthRadius;
-        cameraPositionLocalPositionWhenNotCrouched = ifPlayerHeightWouldBe2AndPlayerTransformWouldBeVector3ZeroThenYLocalPositionOfCameraPositionWouldBe * playerHeight / 2;
         cameraPositionLocalPositionWhenCrouched = ifPlayerHeightWouldBe2AndPlayerTransformWouldBeVector3ZeroThenYLocalPositionOfCameraPositionWouldBe * crouchHeight / 2;
-        frontBumpingDetectorLocalScaleWhenNotCrouched = ifPlayerHeightWouldBe2ThenYLocalScaleOfFrontBumpingDetectorWouldBe * playerHeight / 2;
         frontBumpingDetectorLocalScaleWhenCrouched = ifPlayerHeightWouldBe2ThenYLocalScaleOfFrontBumpingDetectorWouldBe * crouchHeight / 2;
+        cameraPositionLocalPositionWhenNotCrouched = ifPlayerHeightWouldBe2AndPlayerTransformWouldBeVector3ZeroThenYLocalPositionOfCameraPositionWouldBe * playerHeight / 2;
+        frontBumpingDetectorLocalScaleWhenNotCrouched = ifPlayerHeightWouldBe2ThenYLocalScaleOfFrontBumpingDetectorWouldBe * playerHeight / 2;
         playerRigidbody = GetComponent<Rigidbody>();
         playerRigidbody.interpolation = RigidbodyInterpolation.Interpolate;
         playerRigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
@@ -457,11 +458,11 @@ public class PlayerMovementManager : MonoBehaviour
 
             if (!crouching && playerRigidbody.linearVelocity.y > minimum)
             {
-                playerRigidbody.AddForce(new Vector3(0, 50, 0), ForceMode.Acceleration); // Change the "50" value if you change the gravity value.
+                playerRigidbody.AddForce(new Vector3(0, gravityForce - 10, 0), ForceMode.Acceleration);
             }
             else if (playerStatusManagerScript.sliding)
             {
-                playerRigidbody.AddForce(new Vector3(0, 30, 0), ForceMode.Acceleration); // Change the "30" value if you change the gravity value.
+                playerRigidbody.AddForce(new Vector3(0, gravityForce - 30, 0), ForceMode.Acceleration);
             }
         }
         else
