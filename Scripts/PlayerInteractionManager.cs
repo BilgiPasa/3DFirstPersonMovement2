@@ -58,8 +58,8 @@ public class PlayerInteractionManager : MonoBehaviour
 
         if (removingPinKeyPressedWhileHoldingGranade)
         {
-            RemovingPinOfHoldedGranage();
             removingPinKeyPressedWhileHoldingGranade = false;
+            RemovingPinOfHoldedGranage();
         }
     }
 
