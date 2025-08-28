@@ -13,7 +13,7 @@ public class PlayerInteractionManager : MonoBehaviour
     [HideInInspector] public bool canReleaseHoldedObjectWhenTouchedToPlayer;
     [HideInInspector] public Rigidbody grabbedObjectRigidbody;
     const int normalHoldingObjectDistance = 4, movingHoldingObjectWithScrollWheelSpeed = 4, holdForce = 30, maxHoldingObjectCanBeOffsetDistance = 10, maxHoldingObjectDistance = 6, minHoldingObjectDistance = 3;
-    const float grabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier = 0.3f, canReleaseHoldedObjectWhenTouchedToPlayerCooldown = 0.06f, holdAgainCooldown = 0.6f, crosshairBeingRedTime = 0.3f;
+    const float grabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier = 0.3f, canReleaseHoldedObjectWhenTouchedToPlayerCooldown = 0.1f, holdAgainCooldown = 0.6f, crosshairBeingRedTime = 0.4f;
     float tempHoldingObjectDistance;
     bool readyToHold = true, interacionKeyPressed, throwKeyPressedWhileHoldingAnObject;
     Transform grabbedObjectTransform, mainCameraTransform;
