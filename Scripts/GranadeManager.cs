@@ -49,15 +49,15 @@ public class GranadeManager : MonoBehaviour
             {
                 objectRigidbodyThatEffectedFromExplosion = collider.GetComponentInParent<Rigidbody>();
 
-                if (objectRigidbodyThatEffectedFromExplosion)
+                if (objectRigidbodyThatEffectedFromExplosion) // Hareket edebilen ama Collider'ın bulunduğu yerde değil de Parent'ında Rigidbody'si bulunan objeler için
                 {
                     objectRigidbodyThatEffectedFromExplosion.AddExplosionForce(explosionForce, granadeTransform.position, explosionRadius);
 
-                    if (objectRigidbodyThatEffectedFromExplosion.gameObject.tag == "Player") // For player
+                    if (objectRigidbodyThatEffectedFromExplosion.gameObject.tag == "Player") // Oyuncu için
                     {
                         playerInteractionManagerScriptFromPlayerThatEffectedFromExplosion = objectRigidbodyThatEffectedFromExplosion.GetComponent<PlayerInteractionManager>();
 
-                        if (granadeRigidbody.Equals(playerInteractionManagerScriptFromPlayerThatEffectedFromExplosion.grabbedObjectRigidbody)) // To relese the object that player is holding when the object explodes
+                        if (granadeRigidbody.Equals(playerInteractionManagerScriptFromPlayerThatEffectedFromExplosion.grabbedObjectRigidbody)) // Oyuncunun elinde tutmuş olduğu bu patlayan objeyi bırakması için
                         {
                             playerInteractionManagerScriptFromPlayerThatEffectedFromExplosion.ReleaseObject();
                         }
@@ -66,7 +66,7 @@ public class GranadeManager : MonoBehaviour
                     }
                 }
             }
-            else // For movable objects
+            else // Hareket edebilen ve Collider'ın bulunduğu yerde Rigidbody'si bulunan objeler için
             {
                 objectRigidbodyThatEffectedFromExplosion.AddExplosionForce(explosionForce, granadeTransform.position, explosionRadius);
             }
