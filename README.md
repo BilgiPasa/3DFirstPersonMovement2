@@ -1,6 +1,8 @@
 # 3DFirstPersonMovement2
 
-Yaptığım bu hareket sistemi hakkındaki videomu izlemek istiyorsan: https://youtu.be/6q3XmCUo-m0
+Bu projedeki hareket sistemi hakkındaki videom: https://youtu.be/6q3XmCUo-m0
+
+Bu projedeki obje tutma sistemi hakkındaki videom: https://youtu.be/gGU53Ct5m6E
 
 Projemi denemek isterseniz, "Releases" kısmında projemin çalıştırma dosyaları (Windows için .exe, Linux için .x86_64 dosyaları) bulunuyor.
 
