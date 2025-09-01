@@ -253,7 +253,7 @@ public class PlayerMovementManager : MonoBehaviour
     void Jump()
     {
         if (jumpingInput && readyToJump && !jumping)
-        {
+        {// Hatıladığım kadarıyla; justBeforeGrounded şeylerini eklememin sebebi bir bug'ı engellemek içindi. O bug ise hatırladığım kadarıyla eğer ki bouncy bir yüzeyden zıplayıp sonrasında bir duvara değerek normal zemine düşersen ve düşerken de zıplama tuşuna basılı tutarsan, normal zeminde zıpladığında sanki bouncy zeminde zıplıyormuşsun gibi çok zıplıyorsun.
             if (justBeforeGroundedForNormalEnvironment && ((!groundedForAll && coyoteTimeCounter > 0) || (groundedForAll && !groundedForBouncyEnvironment && playerIsTouchingToAnyGround)))
             {
                 Jumping(normalJumpForce);
