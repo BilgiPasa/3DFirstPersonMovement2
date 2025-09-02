@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerCameraManager : MonoBehaviour
 {
@@ -8,11 +9,12 @@ public class PlayerCameraManager : MonoBehaviour
     [HideInInspector] public float xRotation, yRotation, normalFOV;
     int normalCameraRotationMultiplier = 1, zoomingSpeed = 10;
     float zoomedCameraRotationMultiplier = 0.5f, theCameraRotationMultiplier, sprintFOV, zoomFOV, zoomSprintFOV;
-    KeyCode zoomKey = KeyCode.C;
+    bool zoomingInput;
     Transform cameraHolderTransform;
     PauseMenuManager pauseMenuManagerScript;
     PlayerSpawnAndSaveManager playerSpawnAndSaveManagerScript;
     PlayerStatusManager playerStatusManagerScript;
+    InputSystem_Actions inputActions;
     [SerializeField] GameObject userInterfaceObject;
     [SerializeField] Transform playerColliderTransform, cameraPositionTransform;
     [SerializeField] Camera mainCamera;
@@ -27,6 +29,26 @@ public class PlayerCameraManager : MonoBehaviour
         pauseMenuManagerScript = userInterfaceObject.GetComponent<PauseMenuManager>();
         playerSpawnAndSaveManagerScript = userInterfaceObject.GetComponent<PlayerSpawnAndSaveManager>();
         playerStatusManagerScript = userInterfaceObject.GetComponent<PlayerStatusManager>();
+        inputActions = new InputSystem_Actions();
+        inputActions.Player.Enable();
+        inputActions.Player.CameraZoom.performed += CameraZoomInputPerformed;
+        inputActions.Player.CameraZoom.canceled += CameraZoomInputCancelled;
+    }
+
+    void CameraZoomInputPerformed(InputAction.CallbackContext context)
+    {
+        if (!pauseMenuManagerScript.gamePaused && !playerSpawnAndSaveManagerScript.playerDied)
+        {
+            zoomingInput = true;
+        }
+    }
+
+    void CameraZoomInputCancelled(InputAction.CallbackContext context)
+    {
+        if (!pauseMenuManagerScript.gamePaused && !playerSpawnAndSaveManagerScript.playerDied)
+        {
+            zoomingInput = false;
+        }
     }
 
     void Update()
@@ -56,8 +78,8 @@ public class PlayerCameraManager : MonoBehaviour
     {
         if (!playerSpawnAndSaveManagerScript.playerDied)
         {
-            yRotation += Input.GetAxisRaw("Mouse X") * sensitivity * 0.02f * theCameraRotationMultiplier;
-            xRotation -= Input.GetAxisRaw("Mouse Y") * sensitivity * 0.02f * theCameraRotationMultiplier;
+            yRotation += inputActions.Player.Look.ReadValue<Vector2>().x * sensitivity * theCameraRotationMultiplier * 0.001f;
+            xRotation -= inputActions.Player.Look.ReadValue<Vector2>().y * sensitivity * theCameraRotationMultiplier * 0.001f;
             xRotation = Mathf.Clamp(xRotation, -90, 90);
         }
 
@@ -67,7 +89,7 @@ public class PlayerCameraManager : MonoBehaviour
 
     void FOVChange()
     {
-        if (!Input.GetKey(zoomKey))
+        if (!zoomingInput)
         {
             theCameraRotationMultiplier = normalCameraRotationMultiplier;
 

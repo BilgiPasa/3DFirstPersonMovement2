@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class PlayerInteractionManager : MonoBehaviour
 {
@@ -12,9 +13,9 @@ public class PlayerInteractionManager : MonoBehaviour
     [Header("Holding and Throwing")]
     [HideInInspector] public bool canReleaseHoldedObjectWhenTouchedToPlayer;
     [HideInInspector] public Rigidbody grabbedObjectRigidbody;
-    const int normalHoldingObjectDistance = 4, movingHoldingObjectWithScrollWheelSpeed = 4, holdForce = 30, maxHoldingObjectCanBeOffsetDistance = 10, maxHoldingObjectDistance = 6, minHoldingObjectDistance = 3;
-    const float grabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier = 0.3f, canReleaseHoldedObjectWhenTouchedToPlayerCooldown = 0.1f, holdAgainCooldown = 0.6f, crosshairBeingRedTime = 0.3f;
-    float tempHoldingObjectDistance;
+    const int normalHoldingObjectDistance = 4, holdForce = 30, maxHoldingObjectCanBeOffsetDistance = 10, maxHoldingObjectDistance = 6, minHoldingObjectDistance = 3;
+    const float movingHoldingObjectWithScrollWheelSpeed = 0.4f, grabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier = 0.3f, canReleaseHoldedObjectWhenTouchedToPlayerCooldown = 0.1f, holdAgainCooldown = 0.6f, crosshairBeingRedTime = 0.3f;
+    float tempHoldingObjectDistance, mouseScrollY;
     bool readyToHold = true, interacionKeyPressed, throwKeyPressedWhileHoldingAnObject;
     Transform grabbedObjectTransform, mainCameraTransform;
     RaycastHit holdInteractionHit;
@@ -22,11 +23,9 @@ public class PlayerInteractionManager : MonoBehaviour
     [Header("Granade")]
     bool removingPinKeyPressedWhileHoldingGranade;
 
-    [Header("Keybinds")]
-    KeyCode interactionKey = KeyCode.E, throwKey = KeyCode.Mouse0, removingPinKey = KeyCode.Mouse1;
-
     [Header("Other Things")]
     PlayerMovementManager playerMovementManagerScript;
+    InputSystem_Actions inputActions;
 
     [Header("Inputs")]
     [SerializeField] int throwForce = 60;
@@ -42,13 +41,47 @@ public class PlayerInteractionManager : MonoBehaviour
         crosshairImage.color = Color.black;
         tempHoldingObjectDistance = normalHoldingObjectDistance;
         playerMovementManagerScript = GetComponent<PlayerMovementManager>();
+        inputActions = new InputSystem_Actions();
+        inputActions.Player.Enable();
+        inputActions.Player.Interact.performed += InteractInputPerformed;
+        inputActions.Player.Throw.performed += ThrowInputPerformed;
+        inputActions.Player.RemovePin.performed += RemovePinInputPerformed;
+    }
+
+    void InteractInputPerformed(InputAction.CallbackContext context)
+    {
+        if (!pauseMenuManagerScript.gamePaused)
+        {
+            interacionKeyPressed = true;
+        }
+    }
+
+    void ThrowInputPerformed(InputAction.CallbackContext context)
+    {
+        if (!pauseMenuManagerScript.gamePaused && grabbedObjectRigidbody)
+        {
+            throwKeyPressedWhileHoldingAnObject = true;
+        }
+    }
+
+    void RemovePinInputPerformed(InputAction.CallbackContext context)
+    {
+        if (!pauseMenuManagerScript.gamePaused && grabbedObjectRigidbody && grabbedObjectRigidbody.GetComponent<GranadeManager>())
+        {
+            removingPinKeyPressedWhileHoldingGranade = true;
+        }
     }
 
     void Update()
     {
-        if (!pauseMenuManagerScript.gamePaused)
+        if (!pauseMenuManagerScript.gamePaused && grabbedObjectRigidbody)
         {
-            InteractionInputs();
+            mouseScrollY = inputActions.Player.MouseWheel.ReadValue<float>();
+
+            if (mouseScrollY != 0)
+            {
+                tempHoldingObjectDistance += movingHoldingObjectWithScrollWheelSpeed * mouseScrollY;
+            }
         }
     }
 
@@ -60,32 +93,6 @@ public class PlayerInteractionManager : MonoBehaviour
         {
             removingPinKeyPressedWhileHoldingGranade = false;
             RemovingPinOfHoldedGranage();
-        }
-    }
-
-    void InteractionInputs()
-    {
-        if (Input.GetKeyDown(interactionKey))
-        {
-            interacionKeyPressed = true;
-        }
-
-        if (grabbedObjectRigidbody)
-        {
-            if (Input.GetAxis("Mouse ScrollWheel") != 0)
-            {
-                tempHoldingObjectDistance += movingHoldingObjectWithScrollWheelSpeed * Input.GetAxis("Mouse ScrollWheel");
-            }
-
-            if (Input.GetKeyDown(throwKey))
-            {
-                throwKeyPressedWhileHoldingAnObject = true;
-            }
-
-            if (Input.GetKeyDown(removingPinKey) && grabbedObjectRigidbody.GetComponent<GranadeManager>())
-            {
-                removingPinKeyPressedWhileHoldingGranade = true;
-            }
         }
     }
 

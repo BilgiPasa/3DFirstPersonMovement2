@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Linq;
+using UnityEngine.InputSystem;
 
 public class PauseMenuManager : MonoBehaviour
 {
@@ -11,11 +12,12 @@ public class PauseMenuManager : MonoBehaviour
     [HideInInspector] public bool gamePaused, dynamicFOV, settingsMenuOpened;
     int[] last5FPS = new int[5];
     int counter;
-    const KeyCode escapeKey = KeyCode.Escape;
+    bool cancelKeyPressed;
     RectTransform FPSTextRectTransform;
     TextMeshProUGUI speedText, FPSText;
     PlayerSpawnAndSaveManager playerSpawnAndSaveManagerScript;
     PlayerStatusManager playerStatusManagerScript;
+    InputSystem_Actions inputActions;
     [SerializeField] GameObject pauseMenuObject, settingsMenuObject, speedTextObject, FPSTextObject;
     [SerializeField] TextMeshProUGUI FOVText, mouseSensitivityText, maxFPSText;
     [SerializeField] Toggle dynamicFOVToggle, speedTextToggle, increasedSensitivityToggle, showFPSToggle;
@@ -29,6 +31,9 @@ public class PauseMenuManager : MonoBehaviour
         FPSText = FPSTextObject.GetComponent<TextMeshProUGUI>();
         playerSpawnAndSaveManagerScript = GetComponent<PlayerSpawnAndSaveManager>();
         playerStatusManagerScript = GetComponent<PlayerStatusManager>();
+        inputActions = new InputSystem_Actions();
+        inputActions.UI.Enable();
+        inputActions.UI.Cancel.performed += CancelInputPerformed;
 
         if (PlayerPrefs.GetInt("FOV") == 0)
         {
@@ -111,6 +116,11 @@ public class PauseMenuManager : MonoBehaviour
         speedText.text = "Speed: 0";
     }
 
+    void CancelInputPerformed(InputAction.CallbackContext context)
+    {
+        cancelKeyPressed = true;
+    }
+
     void Update()
     {
         if (!(gamePaused || playerSpawnAndSaveManagerScript.playerDied))
@@ -145,8 +155,10 @@ public class PauseMenuManager : MonoBehaviour
             return;
         }
 
-        if (Input.GetKeyDown(escapeKey))
+        if (cancelKeyPressed)
         {
+            cancelKeyPressed = false;
+
             if (!settingsMenuObject.activeSelf)
             {
                 if (!gamePaused)

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 
@@ -16,14 +17,14 @@ public class PlayerMovementManager : MonoBehaviour
 
     [Header("Horizontal and Vertical")]
     [HideInInspector] public int vertical, horizontal, runSpeed = 12;
-    [HideInInspector] public bool onSlope, playerIsStandingOnMovingGround;
+    [HideInInspector] public bool runningInput, onSlope, playerIsStandingOnMovingGround;
     [HideInInspector] public Rigidbody objectRigidbodyThatPlayerIsStandingOn;
     const int normalGroundLinearDamping = 10; // Don't change this value if not necessary.
     const float theMoveMultiplier = 625.005f, airMoveMultiplier = 0.16f, airLinearDamping = 0.04f, bouncyGroundLinearDamping = 12.5f, minimum = 0.1f; // Don't change these values if not necessary.
     int normalMoveSpeed = 9, crouchSpeed = 6, theMoveSpeed;
     float flatRotationAngleInAir;
     bool normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum;
-    Vector2 flatVelocityRelativeToPlayerInAir, normalizedMoveDirectionRelativeToPlayerInAir, normalizedMoveDirectionAsVector2InAir;
+    Vector2 inputtedVector2, flatVelocityRelativeToPlayerInAir, normalizedMoveDirectionRelativeToPlayerInAir, normalizedMoveDirectionAsVector2InAir;
     Vector3 normalizedMoveDirection, normalizedSlopeMoveDirection;
     Transform playerTransform;
     Rigidbody playerRigidbody;
@@ -33,7 +34,7 @@ public class PlayerMovementManager : MonoBehaviour
     [HideInInspector] public float playerHeight = 3, crouchHeight = 2, cameraPositionLocalPositionWhenNotCrouched, cameraPositionLocalPositionWhenCrouched, frontBumpingDetectorLocalScaleWhenNotCrouched, frontBumpingDetectorLocalScaleWhenCrouched;
     [HideInInspector] public bool crouching;
     const float playerWidthRadius = 0.5f, ifPlayerHeightWouldBe2AndPlayerTransformWouldBeVector3ZeroThenYLocalPositionOfCameraPositionWouldBe = 0.7f, ifPlayerHeightWouldBe2ThenYLocalScaleOfFrontBumpingDetectorWouldBe = 1.25f;
-    bool dontUncrouch;
+    bool crouchingInput, dontUncrouch;
 
     [Header("Coyote Time")]
     const float coyoteTime = 0.15f;
@@ -47,15 +48,13 @@ public class PlayerMovementManager : MonoBehaviour
     float gravityForce = Physics.gravity.magnitude;
     bool readyToJump = true, jumpingInput, groundedForBouncyEnvironment, playerIsTouchingToAnyGround, falling, wasFalling, wasGrounded, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment;
 
-    [Header("Keybinds")]
-    KeyCode forwardKey = KeyCode.W, leftKey = KeyCode.A, backwardKey = KeyCode.S, rightKey = KeyCode.D, jumpKey = KeyCode.Space, crouchKey = KeyCode.LeftShift;
-
     [Header("Other Things")]
     [HideInInspector] public int playerHealthDecrease;
     PlayerInteractionManager playerInteractionManagerScript;
     PauseMenuManager pauseMenuManagerScript;
     PlayerSpawnAndSaveManager playerSpawnAndSaveManagerScript;
     PlayerStatusManager playerStatusManagerScript;
+    InputSystem_Actions inputActions;
 
     [Header("Inputs")]
     [SerializeField] GameObject userInterfaceObject;
@@ -82,11 +81,97 @@ public class PlayerMovementManager : MonoBehaviour
         playerStatusManagerScript = userInterfaceObject.GetComponent<PlayerStatusManager>();
     }
 
+    void Start()
+    {
+        inputActions = new InputSystem_Actions();
+        inputActions.Player.Enable();
+        inputActions.Player.Jump.performed += JumpInputPerformed;
+        inputActions.Player.Jump.canceled += JumpInputCancelled;
+        inputActions.Player.Run.performed += RunInputPerformed;
+        inputActions.Player.Run.canceled += RunInputCancelled;
+        inputActions.Player.Crouch.performed += CrouchInputPerformed;
+        inputActions.Player.Crouch.canceled += CrouchInputCancelled;
+    }
+
+    void RunInputPerformed(InputAction.CallbackContext context)
+    {
+        if (!pauseMenuManagerScript.gamePaused)
+        {
+            runningInput = true;
+        }
+    }
+
+    void RunInputCancelled(InputAction.CallbackContext context)
+    {
+        if (!pauseMenuManagerScript.gamePaused)
+        {
+            runningInput = false;
+        }
+    }
+
+    void JumpInputPerformed(InputAction.CallbackContext context)
+    {
+        if (!pauseMenuManagerScript.gamePaused)
+        {
+            jumpingInput = true;
+        }
+    }
+
+    void JumpInputCancelled(InputAction.CallbackContext context)
+    {
+        if (!pauseMenuManagerScript.gamePaused)
+        {
+            jumpingInput = false;
+        }
+    }
+
+    void CrouchInputPerformed(InputAction.CallbackContext context)
+    {
+        if (!pauseMenuManagerScript.gamePaused)
+        {
+            crouchingInput = true;
+        }
+    }
+
+    void CrouchInputCancelled(InputAction.CallbackContext context)
+    {
+        if (!pauseMenuManagerScript.gamePaused)
+        {
+            crouchingInput = false;
+        }
+    }
+
     void Update()
     {
         if (!pauseMenuManagerScript.gamePaused)
-        {// I didn't added the if not player died condition because if player dies, this script does not work because it is attached to the player.
-            MovementInputs();
+        {
+            inputtedVector2 = inputActions.Player.Walk.ReadValue<Vector2>();
+
+            if (inputtedVector2.y > minimum)
+            {
+                vertical = 1;
+            }
+            else if (inputtedVector2.y < -minimum)
+            {
+                vertical = -1;
+            }
+            else
+            {
+                vertical = 0;
+            }
+
+            if (inputtedVector2.x > minimum)
+            {
+                horizontal = 1;
+            }
+            else if (inputtedVector2.x < -minimum)
+            {
+                horizontal = -1;
+            }
+            else
+            {
+                horizontal = 0;
+            }
         }
     }
 
@@ -101,38 +186,6 @@ public class PlayerMovementManager : MonoBehaviour
         Movement();
         GravityAndSpeedControl();
         WasFallingAndWasGroundedCheck();
-    }
-
-    void MovementInputs()
-    {
-        // You can use Input.GetAxis... for inputs. But, I wanted to build horizontal and vertical input myself.
-        if (Input.GetKey(forwardKey) && !Input.GetKey(backwardKey))
-        {
-            vertical = 1;
-        }
-        else if (!Input.GetKey(forwardKey) && Input.GetKey(backwardKey))
-        {
-            vertical = -1;
-        }
-        else
-        {
-            vertical = 0;
-        }
-
-        if (Input.GetKey(rightKey) && !Input.GetKey(leftKey))
-        {
-            horizontal = 1;
-        }
-        else if (!Input.GetKey(rightKey) && Input.GetKey(leftKey))
-        {
-            horizontal = -1;
-        }
-        else
-        {
-            horizontal = 0;
-        }
-
-        jumpingInput = Input.GetKey(jumpKey);
     }
 
     void GroundedCheckAndFallingCheckAndBouncyJumpAndFallDamageAndCoyoteTime()
@@ -295,7 +348,7 @@ public class PlayerMovementManager : MonoBehaviour
             return;
         }
 
-        if (!crouching && Input.GetKey(crouchKey))
+        if (!crouching && crouchingInput)
         {
             playerColliderCapsuleCollider.height = crouchHeight;
             cameraPositionTransform.localPosition = new Vector3(cameraPositionTransform.localPosition.x, cameraPositionLocalPositionWhenCrouched, cameraPositionTransform.localPosition.z);
@@ -314,7 +367,7 @@ public class PlayerMovementManager : MonoBehaviour
         {// Bilgi için https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Physics.CheckCapsule.html sitesine bakabilirsin. -0.075f'i de girebildiği ama küçücük bir kısmı CapsuleCollider ile temas ettiği için uncrouch yapamama durumu olmasın diye koydum.
             dontUncrouch = Physics.CheckCapsule(playerTransform.position + new Vector3(0, playerHeight - crouchHeight / 2 - (playerWidthRadius - 0.01f) - 0.075f, 0), playerTransform.position + new Vector3(0, crouchHeight / 2 - (playerWidthRadius - 0.01f), 0), playerWidthRadius - 0.01f, staticNormalLayer | staticBouncyLayer | movableNormalLayer | movableBouncyLayer);
 
-            if (!Input.GetKey(crouchKey) && !dontUncrouch)
+            if (!crouchingInput && !dontUncrouch)
             {
                 if (groundedForAll)
                 {

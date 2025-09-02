@@ -12,7 +12,6 @@ public class PlayerStatusManager : MonoBehaviour
     [HideInInspector] public bool walking, running, jumpingUp, sliding;
     const float minimum = 0.1f;
     float relativeFlatVelocityMagnitude;
-    KeyCode runKey = KeyCode.R;
     Transform playerTransform;
     PlayerSpawnAndSaveManager playerSpawnAndSaveManagerScript;
     PlayerMovementManager playerMovementManagerScript;
@@ -61,11 +60,11 @@ public class PlayerStatusManager : MonoBehaviour
                 sliding = false;
                 walking = (playerMovementManagerScript.vertical != 0 || playerMovementManagerScript.horizontal != 0) && relativeFlatVelocityMagnitude > minimum;
 
-                if (Input.GetKey(runKey) && playerMovementManagerScript.vertical == 1 && walking)
+                if (playerMovementManagerScript.runningInput && playerMovementManagerScript.vertical == 1 && walking)
                 {
                     running = true;
                 }
-                else if (!walking || (playerMovementManagerScript.vertical != 1 && walking) || (playerFrontBumpingManagerScript.frontBumping && !Input.GetKey(runKey)))
+                else if (!walking || (playerMovementManagerScript.vertical != 1 && walking) || (playerFrontBumpingManagerScript.frontBumping && !playerMovementManagerScript.runningInput))
                 {
                     running = false;
                 }
