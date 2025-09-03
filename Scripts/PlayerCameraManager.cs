@@ -45,10 +45,7 @@ public class PlayerCameraManager : MonoBehaviour
 
     void CameraZoomInputCancelled(InputAction.CallbackContext context)
     {
-        if (!pauseMenuManagerScript.gamePaused && !playerSpawnAndSaveManagerScript.playerDied)
-        {
-            zoomingInput = false;
-        }
+        zoomingInput = false;
     }
 
     void Update()

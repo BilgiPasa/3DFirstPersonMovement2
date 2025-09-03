@@ -87,26 +87,10 @@ public class PlayerMovementManager : MonoBehaviour
         inputActions.Player.Enable();
         inputActions.Player.Jump.performed += JumpInputPerformed;
         inputActions.Player.Jump.canceled += JumpInputCancelled;
-        inputActions.Player.Run.performed += RunInputPerformed;
-        inputActions.Player.Run.canceled += RunInputCancelled;
         inputActions.Player.Crouch.performed += CrouchInputPerformed;
         inputActions.Player.Crouch.canceled += CrouchInputCancelled;
-    }
-
-    void RunInputPerformed(InputAction.CallbackContext context)
-    {
-        if (!pauseMenuManagerScript.gamePaused)
-        {
-            runningInput = true;
-        }
-    }
-
-    void RunInputCancelled(InputAction.CallbackContext context)
-    {
-        if (!pauseMenuManagerScript.gamePaused)
-        {
-            runningInput = false;
-        }
+        inputActions.Player.Run.performed += RunInputPerformed;
+        inputActions.Player.Run.canceled += RunInputCancelled;
     }
 
     void JumpInputPerformed(InputAction.CallbackContext context)
@@ -119,10 +103,7 @@ public class PlayerMovementManager : MonoBehaviour
 
     void JumpInputCancelled(InputAction.CallbackContext context)
     {
-        if (!pauseMenuManagerScript.gamePaused)
-        {
-            jumpingInput = false;
-        }
+        jumpingInput = false;
     }
 
     void CrouchInputPerformed(InputAction.CallbackContext context)
@@ -135,10 +116,20 @@ public class PlayerMovementManager : MonoBehaviour
 
     void CrouchInputCancelled(InputAction.CallbackContext context)
     {
+        crouchingInput = false;
+    }
+
+    void RunInputPerformed(InputAction.CallbackContext context)
+    {
         if (!pauseMenuManagerScript.gamePaused)
         {
-            crouchingInput = false;
+            runningInput = true;
         }
+    }
+
+    void RunInputCancelled(InputAction.CallbackContext context)
+    {
+        runningInput = false;
     }
 
     void Update()
