@@ -5,7 +5,7 @@ using TMPro;
 public class PlayerStatusManager : MonoBehaviour
 {
     //* Attach this script to the UserInterface game object.
-    //* HealthText'te Drop Shadow materyalinin Face'inin dilate'sini 0.2 ve Outline'ının thickness'ını 0.2 yap.
+    //* "OtherIndicatiors"ta "PlayerHealth"te "HealthText"te "Drop Shadow" materyalinin "Face"inin "Dilate"sini 0.2 ve "Outline"ının "Thickness"ını 0.2 yap.
 
     [HideInInspector] public int playerHealth;
     [HideInInspector] public float flatVelocityMagnitude;

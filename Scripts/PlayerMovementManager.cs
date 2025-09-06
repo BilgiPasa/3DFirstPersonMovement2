@@ -16,13 +16,13 @@ public class PlayerMovementManager : MonoBehaviour
     //* Make sure that movable objects have a Rigidbody.
 
     [Header("Horizontal and Vertical")]
-    [HideInInspector] public int vertical, horizontal, runSpeed = 12;
+    [HideInInspector] public int normalMoveSpeed = 9, vertical, horizontal;
+    [HideInInspector] public float crouchSpeed, runSpeed;
     [HideInInspector] public bool runningInput, onSlope, playerIsStandingOnMovingGround;
     [HideInInspector] public Rigidbody objectRigidbodyThatPlayerIsStandingOn;
     const int normalGroundLinearDamping = 10; // Don't change this value if not necessary.
     const float theMoveMultiplier = 625.005f, airMoveMultiplier = 0.16f, airLinearDamping = 0.04f, bouncyGroundLinearDamping = 12.5f, minimum = 0.1f; // Don't change these values if not necessary.
-    int normalMoveSpeed = 9, crouchSpeed = 6, theMoveSpeed;
-    float flatRotationAngleInAir;
+    float theMoveSpeed, flatRotationAngleInAir;
     bool normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum;
     Vector2 inputtedVector2, flatVelocityRelativeToPlayerInAir, normalizedMoveDirectionRelativeToPlayerInAir, normalizedMoveDirectionAsVector2InAir;
     Vector3 normalizedMoveDirection, normalizedSlopeMoveDirection;
@@ -41,10 +41,11 @@ public class PlayerMovementManager : MonoBehaviour
     float coyoteTimeCounter;
 
     [Header("Jump And Fall")]
-    [HideInInspector] public float startOfFall, endOfFall, fallDistance;
-    [HideInInspector] public bool jumping, groundedForAll;
+    [HideInInspector] public int normalJumpForce = 21, bouncyJumpForce = 56;
+    [HideInInspector] public float startOfFall, endOfFall, fallDistance, maxFallWithoutFallDamage = 15;
+    [HideInInspector] public bool jumping, groundedForAll, noFallDamage;
     const float groundedSphereRadius = 0.3f, jumpingCooldown = 0.1f, jumpAgainCooldown = 0.3f;
-    int normalJumpForce = 21, bouncyJumpForce = 56, maxFallWithoutBouncyJumpCalculationByThisScript = 5, maxFallWithoutFallDamage = 15, maxFallWithoutParticles = 5;
+    int maxFallWithoutBouncyJumpCalculationByThisScript = 5, maxFallWithoutParticles = 5;
     float gravityForce = Physics.gravity.magnitude;
     bool readyToJump = true, jumpingInput, groundedForBouncyEnvironment, playerIsTouchingToAnyGround, falling, wasFalling, wasGrounded, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment;
 
@@ -66,6 +67,8 @@ public class PlayerMovementManager : MonoBehaviour
     void Awake()
     {
         playerTransform = transform;
+        runSpeed = normalMoveSpeed * 4 / 3;
+        crouchSpeed = normalMoveSpeed * 2 / 3;
         playerColliderCapsuleCollider.radius = playerWidthRadius;
         cameraPositionLocalPositionWhenCrouched = ifPlayerHeightWouldBe2AndPlayerTransformWouldBeVector3ZeroThenYLocalPositionOfCameraPositionWouldBe * crouchHeight / 2;
         frontBumpingDetectorLocalScaleWhenCrouched = ifPlayerHeightWouldBe2ThenYLocalScaleOfFrontBumpingDetectorWouldBe * crouchHeight / 2;
@@ -73,7 +76,7 @@ public class PlayerMovementManager : MonoBehaviour
         frontBumpingDetectorLocalScaleWhenNotCrouched = ifPlayerHeightWouldBe2ThenYLocalScaleOfFrontBumpingDetectorWouldBe * playerHeight / 2;
         playerRigidbody = GetComponent<Rigidbody>();
         playerRigidbody.interpolation = RigidbodyInterpolation.Interpolate;
-        playerRigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        playerRigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         playerRigidbody.constraints = RigidbodyConstraints.FreezeRotation;
         playerInteractionManagerScript = GetComponent<PlayerInteractionManager>();
         pauseMenuManagerScript = userInterfaceObject.GetComponent<PauseMenuManager>();
@@ -269,9 +272,9 @@ public class PlayerMovementManager : MonoBehaviour
                 Jumping(bouncyJumpForce);
             }
 
-            if (fallDistance > maxFallWithoutFallDamage && groundedForAll && !groundedForBouncyEnvironment && !playerSpawnAndSaveManagerScript.spawnProtection)
+            if (fallDistance > maxFallWithoutFallDamage && groundedForAll && !groundedForBouncyEnvironment && !playerSpawnAndSaveManagerScript.spawnProtection && !noFallDamage)
             {
-                playerHealthDecrease += (int)fallDistance - maxFallWithoutFallDamage;
+                playerHealthDecrease += (int)(fallDistance - maxFallWithoutFallDamage);
             }
 
             startOfFall = endOfFall = fallDistance = 0;
@@ -438,7 +441,7 @@ public class PlayerMovementManager : MonoBehaviour
                     }
                     else
                     {
-                        if (normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum || normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum)
+                        if ((normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum || normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum) && !(normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum && flatVelocityRelativeToPlayerInAir.y < -minimum) && !(normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum && flatVelocityRelativeToPlayerInAir.y > minimum))
                         {
                             if (flatVelocityRelativeToPlayerInAir.x > theMoveSpeed)
                             {
@@ -457,7 +460,7 @@ public class PlayerMovementManager : MonoBehaviour
                     }
                     else
                     {
-                        if (normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum || normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum)
+                        if ((normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum || normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum) && !(normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum && flatVelocityRelativeToPlayerInAir.x < -minimum) && !(normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum && flatVelocityRelativeToPlayerInAir.x > minimum))
                         {
                             if (flatVelocityRelativeToPlayerInAir.y > theMoveSpeed)
                             {

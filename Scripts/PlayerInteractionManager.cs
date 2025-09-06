@@ -11,6 +11,7 @@ public class PlayerInteractionManager : MonoBehaviour
     //* Make sure that movable objects have a Rigidbody.
 
     [Header("Holding and Throwing")]
+    [HideInInspector] public int throwForce = 60;
     [HideInInspector] public bool canReleaseHoldedObjectWhenTouchedToPlayer;
     [HideInInspector] public Rigidbody grabbedObjectRigidbody;
     const int normalHoldingObjectDistance = 4, holdForce = 30, maxHoldingObjectCanBeOffsetDistance = 10, maxHoldingObjectDistance = 6, minHoldingObjectDistance = 3;
@@ -28,7 +29,6 @@ public class PlayerInteractionManager : MonoBehaviour
     InputSystem_Actions inputActions;
 
     [Header("Inputs")]
-    [SerializeField] int throwForce = 60;
     [SerializeField] Transform holdedObjectPositionTransform;
     [SerializeField] Camera mainCamera;
     [SerializeField] LayerMask movableNormalLayer, movableBouncyLayer;
