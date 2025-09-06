@@ -4,7 +4,7 @@ Bu projedeki hareket sistemi hakkındaki videom: https://youtu.be/6q3XmCUo-m0
 
 Bu projedeki obje tutma sistemi hakkındaki videom: https://youtu.be/gGU53Ct5m6E
 
-Bu projemin Unity Asset Store linki: https://assetstore.unity.com/packages/slug/332112
+Bu projemin Unity Asset Store linki (şu anda yayınlanmadı ama yayınlandığında bulunması gereken link): https://assetstore.unity.com/packages/slug/332112
 
 Eğer ki Unity Asset Store'dan satın almak istemiyorsanız, projemde kullandığım scriptler bu GitHub repo'sunda "Scripts" klasörünün içinde bulunmakta. İsterseniz bu scriptleri kullanarak kendi projenizde hareket sistemi yapabilirsiniz. İsterseniz de, Unity Asset Store'dan projemin asset'ini satın alabilirsiniz.
 
