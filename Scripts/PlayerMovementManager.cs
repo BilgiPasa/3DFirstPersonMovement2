@@ -46,7 +46,6 @@ public class PlayerMovementManager : MonoBehaviour
     [HideInInspector] public bool jumping, groundedForAll, noFallDamage;
     const float groundedSphereRadius = 0.3f, jumpingCooldown = 0.1f, jumpAgainCooldown = 0.3f;
     int maxFallWithoutBouncyJumpCalculationByThisScript = 5, maxFallWithoutParticles = 5;
-    float gravityForce = Physics.gravity.magnitude;
     bool readyToJump = true, jumpingInput, groundedForBouncyEnvironment, playerIsTouchingToAnyGround, falling, wasFalling, wasGrounded, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment;
 
     [Header("Other Things")]
@@ -505,11 +504,11 @@ public class PlayerMovementManager : MonoBehaviour
 
             if (!crouching && playerRigidbody.linearVelocity.y > minimum)
             {
-                playerRigidbody.AddForce(new Vector3(0, gravityForce - 10, 0), ForceMode.Acceleration);
+                playerRigidbody.AddForce(50 * playerTransform.up, ForceMode.Acceleration); // Change this if you change the gravity. (60 - 10 = 50)
             }
             else if (playerStatusManagerScript.sliding)
             {
-                playerRigidbody.AddForce(new Vector3(0, gravityForce - 30, 0), ForceMode.Acceleration);
+                playerRigidbody.AddForce(30 * playerTransform.up, ForceMode.Acceleration); // Change this if you change the gravity. (60 - 30 = 30)
             }
         }
         else
