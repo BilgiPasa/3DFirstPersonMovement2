@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class ExplosionEffectManager : MonoBehaviour
 {
+    //* Attach this script to the explosion effect prefab that you are using for explodable (granade) objects.
+
     void Start()
     {
         StartCoroutine(destroyAfterExplosionEnds());

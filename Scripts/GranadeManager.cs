@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class GranadeManager : MonoBehaviour
 {
+    //* Attach this script to explodable (granade) objects.
+
     [HideInInspector] public bool removePin;
     int delaySeconds = 1, explosionRadius = 15, explosionForce = 2000;
     bool pimRemoved;
