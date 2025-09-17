@@ -14,8 +14,8 @@ public class PlayerInteractionManager : MonoBehaviour
     [HideInInspector] public int throwForce = 60;
     [HideInInspector] public bool canReleaseHoldedObjectWhenTouchedToPlayer;
     [HideInInspector] public Rigidbody grabbedObjectRigidbody;
-    const int normalHoldingObjectDistance = 4, holdForce = 30, maxHoldingObjectCanBeOffsetDistance = 10, maxHoldingObjectDistance = 6, minHoldingObjectDistance = 3;
-    const float movingHoldingObjectWithScrollWheelSpeed = 0.4f, grabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier = 0.3f, canReleaseHoldedObjectWhenTouchedToPlayerCooldown = 0.1f, holdAgainCooldown = 0.6f, crosshairBeingRedTime = 0.3f;
+    const int NormalHoldingObjectDistance = 4, HoldForce = 30, MaxHoldingObjectCanBeOffsetDistance = 10, MaxHoldingObjectDistance = 6, MinHoldingObjectDistance = 3;
+    const float MovingHoldingObjectWithScrollWheelSpeed = 0.4f, GrabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier = 0.3f, CanReleaseHoldedObjectWhenTouchedToPlayerCooldown = 0.1f, HoldAgainCooldown = 0.6f, CrosshairBeingRedTime = 0.3f;
     float tempHoldingObjectDistance, mouseScrollY;
     bool readyToHold = true, interacionKeyPressed, throwKeyPressedWhileHoldingAnObject;
     Transform grabbedObjectTransform, mainCameraTransform;
@@ -39,7 +39,7 @@ public class PlayerInteractionManager : MonoBehaviour
     {
         mainCameraTransform = mainCamera.transform;
         crosshairImage.color = Color.black;
-        tempHoldingObjectDistance = normalHoldingObjectDistance;
+        tempHoldingObjectDistance = NormalHoldingObjectDistance;
         playerMovementManagerScript = GetComponent<PlayerMovementManager>();
         inputActions = new InputSystem_Actions();
         inputActions.Player.Enable();
@@ -80,7 +80,7 @@ public class PlayerInteractionManager : MonoBehaviour
 
             if (mouseScrollY != 0)
             {
-                tempHoldingObjectDistance += movingHoldingObjectWithScrollWheelSpeed * mouseScrollY;
+                tempHoldingObjectDistance += MovingHoldingObjectWithScrollWheelSpeed * mouseScrollY;
             }
         }
     }
@@ -100,9 +100,9 @@ public class PlayerInteractionManager : MonoBehaviour
     {
         if (grabbedObjectRigidbody)
         {
-            grabbedObjectRigidbody.AddForce(holdForce * (holdedObjectPositionTransform.position - grabbedObjectTransform.position), ForceMode.VelocityChange);
-            grabbedObjectRigidbody.linearVelocity *= grabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier;
-            grabbedObjectRigidbody.angularVelocity *= grabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier;
+            grabbedObjectRigidbody.AddForce(HoldForce * (holdedObjectPositionTransform.position - grabbedObjectTransform.position), ForceMode.VelocityChange);
+            grabbedObjectRigidbody.linearVelocity *= GrabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier;
+            grabbedObjectRigidbody.angularVelocity *= GrabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier;
 
             if (throwKeyPressedWhileHoldingAnObject)
             {
@@ -113,19 +113,19 @@ public class PlayerInteractionManager : MonoBehaviour
             }
 
             // Tutulan obje çok uzakta kalırsa (bir şeye sıkışır veya takılırsa) objenin hızını sıfırlayıp bıraksın.
-            if ((holdedObjectPositionTransform.position - grabbedObjectTransform.position).magnitude > maxHoldingObjectCanBeOffsetDistance)
+            if ((holdedObjectPositionTransform.position - grabbedObjectTransform.position).magnitude > MaxHoldingObjectCanBeOffsetDistance)
             {
                 ReleaseObjectWithResettingLinearAndAngularVelocity();
                 return;
             }
 
-            if (tempHoldingObjectDistance > maxHoldingObjectDistance)
+            if (tempHoldingObjectDistance > MaxHoldingObjectDistance)
             {
-                tempHoldingObjectDistance = maxHoldingObjectDistance;
+                tempHoldingObjectDistance = MaxHoldingObjectDistance;
             }
-            else if (tempHoldingObjectDistance < minHoldingObjectDistance)
+            else if (tempHoldingObjectDistance < MinHoldingObjectDistance)
             {
-                tempHoldingObjectDistance = minHoldingObjectDistance;
+                tempHoldingObjectDistance = MinHoldingObjectDistance;
             }
 
             holdedObjectPositionTransform.localPosition = new Vector3(0, 0, tempHoldingObjectDistance);
@@ -141,21 +141,21 @@ public class PlayerInteractionManager : MonoBehaviour
                 return;
             }
 
-            if (Physics.Raycast(mainCameraTransform.position, mainCameraTransform.forward, out holdInteractionHit, maxHoldingObjectDistance, movableNormalLayer | movableBouncyLayer) && readyToHold && holdInteractionHit.rigidbody && !holdInteractionHit.rigidbody.isKinematic && !holdInteractionHit.rigidbody.Equals(playerMovementManagerScript.objectRigidbodyThatPlayerIsStandingOn))
+            if (Physics.Raycast(mainCameraTransform.position, mainCameraTransform.forward, out holdInteractionHit, MaxHoldingObjectDistance, movableNormalLayer | movableBouncyLayer) && readyToHold && holdInteractionHit.rigidbody && !holdInteractionHit.rigidbody.isKinematic && !holdInteractionHit.rigidbody.Equals(playerMovementManagerScript.objectRigidbodyThatPlayerIsStandingOn))
             {
                 readyToHold = canReleaseHoldedObjectWhenTouchedToPlayer = false;
                 grabbedObjectRigidbody = holdInteractionHit.rigidbody;
                 grabbedObjectTransform = grabbedObjectRigidbody.transform;
                 grabbedObjectRigidbody.useGravity = false;
                 crosshairImage.color = Color.cyan;
-                Invoke(nameof(CanReleaseHoldedObjectWhenTouchedToPlayerActivator), canReleaseHoldedObjectWhenTouchedToPlayerCooldown);
-                Invoke(nameof(HoldAgainReset), holdAgainCooldown);
+                Invoke(nameof(CanReleaseHoldedObjectWhenTouchedToPlayerActivator), CanReleaseHoldedObjectWhenTouchedToPlayerCooldown);
+                Invoke(nameof(HoldAgainReset), HoldAgainCooldown);
             }
             else if (readyToHold)
             {
                 readyToHold = false;
                 StartCoroutine(CrosshairBeingRed());
-                Invoke(nameof(HoldAgainReset), crosshairBeingRedTime);
+                Invoke(nameof(HoldAgainReset), CrosshairBeingRedTime);
             }
         }
     }
@@ -165,7 +165,7 @@ public class PlayerInteractionManager : MonoBehaviour
         grabbedObjectRigidbody.useGravity = true;
         grabbedObjectTransform = null;
         grabbedObjectRigidbody = null;
-        tempHoldingObjectDistance = normalHoldingObjectDistance;
+        tempHoldingObjectDistance = NormalHoldingObjectDistance;
         crosshairImage.color = Color.black;
     }
 
@@ -175,7 +175,7 @@ public class PlayerInteractionManager : MonoBehaviour
         grabbedObjectRigidbody.useGravity = true;
         grabbedObjectTransform = null;
         grabbedObjectRigidbody = null;
-        tempHoldingObjectDistance = normalHoldingObjectDistance;
+        tempHoldingObjectDistance = NormalHoldingObjectDistance;
         crosshairImage.color = Color.black;
     }
 
@@ -192,7 +192,7 @@ public class PlayerInteractionManager : MonoBehaviour
     IEnumerator CrosshairBeingRed()
     {
         crosshairImage.color = Color.red;
-        yield return new WaitForSeconds(crosshairBeingRedTime);
+        yield return new WaitForSeconds(CrosshairBeingRedTime);
         crosshairImage.color = Color.black;
     }
 

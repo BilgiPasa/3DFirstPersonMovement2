@@ -16,15 +16,16 @@ public class PlayerMovementManager : MonoBehaviour
     //* Make sure that movable objects have a Rigidbody.
 
     [Header("Horizontal and Vertical")]
-    [HideInInspector] public int normalMoveSpeed = 9, vertical, horizontal;
+    [HideInInspector] public int normalMoveSpeed = 9;
     [HideInInspector] public float crouchSpeed, runSpeed;
     [HideInInspector] public bool runningInput, onSlope, playerIsStandingOnMovingGround;
+    [HideInInspector] public Vector2 inputtedVector2;
     [HideInInspector] public Rigidbody objectRigidbodyThatPlayerIsStandingOn;
-    const int normalGroundLinearDamping = 10; // Don't change this value if not necessary.
-    const float theMoveMultiplier = 625.005f, airMoveMultiplier = 0.16f, airLinearDamping = 0.04f, bouncyGroundLinearDamping = 12.5f, minimum = 0.1f; // Don't change these values if not necessary.
+    const int NormalGroundLinearDamping = 10; // Don't change this value if not necessary.
+    const float TheMoveMultiplier = 625.005f, AirMoveMultiplier = 0.16f, AirLinearDamping = 0.04f, BouncyGroundLinearDamping = 12.5f, Minimum = 0.1f; // Don't change these values if not necessary.
     float theMoveSpeed, flatRotationAngleInAir;
     bool normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum;
-    Vector2 inputtedVector2, flatVelocityRelativeToPlayerInAir, normalizedMoveDirectionRelativeToPlayerInAir, normalizedMoveDirectionAsVector2InAir;
+    Vector2 flatVelocityRelativeToPlayerInAir, normalizedMoveDirectionRelativeToPlayerInAir, normalizedMoveDirectionAsVector2InAir;
     Vector3 normalizedMoveDirection, normalizedSlopeMoveDirection;
     Transform playerTransform;
     Rigidbody playerRigidbody;
@@ -33,18 +34,18 @@ public class PlayerMovementManager : MonoBehaviour
     [Header("Crouch")]
     [HideInInspector] public float playerHeight = 3, crouchHeight = 2, cameraPositionLocalPositionWhenNotCrouched, cameraPositionLocalPositionWhenCrouched, frontBumpingDetectorLocalScaleWhenNotCrouched, frontBumpingDetectorLocalScaleWhenCrouched;
     [HideInInspector] public bool crouching;
-    const float playerWidthRadius = 0.5f, ifPlayerHeightWouldBe2AndPlayerTransformWouldBeVector3ZeroThenYLocalPositionOfCameraPositionWouldBe = 0.7f, ifPlayerHeightWouldBe2ThenYLocalScaleOfFrontBumpingDetectorWouldBe = 1.25f;
+    const float PlayerWidthRadius = 0.5f, IfPlayerHeightWouldBe2AndPlayerTransformWouldBeVector3ZeroThenYLocalPositionOfCameraPositionWouldBe = 0.7f, IfPlayerHeightWouldBe2ThenYLocalScaleOfFrontBumpingDetectorWouldBe = 1.25f;
     bool crouchingInput, dontUncrouch;
 
     [Header("Coyote Time")]
-    const float coyoteTime = 0.15f;
+    const float CoyoteTime = 0.15f;
     float coyoteTimeCounter;
 
     [Header("Jump And Fall")]
     [HideInInspector] public int normalJumpForce = 21, bouncyJumpForce = 56;
     [HideInInspector] public float startOfFall, endOfFall, fallDistance, maxFallWithoutFallDamage = 15;
     [HideInInspector] public bool jumping, groundedForAll, noFallDamage;
-    const float groundedSphereRadius = 0.3f, jumpingCooldown = 0.1f, jumpAgainCooldown = 0.3f;
+    const float GroundedSphereRadius = 0.3f, JumpingCooldown = 0.1f, JumpAgainCooldown = 0.3f;
     int maxFallWithoutBouncyJumpCalculationByThisScript = 5, maxFallWithoutParticles = 5;
     bool readyToJump = true, jumpingInput, groundedForBouncyEnvironment, playerIsTouchingToAnyGround, falling, wasFalling, wasGrounded, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment;
 
@@ -68,11 +69,11 @@ public class PlayerMovementManager : MonoBehaviour
         playerTransform = transform;
         runSpeed = normalMoveSpeed * 4 / 3;
         crouchSpeed = normalMoveSpeed * 2 / 3;
-        playerColliderCapsuleCollider.radius = playerWidthRadius;
-        cameraPositionLocalPositionWhenCrouched = ifPlayerHeightWouldBe2AndPlayerTransformWouldBeVector3ZeroThenYLocalPositionOfCameraPositionWouldBe * crouchHeight / 2;
-        frontBumpingDetectorLocalScaleWhenCrouched = ifPlayerHeightWouldBe2ThenYLocalScaleOfFrontBumpingDetectorWouldBe * crouchHeight / 2;
-        cameraPositionLocalPositionWhenNotCrouched = ifPlayerHeightWouldBe2AndPlayerTransformWouldBeVector3ZeroThenYLocalPositionOfCameraPositionWouldBe * playerHeight / 2;
-        frontBumpingDetectorLocalScaleWhenNotCrouched = ifPlayerHeightWouldBe2ThenYLocalScaleOfFrontBumpingDetectorWouldBe * playerHeight / 2;
+        playerColliderCapsuleCollider.radius = PlayerWidthRadius;
+        cameraPositionLocalPositionWhenCrouched = IfPlayerHeightWouldBe2AndPlayerTransformWouldBeVector3ZeroThenYLocalPositionOfCameraPositionWouldBe * crouchHeight / 2;
+        frontBumpingDetectorLocalScaleWhenCrouched = IfPlayerHeightWouldBe2ThenYLocalScaleOfFrontBumpingDetectorWouldBe * crouchHeight / 2;
+        cameraPositionLocalPositionWhenNotCrouched = IfPlayerHeightWouldBe2AndPlayerTransformWouldBeVector3ZeroThenYLocalPositionOfCameraPositionWouldBe * playerHeight / 2;
+        frontBumpingDetectorLocalScaleWhenNotCrouched = IfPlayerHeightWouldBe2ThenYLocalScaleOfFrontBumpingDetectorWouldBe * playerHeight / 2;
         playerRigidbody = GetComponent<Rigidbody>();
         playerRigidbody.interpolation = RigidbodyInterpolation.Interpolate;
         playerRigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
@@ -139,32 +140,6 @@ public class PlayerMovementManager : MonoBehaviour
         if (!pauseMenuManagerScript.gamePaused)
         {
             inputtedVector2 = inputActions.Player.Walk.ReadValue<Vector2>();
-
-            if (inputtedVector2.y > minimum)
-            {
-                vertical = 1;
-            }
-            else if (inputtedVector2.y < -minimum)
-            {
-                vertical = -1;
-            }
-            else
-            {
-                vertical = 0;
-            }
-
-            if (inputtedVector2.x > minimum)
-            {
-                horizontal = 1;
-            }
-            else if (inputtedVector2.x < -minimum)
-            {
-                horizontal = -1;
-            }
-            else
-            {
-                horizontal = 0;
-            }
         }
     }
 
@@ -185,13 +160,13 @@ public class PlayerMovementManager : MonoBehaviour
     {
         if (!crouching)
         {
-            groundedForAll = Physics.CheckSphere(playerTransform.position - new Vector3(0, playerHeight / 2, 0), groundedSphereRadius, staticNormalLayer | staticBouncyLayer | movableNormalLayer | movableBouncyLayer);
-            groundedForBouncyEnvironment = Physics.CheckSphere(playerTransform.position - new Vector3(0, playerHeight / 2, 0), groundedSphereRadius, staticBouncyLayer | movableBouncyLayer);
+            groundedForAll = Physics.CheckSphere(playerTransform.position - new Vector3(0, playerHeight / 2, 0), GroundedSphereRadius, staticNormalLayer | staticBouncyLayer | movableNormalLayer | movableBouncyLayer);
+            groundedForBouncyEnvironment = Physics.CheckSphere(playerTransform.position - new Vector3(0, playerHeight / 2, 0), GroundedSphereRadius, staticBouncyLayer | movableBouncyLayer);
 
             // Üstünde durduğun objeyi algılamak için
             // groundedForAll şartının sebebi, o şartı koymazsam, hold ettiği objeyi grounded etmeden altında tutsan bile elinden bırakıyor. Ben grounded ederse bıraksın istiyorum.
             // Bu arada playerHeight / 2 - 1 yazmamın sebebi, sadece playerHeight / 2 yazarsam çalışmıyor ve eğer ki 2 movable objenin üstünde durarsan sadece alttaki objeyi algılıyor. Ben de -playerTransform.up demek 1 metre aşağı anlamına geldiği için belki playerHeight / 2 - 1 yazarsam (yani 1 metre yukarı kaydırırsam) belki çalışır diye düşündüm. Ve çalıştı da!
-            if (groundedForAll && Physics.SphereCast(playerTransform.position - new Vector3(0, playerHeight / 2 - 1, 0), groundedSphereRadius, -playerTransform.up, out whatMovableObjectIsPlayerStandingOnHit, movableNormalLayer | movableBouncyLayer))
+            if (groundedForAll && Physics.SphereCast(playerTransform.position - new Vector3(0, playerHeight / 2 - 1, 0), GroundedSphereRadius, -playerTransform.up, out whatMovableObjectIsPlayerStandingOnHit, movableNormalLayer | movableBouncyLayer))
             {
                 objectRigidbodyThatPlayerIsStandingOn = whatMovableObjectIsPlayerStandingOnHit.rigidbody;
 
@@ -208,13 +183,13 @@ public class PlayerMovementManager : MonoBehaviour
         }
         else
         {
-            groundedForAll = Physics.CheckSphere(playerTransform.position - new Vector3(0, crouchHeight / 2, 0), groundedSphereRadius, staticNormalLayer | staticBouncyLayer | movableNormalLayer | movableBouncyLayer);
-            groundedForBouncyEnvironment = Physics.CheckSphere(playerTransform.position - new Vector3(0, crouchHeight / 2, 0), groundedSphereRadius, staticBouncyLayer | movableBouncyLayer);
+            groundedForAll = Physics.CheckSphere(playerTransform.position - new Vector3(0, crouchHeight / 2, 0), GroundedSphereRadius, staticNormalLayer | staticBouncyLayer | movableNormalLayer | movableBouncyLayer);
+            groundedForBouncyEnvironment = Physics.CheckSphere(playerTransform.position - new Vector3(0, crouchHeight / 2, 0), GroundedSphereRadius, staticBouncyLayer | movableBouncyLayer);
 
             // Üstünde durduğun objeyi algılamak için
             // groundedForAll şartının sebebi, yukarıdakiyle aynı.
             // crouchHeight / 2 - 1 yazmamın sebebi, yukarıda playerHeight / 2 - 1 yazmamın sebebiyle aynı.
-            if (groundedForAll && Physics.SphereCast(playerTransform.position - new Vector3(0, crouchHeight / 2 - 1, 0), groundedSphereRadius, -playerTransform.up, out whatMovableObjectIsPlayerStandingOnHit, movableNormalLayer | movableBouncyLayer))
+            if (groundedForAll && Physics.SphereCast(playerTransform.position - new Vector3(0, crouchHeight / 2 - 1, 0), GroundedSphereRadius, -playerTransform.up, out whatMovableObjectIsPlayerStandingOnHit, movableNormalLayer | movableBouncyLayer))
             {
                 objectRigidbodyThatPlayerIsStandingOn = whatMovableObjectIsPlayerStandingOnHit.rigidbody;
 
@@ -230,7 +205,7 @@ public class PlayerMovementManager : MonoBehaviour
             }
         }
 
-        falling = !groundedForAll && playerRigidbody.linearVelocity.y < -minimum;
+        falling = !groundedForAll && playerRigidbody.linearVelocity.y < -Minimum;
 
         if (!wasFalling && falling)
         {
@@ -259,9 +234,9 @@ public class PlayerMovementManager : MonoBehaviour
             //print(fallDistance); // For testing
         }
 
-        if (fallDistance > minimum)
+        if (fallDistance > Minimum)
         {
-            if (fallDistance > maxFallWithoutParticles && !jumpingDownParticles.isPlaying)
+            if (fallDistance > maxFallWithoutParticles && !jumpingDownParticles.isEmitting)
             {
                 jumpingDownParticles.Play();
             }
@@ -282,7 +257,7 @@ public class PlayerMovementManager : MonoBehaviour
 
         if (groundedForAll)
         {
-            coyoteTimeCounter = coyoteTime;
+            coyoteTimeCounter = CoyoteTime;
             justBeforeGroundedForNormalEnvironment = groundedForAll && !groundedForBouncyEnvironment;
             justBeforeGroundedForBouncyEnvironment = groundedForBouncyEnvironment;
         }
@@ -317,8 +292,8 @@ public class PlayerMovementManager : MonoBehaviour
         jumping = true;
         playerRigidbody.linearVelocity = new Vector3(playerRigidbody.linearVelocity.x, 0, playerRigidbody.linearVelocity.z);
         playerRigidbody.AddForce(jumpForce * playerTransform.up, ForceMode.VelocityChange);
-        Invoke(nameof(JumpAgainReset), jumpAgainCooldown);
-        Invoke(nameof(JumpingReset), jumpingCooldown);
+        Invoke(nameof(JumpAgainReset), JumpAgainCooldown);
+        Invoke(nameof(JumpingReset), JumpingCooldown);
     }
 
     /* For a continuous jump, use JumpAgainReset. If you don't want to use JumpAgainReset, make a jump buffer
@@ -358,7 +333,7 @@ public class PlayerMovementManager : MonoBehaviour
         }
         else if (crouching)
         {// Bilgi için https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Physics.CheckCapsule.html sitesine bakabilirsin. -0.075f'i de girebildiği ama küçücük bir kısmı CapsuleCollider ile temas ettiği için uncrouch yapamama durumu olmasın diye koydum.
-            dontUncrouch = Physics.CheckCapsule(playerTransform.position + new Vector3(0, playerHeight - crouchHeight / 2 - (playerWidthRadius - 0.01f) - 0.075f, 0), playerTransform.position + new Vector3(0, crouchHeight / 2 - (playerWidthRadius - 0.01f), 0), playerWidthRadius - 0.01f, staticNormalLayer | staticBouncyLayer | movableNormalLayer | movableBouncyLayer);
+            dontUncrouch = Physics.CheckCapsule(playerTransform.position + new Vector3(0, playerHeight - crouchHeight / 2 - (PlayerWidthRadius - 0.01f) - 0.075f, 0), playerTransform.position + new Vector3(0, crouchHeight / 2 - (PlayerWidthRadius - 0.01f), 0), PlayerWidthRadius - 0.01f, staticNormalLayer | staticBouncyLayer | movableNormalLayer | movableBouncyLayer);
 
             if (!crouchingInput && !dontUncrouch)
             {
@@ -381,29 +356,29 @@ public class PlayerMovementManager : MonoBehaviour
     {
         if (groundedForAll && !jumping && !playerStatusManagerScript.sliding)
         {
-            playerRigidbody.linearDamping = !groundedForBouncyEnvironment ? normalGroundLinearDamping : bouncyGroundLinearDamping;
+            playerRigidbody.linearDamping = !groundedForBouncyEnvironment ? NormalGroundLinearDamping : BouncyGroundLinearDamping;
         }
         else
         {
-            playerRigidbody.linearDamping = airLinearDamping;
+            playerRigidbody.linearDamping = AirLinearDamping;
         }
     }
 
     void Movement()
     {
-        normalizedMoveDirection = (playerColliderTransform.forward * vertical + playerColliderTransform.right * horizontal).normalized;
-        onSlope = ((!crouching && Physics.Raycast(playerTransform.position, -playerTransform.up, out slopeHit, playerHeight / 2 + groundedSphereRadius * 2)) || (crouching && Physics.Raycast(playerTransform.position, -playerTransform.up, out slopeHit, crouchHeight / 2 + groundedSphereRadius * 2))) && slopeHit.normal != playerTransform.up; // slopeHit.normal kısmını sona koyman lazım çünkü Raycast'i bilmeden hit olan şeyi hesaplamaya çalışırsan olmaz.
+        normalizedMoveDirection = playerColliderTransform.forward * inputtedVector2.y + playerColliderTransform.right * inputtedVector2.x;
+        onSlope = ((!crouching && Physics.Raycast(playerTransform.position, -playerTransform.up, out slopeHit, playerHeight / 2 + GroundedSphereRadius * 2)) || (crouching && Physics.Raycast(playerTransform.position, -playerTransform.up, out slopeHit, crouchHeight / 2 + GroundedSphereRadius * 2))) && slopeHit.normal != playerTransform.up; // slopeHit.normal kısmını sona koyman lazım çünkü Raycast'i bilmeden hit olan şeyi hesaplamaya çalışırsan olmaz.
 
-        if (playerRigidbody.linearDamping != airLinearDamping)
+        if (playerRigidbody.linearDamping != AirLinearDamping)
         {
             if (!onSlope)
             {
-                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * Time.fixedDeltaTime * normalizedMoveDirection, ForceMode.Acceleration);
+                playerRigidbody.AddForce(theMoveSpeed * TheMoveMultiplier * Time.fixedDeltaTime * normalizedMoveDirection, ForceMode.Acceleration);
             }
             else
             {
                 normalizedSlopeMoveDirection = Vector3.ProjectOnPlane(normalizedMoveDirection, slopeHit.normal);
-                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * Time.fixedDeltaTime * normalizedSlopeMoveDirection, ForceMode.Acceleration);
+                playerRigidbody.AddForce(theMoveSpeed * TheMoveMultiplier * Time.fixedDeltaTime * normalizedSlopeMoveDirection, ForceMode.Acceleration);
             }
         }
         else
@@ -411,10 +386,10 @@ public class PlayerMovementManager : MonoBehaviour
             flatRotationAngleInAir = playerColliderTransform.rotation.eulerAngles.y;
             flatVelocityRelativeToPlayerInAir = RelativeToPlayerConverter(playerRigidbody.linearVelocity.x, playerRigidbody.linearVelocity.z, flatRotationAngleInAir);
             normalizedMoveDirectionRelativeToPlayerInAir = RelativeToPlayerConverter(normalizedMoveDirection.x, normalizedMoveDirection.z, flatRotationAngleInAir);
-            normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum = normalizedMoveDirectionRelativeToPlayerInAir.y > minimum;
-            normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum = normalizedMoveDirectionRelativeToPlayerInAir.y < -minimum;
-            normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum = normalizedMoveDirectionRelativeToPlayerInAir.x > minimum;
-            normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum = normalizedMoveDirectionRelativeToPlayerInAir.x < -minimum;
+            normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum = normalizedMoveDirectionRelativeToPlayerInAir.y > Minimum;
+            normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum = normalizedMoveDirectionRelativeToPlayerInAir.y < -Minimum;
+            normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum = normalizedMoveDirectionRelativeToPlayerInAir.x > Minimum;
+            normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum = normalizedMoveDirectionRelativeToPlayerInAir.x < -Minimum;
 
             if ((normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum && flatVelocityRelativeToPlayerInAir.y > theMoveSpeed) || (normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum && flatVelocityRelativeToPlayerInAir.y < -theMoveSpeed))
             {
@@ -440,15 +415,15 @@ public class PlayerMovementManager : MonoBehaviour
                     }
                     else
                     {
-                        if ((normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum || normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum) && !(normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum && flatVelocityRelativeToPlayerInAir.y < -minimum) && !(normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum && flatVelocityRelativeToPlayerInAir.y > minimum))
+                        if ((normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum || normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum) && !(normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum && flatVelocityRelativeToPlayerInAir.y < -Minimum) && !(normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum && flatVelocityRelativeToPlayerInAir.y > Minimum))
                         {
                             if (flatVelocityRelativeToPlayerInAir.x > theMoveSpeed)
                             {
-                                playerRigidbody.AddForce(theMoveSpeed / 2 * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.y) * -playerColliderTransform.right, ForceMode.Acceleration);
+                                playerRigidbody.AddForce(theMoveSpeed / 2 * TheMoveMultiplier * AirMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.y) * -playerColliderTransform.right, ForceMode.Acceleration);
                             }
                             else if (flatVelocityRelativeToPlayerInAir.x < -theMoveSpeed)
                             {
-                                playerRigidbody.AddForce(theMoveSpeed / 2 * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.y) * playerColliderTransform.right, ForceMode.Acceleration);
+                                playerRigidbody.AddForce(theMoveSpeed / 2 * TheMoveMultiplier * AirMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.y) * playerColliderTransform.right, ForceMode.Acceleration);
                             }
                         }
                     }
@@ -459,15 +434,15 @@ public class PlayerMovementManager : MonoBehaviour
                     }
                     else
                     {
-                        if ((normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum || normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum) && !(normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum && flatVelocityRelativeToPlayerInAir.x < -minimum) && !(normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum && flatVelocityRelativeToPlayerInAir.x > minimum))
+                        if ((normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum || normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum) && !(normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum && flatVelocityRelativeToPlayerInAir.x < -Minimum) && !(normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum && flatVelocityRelativeToPlayerInAir.x > Minimum))
                         {
                             if (flatVelocityRelativeToPlayerInAir.y > theMoveSpeed)
                             {
-                                playerRigidbody.AddForce(theMoveSpeed / 2 * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.x) * -playerColliderTransform.forward, ForceMode.Acceleration);
+                                playerRigidbody.AddForce(theMoveSpeed / 2 * TheMoveMultiplier * AirMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.x) * -playerColliderTransform.forward, ForceMode.Acceleration);
                             }
                             else if (flatVelocityRelativeToPlayerInAir.y < -theMoveSpeed)
                             {
-                                playerRigidbody.AddForce(theMoveSpeed / 2 * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.x) * playerColliderTransform.forward, ForceMode.Acceleration);
+                                playerRigidbody.AddForce(theMoveSpeed / 2 * TheMoveMultiplier * AirMoveMultiplier * Time.fixedDeltaTime * Mathf.Abs(normalizedMoveDirectionRelativeToPlayerInAir.x) * playerColliderTransform.forward, ForceMode.Acceleration);
                             }
                         }
                     }
@@ -479,12 +454,12 @@ public class PlayerMovementManager : MonoBehaviour
 
             if (!onSlope)
             {
-                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * normalizedMoveDirection, ForceMode.Acceleration);
+                playerRigidbody.AddForce(theMoveSpeed * TheMoveMultiplier * AirMoveMultiplier * Time.fixedDeltaTime * normalizedMoveDirection, ForceMode.Acceleration);
             }
             else
             {
                 normalizedSlopeMoveDirection = Vector3.ProjectOnPlane(normalizedMoveDirection, slopeHit.normal);
-                playerRigidbody.AddForce(theMoveSpeed * theMoveMultiplier * airMoveMultiplier * Time.fixedDeltaTime * normalizedSlopeMoveDirection, ForceMode.Acceleration);
+                playerRigidbody.AddForce(theMoveSpeed * TheMoveMultiplier * AirMoveMultiplier * Time.fixedDeltaTime * normalizedSlopeMoveDirection, ForceMode.Acceleration);
             }
         }
     }
@@ -500,9 +475,9 @@ public class PlayerMovementManager : MonoBehaviour
     {
         if (groundedForAll && playerIsTouchingToAnyGround && onSlope)
         {
-            playerRigidbody.useGravity = crouching || playerRigidbody.linearVelocity.y > minimum;
+            playerRigidbody.useGravity = crouching || playerRigidbody.linearVelocity.y > Minimum;
 
-            if (!crouching && playerRigidbody.linearVelocity.y > minimum)
+            if (!crouching && playerRigidbody.linearVelocity.y > Minimum)
             {
                 playerRigidbody.AddForce(50 * playerTransform.up, ForceMode.Acceleration); // Change this if you change the gravity. (60 - 10 = 50)
             }
@@ -529,17 +504,17 @@ public class PlayerMovementManager : MonoBehaviour
             theMoveSpeed = normalMoveSpeed;
         }
 
-        if (Mathf.Abs(playerRigidbody.linearVelocity.z) <= minimum)
+        if (Mathf.Abs(playerRigidbody.linearVelocity.z) <= Minimum)
         {
             playerRigidbody.linearVelocity = new Vector3(playerRigidbody.linearVelocity.x, playerRigidbody.linearVelocity.y, 0);
         }
 
-        if (Mathf.Abs(playerRigidbody.linearVelocity.x) <= minimum)
+        if (Mathf.Abs(playerRigidbody.linearVelocity.x) <= Minimum)
         {
             playerRigidbody.linearVelocity = new Vector3(0, playerRigidbody.linearVelocity.y, playerRigidbody.linearVelocity.z);
         }
 
-        if (Mathf.Abs(playerRigidbody.linearVelocity.y) <= minimum)
+        if (Mathf.Abs(playerRigidbody.linearVelocity.y) <= Minimum)
         {
             playerRigidbody.linearVelocity = new Vector3(playerRigidbody.linearVelocity.x, 0, playerRigidbody.linearVelocity.z);
         }
@@ -576,21 +551,21 @@ public class PlayerMovementManager : MonoBehaviour
             }
 
             // Üstünde durduğun hareketli yüzeyin hızına göre hareket etmek için
-            if (collision.rigidbody.Equals(objectRigidbodyThatPlayerIsStandingOn) && collision.rigidbody.linearVelocity.magnitude > minimum)
+            if (collision.rigidbody.Equals(objectRigidbodyThatPlayerIsStandingOn) && collision.rigidbody.linearVelocity.magnitude > Minimum)
             {
                 playerIsStandingOnMovingGround = true;
 
-                if (playerRigidbody.linearDamping == normalGroundLinearDamping)
+                if (playerRigidbody.linearDamping == NormalGroundLinearDamping)
                 {
-                    playerRigidbody.AddForce(theMoveMultiplier * Time.fixedDeltaTime * objectRigidbodyThatPlayerIsStandingOn.linearVelocity, ForceMode.Acceleration);
+                    playerRigidbody.AddForce(TheMoveMultiplier * Time.fixedDeltaTime * objectRigidbodyThatPlayerIsStandingOn.linearVelocity, ForceMode.Acceleration);
                 }
-                else if (playerRigidbody.linearDamping == bouncyGroundLinearDamping)
+                else if (playerRigidbody.linearDamping == BouncyGroundLinearDamping)
                 {
-                    playerRigidbody.AddForce(theMoveMultiplier * 4 / 3 * Time.fixedDeltaTime * objectRigidbodyThatPlayerIsStandingOn.linearVelocity, ForceMode.Acceleration); // Evet, "* 4 / 3"ü deneyerek buldum.
+                    playerRigidbody.AddForce(TheMoveMultiplier * 4 / 3 * Time.fixedDeltaTime * objectRigidbodyThatPlayerIsStandingOn.linearVelocity, ForceMode.Acceleration); // Evet, "* 4 / 3"ü deneyerek buldum.
                 }
                 else
                 {
-                    playerRigidbody.AddForce(theMoveMultiplier / 49.96f * airMoveMultiplier * Time.fixedDeltaTime * objectRigidbodyThatPlayerIsStandingOn.linearVelocity, ForceMode.Acceleration); // Evet, "/ 49.96f"i de deneyerek buldum.
+                    playerRigidbody.AddForce(TheMoveMultiplier / 49.96f * AirMoveMultiplier * Time.fixedDeltaTime * objectRigidbodyThatPlayerIsStandingOn.linearVelocity, ForceMode.Acceleration); // Evet, "/ 49.96f"i de deneyerek buldum.
                 }
             }
             else

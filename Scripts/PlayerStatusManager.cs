@@ -10,7 +10,7 @@ public class PlayerStatusManager : MonoBehaviour
     [HideInInspector] public int playerHealth;
     [HideInInspector] public float flatVelocityMagnitude;
     [HideInInspector] public bool walking, running, jumpingUp, sliding;
-    const float minimum = 0.1f;
+    const float Minimum = 0.1f;
     float relativeFlatVelocityMagnitude;
     Transform playerTransform;
     PlayerSpawnAndSaveManager playerSpawnAndSaveManagerScript;
@@ -58,18 +58,18 @@ public class PlayerStatusManager : MonoBehaviour
             {
                 playerGroundParticlesTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (playerMovementManagerScript.playerHeight / 2), playerTransform.position.z);
                 sliding = false;
-                walking = (playerMovementManagerScript.vertical != 0 || playerMovementManagerScript.horizontal != 0) && relativeFlatVelocityMagnitude > minimum;
+                walking = playerMovementManagerScript.inputtedVector2.magnitude > Minimum && relativeFlatVelocityMagnitude > Minimum;
 
-                if (playerMovementManagerScript.runningInput && playerMovementManagerScript.vertical == 1 && walking)
+                if (playerMovementManagerScript.runningInput && playerMovementManagerScript.inputtedVector2.y > Minimum && walking)
                 {
                     running = true;
                 }
-                else if (!walking || (playerMovementManagerScript.vertical != 1 && walking) || (playerFrontBumpingManagerScript.frontBumping && !playerMovementManagerScript.runningInput))
+                else if (!walking || (playerMovementManagerScript.inputtedVector2.y <= Minimum && walking) || (playerFrontBumpingManagerScript.frontBumping && !playerMovementManagerScript.runningInput))
                 {
                     running = false;
                 }
 
-                jumpingUp = playerMovementManagerScript.jumping && playerRigidbody.linearVelocity.y > minimum && playerMovementManagerScript.groundedForAll;
+                jumpingUp = playerMovementManagerScript.jumping && playerRigidbody.linearVelocity.y > Minimum && playerMovementManagerScript.groundedForAll;
             }
             else
             {
@@ -83,16 +83,16 @@ public class PlayerStatusManager : MonoBehaviour
             walking = running = jumpingUp = sliding = false;
         }
 
-        if (running && jumpingUp && !runJumpParticles.isPlaying)
+        if (running && jumpingUp && !runJumpParticles.isEmitting)
         {
             runJumpParticles.Play();
         }
 
-        if ((sliding || running) && relativeFlatVelocityMagnitude > playerMovementManagerScript.runSpeed / 4 && playerMovementManagerScript.groundedForAll && !runAndSlideParticles.isPlaying)
+        if ((sliding || running) && relativeFlatVelocityMagnitude > playerMovementManagerScript.runSpeed / 4 && playerMovementManagerScript.groundedForAll && !runAndSlideParticles.isEmitting)
         {
             runAndSlideParticles.Play();
         }
-        else if ((!(sliding || running) || relativeFlatVelocityMagnitude <= playerMovementManagerScript.runSpeed / 4 || !playerMovementManagerScript.groundedForAll) && runAndSlideParticles.isPlaying)
+        else if ((!(sliding || running) || relativeFlatVelocityMagnitude <= playerMovementManagerScript.runSpeed / 4 || !playerMovementManagerScript.groundedForAll) && runAndSlideParticles.isEmitting)
         {
             runAndSlideParticles.Stop();
         }
