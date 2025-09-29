@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -5,8 +6,8 @@ public class PlayerCameraManager : MonoBehaviour
 {
     //* Attach this script to the CameraHolder game object.
 
-    [HideInInspector] public int sensitivity;
-    [HideInInspector] public float xRotation, yRotation, normalFOV;
+    [NonSerialized] public int sensitivity;
+    [NonSerialized] public float xRotation, yRotation, normalFOV;
     int normalCameraRotationMultiplier = 1, zoomingSpeed = 10;
     float zoomedCameraRotationMultiplier = 0.5f, theCameraRotationMultiplier, sprintFOV, zoomFOV, zoomSprintFOV;
     bool zoomingInput;

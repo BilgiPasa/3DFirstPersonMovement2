@@ -16,13 +16,13 @@ public class PlayerMovementManager : MonoBehaviour
     //* Make sure that movable objects have a Rigidbody.
 
     [Header("Horizontal and Vertical")]
-    [HideInInspector] public int normalMoveSpeed = 9;
-    [HideInInspector] public float crouchSpeed, runSpeed;
-    [HideInInspector] public bool runningInput, onSlope, playerIsStandingOnMovingGround;
-    [HideInInspector] public Vector2 inputtedVector2;
-    [HideInInspector] public Rigidbody objectRigidbodyThatPlayerIsStandingOn;
-    const int NormalGroundLinearDamping = 10; // Don't change this value if not necessary.
-    const float TheMoveMultiplier = 625.005f, AirMoveMultiplier = 0.16f, AirLinearDamping = 0.04f, BouncyGroundLinearDamping = 12.5f, Minimum = 0.1f; // Don't change these values if not necessary.
+    [NonSerialized] public int normalMoveSpeed; // If you want to change the value, change it from the PauseMenuManager script.
+    [NonSerialized] public float crouchSpeed, runSpeed;
+    [NonSerialized] public bool runningInput, onSlope, standingOnMovingGround;
+    [NonSerialized] public Vector2 inputtedVector2;
+    [NonSerialized] public Rigidbody objectRigidbodyThatPlayerIsStandingOn;
+    const int NormalGroundLinearDamping = 10; // DO NOT change this value if not necessary.
+    const float TheMoveMultiplier = 625.005f, AirMoveMultiplier = 0.16f, AirLinearDamping = 0.04f, BouncyGroundLinearDamping = 12.5f, Minimum = 0.1f; // DO NOT change these values if not necessary.
     float theMoveSpeed, flatRotationAngleInAir;
     bool normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum;
     Vector2 flatVelocityRelativeToPlayerInAir, normalizedMoveDirectionRelativeToPlayerInAir, normalizedMoveDirectionAsVector2InAir;
@@ -32,25 +32,25 @@ public class PlayerMovementManager : MonoBehaviour
     RaycastHit slopeHit, whatMovableObjectIsPlayerStandingOnHit;
 
     [Header("Crouch")]
-    [HideInInspector] public float playerHeight = 3, crouchHeight = 2, cameraPositionLocalPositionWhenNotCrouched, cameraPositionLocalPositionWhenCrouched, frontBumpingDetectorLocalScaleWhenNotCrouched, frontBumpingDetectorLocalScaleWhenCrouched;
-    [HideInInspector] public bool crouching;
+    [NonSerialized] public float playerHeight = 3, crouchHeight = 2, cameraPositionLocalPositionWhenNotCrouched, cameraPositionLocalPositionWhenCrouched, frontBumpingDetectorLocalScaleWhenNotCrouched, frontBumpingDetectorLocalScaleWhenCrouched;
+    [NonSerialized] public bool crouching;
     const float PlayerWidthRadius = 0.5f, IfPlayerHeightWouldBe2AndPlayerTransformWouldBeVector3ZeroThenYLocalPositionOfCameraPositionWouldBe = 0.7f, IfPlayerHeightWouldBe2ThenYLocalScaleOfFrontBumpingDetectorWouldBe = 1.25f;
     bool crouchingInput, dontUncrouch;
 
     [Header("Coyote Time")]
-    const float CoyoteTime = 0.15f;
+    const float CoyoteTimeSeconds = 0.15f;
     float coyoteTimeCounter;
 
     [Header("Jump And Fall")]
-    [HideInInspector] public int normalJumpForce = 21, bouncyJumpForce = 56;
-    [HideInInspector] public float startOfFall, endOfFall, fallDistance, maxFallWithoutFallDamage = 15;
-    [HideInInspector] public bool jumping, groundedForAll, noFallDamage;
+    [NonSerialized] public int normalJumpForce, bouncyJumpForce; // If you want to change the values, change them from the PauseMenuManager script.
+    [NonSerialized] public float startOfFall, endOfFall, fallDistance, maxFallWithoutFallDamage = 15;
+    [NonSerialized] public bool jumping, groundedForAll, noFallDamage;
     const float GroundedSphereRadius = 0.3f, JumpingCooldown = 0.1f, JumpAgainCooldown = 0.3f;
     int maxFallWithoutBouncyJumpCalculationByThisScript = 5, maxFallWithoutParticles = 5;
-    bool readyToJump = true, jumpingInput, groundedForBouncyEnvironment, playerIsTouchingToAnyGround, falling, wasFalling, wasGrounded, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment;
+    bool readyToJump = true, jumpingInput, groundedForBouncyEnvironment, touchingToAnyGround, falling, wasFalling, wasTouchingToAnyGround, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment;
 
     [Header("Other Things")]
-    [HideInInspector] public int playerHealthDecrease;
+    [NonSerialized] public int playerHealthDecrease;
     PlayerInteractionManager playerInteractionManagerScript;
     PauseMenuManager pauseMenuManagerScript;
     PlayerSpawnAndSaveManager playerSpawnAndSaveManagerScript;
@@ -146,17 +146,19 @@ public class PlayerMovementManager : MonoBehaviour
     void FixedUpdate()
     {// I didn't added the if not game paused condition because if game pauses, FixedUpdate pauses too.
         // And also I didn't added the if not player died condition because if player dies, this script does not work because it is attached to the player.
-        // These functions' order are intentional, i wouldn't recommend you to change the order.
-        GroundedCheckAndFallingCheckAndBouncyJumpAndFallDamageAndCoyoteTime();
+        // These functions' order are intentional, DO NOT change the order if not necessary.
+        GroundedCheck();
+        FallingCheckAndBouncyJumpAndFallDamage();
+        CoyoteTime();
         Jump();
         Crouch();
         LinearDamping();
         Movement();
         GravityAndSpeedControl();
-        WasFallingAndWasGroundedCheck();
+        WasFallingAndWasTouchingToAnyGroundCheck();
     }
 
-    void GroundedCheckAndFallingCheckAndBouncyJumpAndFallDamageAndCoyoteTime()
+    void GroundedCheck()
     {
         if (!crouching)
         {
@@ -204,7 +206,10 @@ public class PlayerMovementManager : MonoBehaviour
                 objectRigidbodyThatPlayerIsStandingOn = null;
             }
         }
+    }
 
+    void FallingCheckAndBouncyJumpAndFallDamage()
+    {
         falling = !groundedForAll && playerRigidbody.linearVelocity.y < -Minimum;
 
         if (!wasFalling && falling)
@@ -219,7 +224,7 @@ public class PlayerMovementManager : MonoBehaviour
             }
         }
 
-        if (!wasGrounded && groundedForAll)
+        if (!wasTouchingToAnyGround && touchingToAnyGround && groundedForAll)
         {
             if (!crouching)
             {
@@ -252,12 +257,15 @@ public class PlayerMovementManager : MonoBehaviour
             }
 
             startOfFall = endOfFall = fallDistance = 0;
-            wasFalling = wasGrounded = true;
+            wasFalling = wasTouchingToAnyGround = true;
         }
+    }
 
+    void CoyoteTime()
+    {
         if (groundedForAll)
         {
-            coyoteTimeCounter = CoyoteTime;
+            coyoteTimeCounter = CoyoteTimeSeconds;
             justBeforeGroundedForNormalEnvironment = groundedForAll && !groundedForBouncyEnvironment;
             justBeforeGroundedForBouncyEnvironment = groundedForBouncyEnvironment;
         }
@@ -275,11 +283,11 @@ public class PlayerMovementManager : MonoBehaviour
     {
         if (jumpingInput && readyToJump && !jumping)
         {// Hatıladığım kadarıyla; justBeforeGrounded şeylerini eklememin sebebi bir bug'ı engellemek içindi. O bug ise hatırladığım kadarıyla eğer ki bouncy bir yüzeyden zıplayıp sonrasında bir duvara değerek normal zemine düşersen ve düşerken de zıplama tuşuna basılı tutarsan, normal zeminde zıpladığında sanki bouncy zeminde zıplıyormuşsun gibi çok zıplıyorsun.
-            if (justBeforeGroundedForNormalEnvironment && ((!groundedForAll && coyoteTimeCounter > 0) || (groundedForAll && !groundedForBouncyEnvironment && playerIsTouchingToAnyGround)))
+            if (justBeforeGroundedForNormalEnvironment && ((!groundedForAll && coyoteTimeCounter > 0) || (groundedForAll && !groundedForBouncyEnvironment && touchingToAnyGround)))
             {
                 Jumping(normalJumpForce);
             }
-            else if (justBeforeGroundedForBouncyEnvironment && ((!groundedForAll && coyoteTimeCounter > 0) || (groundedForAll && groundedForBouncyEnvironment && playerIsTouchingToAnyGround)))
+            else if (justBeforeGroundedForBouncyEnvironment && ((!groundedForAll && coyoteTimeCounter > 0) || (groundedForAll && groundedForBouncyEnvironment && touchingToAnyGround)))
             {
                 Jumping(bouncyJumpForce);
             }
@@ -288,6 +296,7 @@ public class PlayerMovementManager : MonoBehaviour
 
     void Jumping(int jumpForce)
     {
+        //print(playerTransform.position.y); // For testing
         readyToJump = false;
         jumping = true;
         playerRigidbody.linearVelocity = new Vector3(playerRigidbody.linearVelocity.x, 0, playerRigidbody.linearVelocity.z);
@@ -473,17 +482,13 @@ public class PlayerMovementManager : MonoBehaviour
 
     void GravityAndSpeedControl()
     {
-        if (groundedForAll && playerIsTouchingToAnyGround && onSlope)
+        if (groundedForAll && touchingToAnyGround)
         {
-            playerRigidbody.useGravity = crouching || playerRigidbody.linearVelocity.y > Minimum;
+            playerRigidbody.useGravity = onSlope && (crouching || playerRigidbody.linearVelocity.y > Minimum);
 
             if (!crouching && playerRigidbody.linearVelocity.y > Minimum)
             {
                 playerRigidbody.AddForce(50 * playerTransform.up, ForceMode.Acceleration); // Change this if you change the gravity. (60 - 10 = 50)
-            }
-            else if (playerStatusManagerScript.sliding)
-            {
-                playerRigidbody.AddForce(30 * playerTransform.up, ForceMode.Acceleration); // Change this if you change the gravity. (60 - 30 = 30)
             }
         }
         else
@@ -520,14 +525,19 @@ public class PlayerMovementManager : MonoBehaviour
         }
     }
 
-    void WasFallingAndWasGroundedCheck()
+    void WasFallingAndWasTouchingToAnyGroundCheck()
     {
         wasFalling = falling;
-        wasGrounded = groundedForAll;
+        wasTouchingToAnyGround = touchingToAnyGround;
     }
 
     void OnCollisionEnter(Collision collision)
     {
+        if (collision.gameObject.layer == 3 || collision.gameObject.layer == 6 || collision.gameObject.layer == 7 || collision.gameObject.layer == 8)
+        {
+            touchingToAnyGround = true;
+        }
+
         // Tuttuğun obje ile uçmayı ve sürüklenmeyi engellemek için
         if ((collision.gameObject.layer == 7 || collision.gameObject.layer == 8) && collision.rigidbody && collision.rigidbody.Equals(playerInteractionManagerScript.grabbedObjectRigidbody) && playerInteractionManagerScript.canReleaseHoldedObjectWhenTouchedToPlayer)
         {
@@ -539,7 +549,7 @@ public class PlayerMovementManager : MonoBehaviour
     {
         if (collision.gameObject.layer == 3 || collision.gameObject.layer == 6 || collision.gameObject.layer == 7 || collision.gameObject.layer == 8)
         {
-            playerIsTouchingToAnyGround = true;
+            touchingToAnyGround = true;
         }
 
         if ((collision.gameObject.layer == 7 || collision.gameObject.layer == 8) && collision.rigidbody)
@@ -553,7 +563,7 @@ public class PlayerMovementManager : MonoBehaviour
             // Üstünde durduğun hareketli yüzeyin hızına göre hareket etmek için
             if (collision.rigidbody.Equals(objectRigidbodyThatPlayerIsStandingOn) && collision.rigidbody.linearVelocity.magnitude > Minimum)
             {
-                playerIsStandingOnMovingGround = true;
+                standingOnMovingGround = true;
 
                 if (playerRigidbody.linearDamping == NormalGroundLinearDamping)
                 {
@@ -570,12 +580,12 @@ public class PlayerMovementManager : MonoBehaviour
             }
             else
             {
-                playerIsStandingOnMovingGround = false;
+                standingOnMovingGround = false;
             }
         }
         else
         {
-            playerIsStandingOnMovingGround = false;
+            standingOnMovingGround = false;
         }
     }
 
@@ -583,12 +593,12 @@ public class PlayerMovementManager : MonoBehaviour
     {
         if (collision.gameObject.layer == 3 || collision.gameObject.layer == 6 || collision.gameObject.layer == 7 || collision.gameObject.layer == 8)
         {
-            playerIsTouchingToAnyGround = false;
+            touchingToAnyGround = false;
         }
 
         if ((collision.gameObject.layer == 7 || collision.gameObject.layer == 8) && collision.rigidbody)
         {
-            playerIsStandingOnMovingGround = false;
+            standingOnMovingGround = false;
         }
     }
 }

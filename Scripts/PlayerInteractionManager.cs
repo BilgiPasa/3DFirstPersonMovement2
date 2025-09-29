@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,11 +12,11 @@ public class PlayerInteractionManager : MonoBehaviour
     //* Make sure that movable objects have a Rigidbody.
 
     [Header("Holding and Throwing")]
-    [HideInInspector] public int throwForce = 60;
-    [HideInInspector] public bool canReleaseHoldedObjectWhenTouchedToPlayer;
-    [HideInInspector] public Rigidbody grabbedObjectRigidbody;
+    [NonSerialized] public int throwForce; // If you want to change the value, change it from the PauseMenuManager script.
+    [NonSerialized] public bool canReleaseHoldedObjectWhenTouchedToPlayer;
+    [NonSerialized] public Rigidbody grabbedObjectRigidbody;
     const int NormalHoldingObjectDistance = 4, HoldForce = 30, MaxHoldingObjectCanBeOffsetDistance = 10, MaxHoldingObjectDistance = 6, MinHoldingObjectDistance = 3;
-    const float MovingHoldingObjectWithScrollWheelSpeed = 0.4f, GrabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier = 0.3f, CanReleaseHoldedObjectWhenTouchedToPlayerCooldown = 0.1f, HoldAgainCooldown = 0.6f, CrosshairBeingRedTime = 0.3f;
+    const float MovingHoldingObjectWithScrollWheelSpeed = 0.4f, GrabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier = 0.3f, CanReleaseHoldedObjectWhenTouchedToPlayerCooldown = 0.2f, HoldAgainCooldown = 0.6f, CrosshairBeingRedTime = 0.3f;
     float tempHoldingObjectDistance, mouseScrollY;
     bool readyToHold = true, interacionKeyPressed, throwKeyPressedWhileHoldingAnObject;
     Transform grabbedObjectTransform, mainCameraTransform;

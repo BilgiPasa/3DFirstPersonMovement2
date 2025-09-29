@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -7,9 +8,9 @@ public class PlayerStatusManager : MonoBehaviour
     //* Attach this script to the UserInterface game object.
     //* "OtherIndicatiors"ta "PlayerHealth"te "HealthText"te "Drop Shadow" materyalinin "Face"inin "Dilate"sini 0.2 ve "Outline"ının "Thickness"ını 0.2 yap.
 
-    [HideInInspector] public int playerHealth;
-    [HideInInspector] public float flatVelocityMagnitude;
-    [HideInInspector] public bool walking, running, jumpingUp, sliding;
+    [NonSerialized] public int playerHealth;
+    [NonSerialized] public float flatVelocityMagnitude;
+    [NonSerialized] public bool walking, running, jumpingUp, sliding;
     const float Minimum = 0.1f;
     float relativeFlatVelocityMagnitude;
     Transform playerTransform;
@@ -44,10 +45,10 @@ public class PlayerStatusManager : MonoBehaviour
         {
             flatVelocityMagnitude = new Vector2(playerRigidbody.linearVelocity.x, playerRigidbody.linearVelocity.z).magnitude;
 
-            if (!(playerMovementManagerScript.playerIsStandingOnMovingGround && playerMovementManagerScript.objectRigidbodyThatPlayerIsStandingOn))
+            if (!(playerMovementManagerScript.standingOnMovingGround && playerMovementManagerScript.objectRigidbodyThatPlayerIsStandingOn))
             {
                 relativeFlatVelocityMagnitude = flatVelocityMagnitude;
-                playerMovementManagerScript.playerIsStandingOnMovingGround = false;
+                playerMovementManagerScript.standingOnMovingGround = false;
             }
             else
             {

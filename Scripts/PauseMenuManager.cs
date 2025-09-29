@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -9,9 +10,9 @@ public class PauseMenuManager : MonoBehaviour
     //* Attach this script to the UserInterface game object.
     //* "PauseMenu"yü aktive et ve "SettingsButton"ın "Text"ine gel. O "Text"in "Outline" materyalinin "Face"inin "Dilate"sini 0.1 yap. "Outline"ının rengini bembeyaz yap ve "Thickness"ını 0.05 yap. Ardından "PauseMenu"yü inaktif yap.
 
-    [HideInInspector] public bool gamePaused, dynamicFOV, settingsMenuOpened;
+    [NonSerialized] public bool gamePaused, dynamicFOV, settingsMenuOpened;
     int[] last5FPS = new int[5];
-    int defaultFOV = 90, defaultMaxFPS = 8, defaultMouseSensitivity = 100, defaultShowFPS = 1, defaultIncreasedSensitivity = -1, defaultDynamicFOV = 1, defaultShowSpeedText = 1, defaultPlayerSpeedTweak = 9, defaultPlayerThrowForceTweak = 60, defaultPlayerNormalJumpForceTweak = 21, defaultPlayerBouncyJumpForceTweak = 56, defaultPlayerNoFallDamageTweak = -1, counter;
+    int defaultFOV = 90, defaultMaxFPS = 8, defaultMouseSensitivity = 100, defaultShowFPS = 1, defaultIncreasedSensitivity = -1, defaultDynamicFOV = 1, defaultShowSpeedText = 1, defaultPlayerSpeedTweak = 9, defaultPlayerThrowForceTweak = 60, defaultPlayerNormalJumpForceTweak = 20, defaultPlayerBouncyJumpForceTweak = 55, defaultPlayerNoFallDamageTweak = -1, counter;
     bool cancelKeyPressed;
     RectTransform FPSTextRectTransform;
     TextMeshProUGUI speedText, FPSText;
@@ -21,7 +22,7 @@ public class PauseMenuManager : MonoBehaviour
     PlayerStatusManager playerStatusManagerScript;
     InputSystem_Actions inputActions;
     [SerializeField] GameObject playerObject, pauseMenuObject, settingsMenuObject, playerTweaksMenuObject, speedTextObject, FPSTextObject;
-    [SerializeField] TextMeshProUGUI FOVText, mouseSensitivityText, maxFPSText, playerSpeedTweakText, playerThrowForceTweakText, playerNormalJumpForceTweakText, playerBouncyJumpForceTweakText;
+    [SerializeField] TextMeshProUGUI FOVText, mouseSensitivityText, maxFPSText, playerSpeedTweakText, playerThrowForceTweakText, playerNormalJumpForceTweakText, playerBouncyJumpForceTweakText, gameVersionText;
     [SerializeField] Toggle dynamicFOVToggle, showSpeedTextToggle, increasedSensitivityToggle, showFPSToggle, playerNoDamageTweakToggle;
     [SerializeField] Slider FOVSlider, mouseSensitivitySlider, maxFPSSlider, playerSpeedTweakSlider, playerThrowForceTweakSlider, playerNormalJumpForceSlider, playerBouncyJumpForceSlider;
     [SerializeField] PlayerCameraManager playerCameraManagerScript;
@@ -171,6 +172,7 @@ public class PauseMenuManager : MonoBehaviour
         }
 
         speedText.text = "Speed: 0";
+        gameVersionText.text = $"v{Application.version}";
 
         if (!(!speedTextObject.activeSelf && FPSTextObject.activeSelf))
         {

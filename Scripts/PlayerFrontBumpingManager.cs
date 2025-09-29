@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider))]
@@ -10,7 +11,7 @@ public class PlayerFrontBumpingManager : MonoBehaviour
     //* In Unity Editor, layer 7 should be "Movable Normal Layer".
     //* In Unity Editor, layer 8 should be "Movable Bouncy Layer".
 
-    [HideInInspector] public bool frontBumping;
+    [NonSerialized] public bool frontBumping;
     BoxCollider frontBumpingDetectorBoxCollider;
 
     void Start()
