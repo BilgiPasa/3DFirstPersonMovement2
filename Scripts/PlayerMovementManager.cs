@@ -47,7 +47,7 @@ public class PlayerMovementManager : MonoBehaviour
     [NonSerialized] public bool jumping, groundedForAll, noFallDamage;
     const float GroundedSphereRadius = 0.3f, JumpingCooldown = 0.1f, JumpAgainCooldown = 0.3f;
     int maxFallWithoutBouncyJumpCalculationByThisScript = 5, maxFallWithoutParticles = 5;
-    bool readyToJump = true, jumpingInput, groundedForBouncyEnvironment, touchingToAnyGround, falling, wasFalling, wasTouchingToAnyGround, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment;
+    bool readyToJump = true, jumpingInput, groundedForBouncyEnvironment, touchingToAnyGround, touchingToAnyGroundAndGroundedForAll, falling, wasFalling, wasTouchingToAnyGround, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment;
 
     [Header("Other Things")]
     [NonSerialized] public int playerHealthDecrease;
@@ -206,11 +206,13 @@ public class PlayerMovementManager : MonoBehaviour
                 objectRigidbodyThatPlayerIsStandingOn = null;
             }
         }
+
+        touchingToAnyGroundAndGroundedForAll = touchingToAnyGround && groundedForAll;
     }
 
     void FallingCheckAndBouncyJumpAndFallDamage()
     {
-        falling = !groundedForAll && playerRigidbody.linearVelocity.y < -Minimum;
+        falling = !touchingToAnyGroundAndGroundedForAll && playerRigidbody.linearVelocity.y < -Minimum;
 
         if (!wasFalling && falling)
         {
@@ -224,7 +226,7 @@ public class PlayerMovementManager : MonoBehaviour
             }
         }
 
-        if (!wasTouchingToAnyGround && touchingToAnyGround && groundedForAll)
+        if (!wasTouchingToAnyGround && touchingToAnyGroundAndGroundedForAll)
         {
             if (!crouching)
             {
@@ -236,7 +238,7 @@ public class PlayerMovementManager : MonoBehaviour
             }
 
             fallDistance = startOfFall - endOfFall;
-            //print(fallDistance); // For testing
+            //print($"Calculated fall distance is: {fallDistance}"); // For testing
         }
 
         if (fallDistance > Minimum)
@@ -251,7 +253,7 @@ public class PlayerMovementManager : MonoBehaviour
                 Jumping(bouncyJumpForce);
             }
 
-            if (fallDistance > maxFallWithoutFallDamage && groundedForAll && !groundedForBouncyEnvironment && !playerSpawnAndSaveManagerScript.spawnProtection && !noFallDamage)
+            if (fallDistance > maxFallWithoutFallDamage && !groundedForBouncyEnvironment && !playerSpawnAndSaveManagerScript.spawnProtection && !noFallDamage)
             {
                 playerHealthDecrease += (int)(fallDistance - maxFallWithoutFallDamage);
             }
@@ -266,7 +268,7 @@ public class PlayerMovementManager : MonoBehaviour
         if (groundedForAll)
         {
             coyoteTimeCounter = CoyoteTimeSeconds;
-            justBeforeGroundedForNormalEnvironment = groundedForAll && !groundedForBouncyEnvironment;
+            justBeforeGroundedForNormalEnvironment = !groundedForBouncyEnvironment;
             justBeforeGroundedForBouncyEnvironment = groundedForBouncyEnvironment;
         }
         else if (coyoteTimeCounter <= 0)
@@ -283,11 +285,11 @@ public class PlayerMovementManager : MonoBehaviour
     {
         if (jumpingInput && readyToJump && !jumping)
         {// Hatıladığım kadarıyla; justBeforeGrounded şeylerini eklememin sebebi bir bug'ı engellemek içindi. O bug ise hatırladığım kadarıyla eğer ki bouncy bir yüzeyden zıplayıp sonrasında bir duvara değerek normal zemine düşersen ve düşerken de zıplama tuşuna basılı tutarsan, normal zeminde zıpladığında sanki bouncy zeminde zıplıyormuşsun gibi çok zıplıyorsun.
-            if (justBeforeGroundedForNormalEnvironment && ((!groundedForAll && coyoteTimeCounter > 0) || (groundedForAll && !groundedForBouncyEnvironment && touchingToAnyGround)))
+            if (justBeforeGroundedForNormalEnvironment && ((touchingToAnyGroundAndGroundedForAll && !groundedForBouncyEnvironment) || (!groundedForAll && coyoteTimeCounter > 0)))
             {
                 Jumping(normalJumpForce);
             }
-            else if (justBeforeGroundedForBouncyEnvironment && ((!groundedForAll && coyoteTimeCounter > 0) || (groundedForAll && groundedForBouncyEnvironment && touchingToAnyGround)))
+            else if (justBeforeGroundedForBouncyEnvironment && ((touchingToAnyGroundAndGroundedForAll && groundedForBouncyEnvironment) || (!groundedForAll && coyoteTimeCounter > 0)))
             {
                 Jumping(bouncyJumpForce);
             }
@@ -296,7 +298,7 @@ public class PlayerMovementManager : MonoBehaviour
 
     void Jumping(int jumpForce)
     {
-        //print(playerTransform.position.y); // For testing
+        //print($"Jump started at y: {playerTransform.position.y}"); // For testing
         readyToJump = false;
         jumping = true;
         playerRigidbody.linearVelocity = new Vector3(playerRigidbody.linearVelocity.x, 0, playerRigidbody.linearVelocity.z);
@@ -482,9 +484,9 @@ public class PlayerMovementManager : MonoBehaviour
 
     void GravityAndSpeedControl()
     {
-        if (groundedForAll && touchingToAnyGround)
+        if (touchingToAnyGroundAndGroundedForAll)
         {
-            playerRigidbody.useGravity = onSlope && (crouching || playerRigidbody.linearVelocity.y > Minimum);
+            playerRigidbody.useGravity = onSlope && (playerRigidbody.linearVelocity.y > Minimum || crouching);
 
             if (!crouching && playerRigidbody.linearVelocity.y > Minimum)
             {
@@ -533,11 +535,6 @@ public class PlayerMovementManager : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.layer == 3 || collision.gameObject.layer == 6 || collision.gameObject.layer == 7 || collision.gameObject.layer == 8)
-        {
-            touchingToAnyGround = true;
-        }
-
         // Tuttuğun obje ile uçmayı ve sürüklenmeyi engellemek için
         if ((collision.gameObject.layer == 7 || collision.gameObject.layer == 8) && collision.rigidbody && collision.rigidbody.Equals(playerInteractionManagerScript.grabbedObjectRigidbody) && playerInteractionManagerScript.canReleaseHoldedObjectWhenTouchedToPlayer)
         {
@@ -550,6 +547,10 @@ public class PlayerMovementManager : MonoBehaviour
         if (collision.gameObject.layer == 3 || collision.gameObject.layer == 6 || collision.gameObject.layer == 7 || collision.gameObject.layer == 8)
         {
             touchingToAnyGround = true;
+        }
+        else
+        {
+            touchingToAnyGround = false;
         }
 
         if ((collision.gameObject.layer == 7 || collision.gameObject.layer == 8) && collision.rigidbody)

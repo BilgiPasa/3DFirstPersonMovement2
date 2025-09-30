@@ -56,7 +56,7 @@ public class GranadeManager : MonoBehaviour
                 {
                     objectRigidbodyThatEffectedFromExplosion.AddExplosionForce(explosionForce, granadeTransform.position, explosionRadius);
 
-                    if (objectRigidbodyThatEffectedFromExplosion.gameObject.tag == "Player") // Oyuncu için
+                    if (objectRigidbodyThatEffectedFromExplosion.gameObject.tag.Equals("Player")) // Oyuncu için
                     {
                         playerInteractionManagerScriptFromPlayerThatEffectedFromExplosion = objectRigidbodyThatEffectedFromExplosion.GetComponent<PlayerInteractionManager>();
 
