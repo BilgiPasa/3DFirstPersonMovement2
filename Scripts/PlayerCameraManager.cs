@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,9 +5,9 @@ public class PlayerCameraManager : MonoBehaviour
 {
     //* Attach this script to the CameraHolder game object.
 
-    [NonSerialized] public int sensitivity;
-    [NonSerialized] public float xRotation, yRotation, normalFOV;
+    int sensitivity; // This value has getter and setter.
     int normalCameraRotationMultiplier = 1, zoomingSpeed = 10;
+    float xRotation, yRotation, normalFOV; // These values have getters and setters.
     float zoomedCameraRotationMultiplier = 0.5f, theCameraRotationMultiplier, sprintFOV, zoomFOV, zoomSprintFOV;
     bool zoomingInput;
     Transform cameraHolderTransform;
@@ -20,6 +19,30 @@ public class PlayerCameraManager : MonoBehaviour
     [SerializeField] Transform playerColliderTransform, cameraPositionTransform;
     [SerializeField] Camera mainCamera;
     [SerializeField] PlayerMovementManager playerMovementManagerScript;
+
+    public int Sensitivity
+    {
+        get => sensitivity;
+        set { sensitivity = value; }
+    }
+
+    public float XRotation
+    {
+        get => xRotation;
+        set { xRotation = value; }
+    }
+
+    public float YRotation
+    {
+        get => yRotation;
+        set { yRotation = value; }
+    }
+
+    public float NormalFOV
+    {
+        get => normalFOV;
+        set { normalFOV = value; }
+    }
 
     void Start()
     {
@@ -38,7 +61,7 @@ public class PlayerCameraManager : MonoBehaviour
 
     void CameraZoomInputPerformed(InputAction.CallbackContext context)
     {
-        if (!pauseMenuManagerScript.gamePaused && !playerSpawnAndSaveManagerScript.playerDied)
+        if (!pauseMenuManagerScript.GamePaused && !playerSpawnAndSaveManagerScript.PlayerDied)
         {
             zoomingInput = true;
         }
@@ -51,17 +74,17 @@ public class PlayerCameraManager : MonoBehaviour
 
     void Update()
     {
-        if (!pauseMenuManagerScript.gamePaused)
+        if (!pauseMenuManagerScript.GamePaused)
         {
             CameraLook();
 
-            if (!playerSpawnAndSaveManagerScript.playerDied)
+            if (!playerSpawnAndSaveManagerScript.PlayerDied)
             {
                 FOVChange();
             }
         }
 
-        if (pauseMenuManagerScript.settingsMenuOpened)
+        if (pauseMenuManagerScript.SettingsMenuOpened)
         {
             mainCamera.fieldOfView = normalFOV;
         }
@@ -74,7 +97,7 @@ public class PlayerCameraManager : MonoBehaviour
 
     void CameraLook()
     {
-        if (!playerSpawnAndSaveManagerScript.playerDied)
+        if (!playerSpawnAndSaveManagerScript.PlayerDied)
         {
             yRotation += inputActions.Player.Look.ReadValue<Vector2>().x * sensitivity * theCameraRotationMultiplier * 0.001f;
             xRotation -= inputActions.Player.Look.ReadValue<Vector2>().y * sensitivity * theCameraRotationMultiplier * 0.001f;
@@ -91,7 +114,7 @@ public class PlayerCameraManager : MonoBehaviour
         {
             theCameraRotationMultiplier = normalCameraRotationMultiplier;
 
-            if (!(pauseMenuManagerScript.dynamicFOV && (playerStatusManagerScript.running || (playerStatusManagerScript.sliding && playerStatusManagerScript.flatVelocityMagnitude > playerMovementManagerScript.runSpeed))))
+            if (!(pauseMenuManagerScript.DynamicFOV && (playerStatusManagerScript.Running || (playerStatusManagerScript.Sliding && playerStatusManagerScript.FlatVelocityMagnitude > playerMovementManagerScript.RunSpeed))))
             {
                 mainCamera.fieldOfView = mainCamera.fieldOfView > normalFOV - 0.01f && mainCamera.fieldOfView < normalFOV + 0.01f ? normalFOV : Mathf.Lerp(mainCamera.fieldOfView, normalFOV, zoomingSpeed * Time.deltaTime);
             }
@@ -105,7 +128,7 @@ public class PlayerCameraManager : MonoBehaviour
         {
             theCameraRotationMultiplier = zoomedCameraRotationMultiplier;
 
-            if (!(pauseMenuManagerScript.dynamicFOV && (playerStatusManagerScript.running || (playerStatusManagerScript.sliding && playerStatusManagerScript.flatVelocityMagnitude > playerMovementManagerScript.runSpeed))))
+            if (!(pauseMenuManagerScript.DynamicFOV && (playerStatusManagerScript.Running || (playerStatusManagerScript.Sliding && playerStatusManagerScript.FlatVelocityMagnitude > playerMovementManagerScript.RunSpeed))))
             {
                 zoomFOV = normalFOV / 5;
                 mainCamera.fieldOfView = mainCamera.fieldOfView < zoomFOV + 0.01f ? zoomFOV : Mathf.Lerp(mainCamera.fieldOfView, zoomFOV, zoomingSpeed * Time.deltaTime);

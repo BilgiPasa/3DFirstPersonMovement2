@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -8,13 +7,19 @@ public class GranadeManager : MonoBehaviour
 {
     //* Attach this script to explodable (granade) objects.
 
-    [NonSerialized] public bool removePin;
     int delaySeconds = 1, explosionRadius = 15, explosionForce = 2000;
+    bool removePin; // This value has getter and setter.
     bool pimRemoved;
     Transform granadeTransform;
     Rigidbody granadeRigidbody, objectRigidbodyThatEffectedFromExplosion;
     PlayerInteractionManager playerInteractionManagerScriptFromPlayerThatEffectedFromExplosion;
     [SerializeField] GameObject explosionEffectPrefabObject;
+
+    public bool RemovePin
+    {
+        get => removePin;
+        set { removePin = value; }
+    }
 
     void Start()
     {
@@ -60,12 +65,12 @@ public class GranadeManager : MonoBehaviour
                     {
                         playerInteractionManagerScriptFromPlayerThatEffectedFromExplosion = objectRigidbodyThatEffectedFromExplosion.GetComponent<PlayerInteractionManager>();
 
-                        if (granadeRigidbody.Equals(playerInteractionManagerScriptFromPlayerThatEffectedFromExplosion.grabbedObjectRigidbody)) // Oyuncunun elinde tutmuş olduğu bu patlayan objeyi bırakması için
+                        if (granadeRigidbody.Equals(playerInteractionManagerScriptFromPlayerThatEffectedFromExplosion.GrabbedObjectRigidbody)) // Oyuncunun elinde tutmuş olduğu bu patlayan objeyi bırakması için
                         {
                             playerInteractionManagerScriptFromPlayerThatEffectedFromExplosion.ReleaseObject();
                         }
 
-                        objectRigidbodyThatEffectedFromExplosion.GetComponent<PlayerMovementManager>().playerHealthDecrease += explosionForce / ((int)(objectRigidbodyThatEffectedFromExplosion.position - granadeTransform.position).magnitude * 100);
+                        objectRigidbodyThatEffectedFromExplosion.GetComponent<PlayerMovementManager>().PlayerHealthDecrease += explosionForce / ((int)(objectRigidbodyThatEffectedFromExplosion.position - granadeTransform.position).magnitude * 100);
                     }
                 }
             }

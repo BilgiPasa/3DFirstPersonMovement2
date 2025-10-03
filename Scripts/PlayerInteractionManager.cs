@@ -1,8 +1,7 @@
-using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PlayerInteractionManager : MonoBehaviour
 {
@@ -12,15 +11,33 @@ public class PlayerInteractionManager : MonoBehaviour
     //* Make sure that movable objects have a Rigidbody.
 
     [Header("Holding and Throwing")]
-    [NonSerialized] public int throwForce; // If you want to change the value, change it from the PauseMenuManager script.
-    [NonSerialized] public bool canReleaseHoldedObjectWhenTouchedToPlayer;
-    [NonSerialized] public Rigidbody grabbedObjectRigidbody;
     const int NormalHoldingObjectDistance = 4, HoldForce = 30, MaxHoldingObjectCanBeOffsetDistance = 10, MaxHoldingObjectDistance = 6, MinHoldingObjectDistance = 3;
+    int throwForce; // This value has getter and setter. Also; if you want to change the value, change it from the PauseMenuManager script.
     const float MovingHoldingObjectWithScrollWheelSpeed = 0.4f, GrabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier = 0.3f, CanReleaseHoldedObjectWhenTouchedToPlayerCooldown = 0.2f, HoldAgainCooldown = 0.6f, CrosshairBeingRedTime = 0.3f;
     float tempHoldingObjectDistance, mouseScrollY;
+    bool canReleaseHoldedObjectWhenTouchedToPlayer; // This value has getter and setter.
     bool readyToHold = true, interacionKeyPressed, throwKeyPressedWhileHoldingAnObject;
     Transform grabbedObjectTransform, mainCameraTransform;
+    Rigidbody grabbedObjectRigidbody; // This value has getter and setter.
     RaycastHit holdInteractionHit;
+
+    public int ThrowForce
+    {
+        get => throwForce;
+        set { throwForce = value; }
+    }
+
+    public bool CanReleaseHoldedObjectWhenTouchedToPlayer
+    {
+        get => canReleaseHoldedObjectWhenTouchedToPlayer;
+        set { canReleaseHoldedObjectWhenTouchedToPlayer = value; }
+    }
+
+    public Rigidbody GrabbedObjectRigidbody
+    {
+        get => grabbedObjectRigidbody;
+        set { grabbedObjectRigidbody = value; }
+    }
 
     [Header("Granade")]
     bool removingPinKeyPressedWhileHoldingGranade;
@@ -51,7 +68,7 @@ public class PlayerInteractionManager : MonoBehaviour
 
     void InteractInputPerformed(InputAction.CallbackContext context)
     {
-        if (!pauseMenuManagerScript.gamePaused)
+        if (!pauseMenuManagerScript.GamePaused)
         {
             interacionKeyPressed = true;
         }
@@ -59,7 +76,7 @@ public class PlayerInteractionManager : MonoBehaviour
 
     void ThrowInputPerformed(InputAction.CallbackContext context)
     {
-        if (!pauseMenuManagerScript.gamePaused && grabbedObjectRigidbody)
+        if (!pauseMenuManagerScript.GamePaused && grabbedObjectRigidbody)
         {
             throwKeyPressedWhileHoldingAnObject = true;
         }
@@ -67,7 +84,7 @@ public class PlayerInteractionManager : MonoBehaviour
 
     void RemovePinInputPerformed(InputAction.CallbackContext context)
     {
-        if (!pauseMenuManagerScript.gamePaused && grabbedObjectRigidbody && grabbedObjectRigidbody.GetComponent<GranadeManager>())
+        if (!pauseMenuManagerScript.GamePaused && grabbedObjectRigidbody && grabbedObjectRigidbody.GetComponent<GranadeManager>())
         {
             removingPinKeyPressedWhileHoldingGranade = true;
         }
@@ -75,7 +92,7 @@ public class PlayerInteractionManager : MonoBehaviour
 
     void Update()
     {
-        if (!pauseMenuManagerScript.gamePaused && grabbedObjectRigidbody)
+        if (!pauseMenuManagerScript.GamePaused && grabbedObjectRigidbody)
         {
             mouseScrollY = inputActions.Player.MouseWheel.ReadValue<float>();
 
@@ -142,7 +159,7 @@ public class PlayerInteractionManager : MonoBehaviour
                 return;
             }
 
-            if (Physics.Raycast(mainCameraTransform.position, mainCameraTransform.forward, out holdInteractionHit, MaxHoldingObjectDistance, movableNormalLayer | movableBouncyLayer) && readyToHold && holdInteractionHit.rigidbody && !holdInteractionHit.rigidbody.isKinematic && !holdInteractionHit.rigidbody.Equals(playerMovementManagerScript.objectRigidbodyThatPlayerIsStandingOn))
+            if (Physics.Raycast(mainCameraTransform.position, mainCameraTransform.forward, out holdInteractionHit, MaxHoldingObjectDistance, movableNormalLayer | movableBouncyLayer) && readyToHold && holdInteractionHit.rigidbody && !holdInteractionHit.rigidbody.isKinematic && !holdInteractionHit.rigidbody.Equals(playerMovementManagerScript.ObjectRigidbodyThatPlayerIsStandingOn))
             {
                 readyToHold = canReleaseHoldedObjectWhenTouchedToPlayer = false;
                 grabbedObjectRigidbody = holdInteractionHit.rigidbody;
@@ -199,6 +216,6 @@ public class PlayerInteractionManager : MonoBehaviour
 
     void RemovingPinOfHoldedGranage()
     {
-        grabbedObjectRigidbody.GetComponent<GranadeManager>().removePin = true;
+        grabbedObjectRigidbody.GetComponent<GranadeManager>().RemovePin = true;
     }
 }

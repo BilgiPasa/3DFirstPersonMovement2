@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,9 +6,9 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
 {
     //* Attach this script to the UserInterface game object.
 
-    [NonSerialized] public bool playerDied, spawnProtection;
     int savingTheGameDelay = 15, spawnProtectionSeconds = 3;
     float savingTheGameTimer;
+    bool playerDied, spawnProtection; // These values have getters and setters.
     bool thePlayerDiedSaveValueWasZero, respawnButtonPressed;
     Transform playerTransform;
     Rigidbody playerRigidbody;
@@ -24,6 +23,18 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
     [SerializeField] CapsuleCollider playerColliderCapsuleCollider;
     [SerializeField] Image crosshairImage;
     [SerializeField] PlayerCameraManager playerCameraManagerScript;
+
+    public bool PlayerDied
+    {
+        get => playerDied;
+        set { playerDied = value; }
+    }
+
+    public bool SpawnProtection
+    {
+        get => spawnProtection;
+        set { spawnProtection = value; }
+    }
 
     void Start()
     {
@@ -58,17 +69,17 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
 
         if (!string.IsNullOrEmpty(PlayerPrefs.GetString("playerHealth")))
         {
-            playerStatusManagerScript.playerHealth = int.Parse(PlayerPrefs.GetString("playerHealth"));
+            playerStatusManagerScript.PlayerHealth = int.Parse(PlayerPrefs.GetString("playerHealth"));
         }
         else
         {
-            playerStatusManagerScript.playerHealth = 100;
+            playerStatusManagerScript.PlayerHealth = 100;
         }
 
-        playerCameraManagerScript.xRotation = PlayerPrefs.GetFloat("playerRotationX");
-        playerCameraManagerScript.yRotation = PlayerPrefs.GetFloat("playerRotationY");
-        cameraHolderTransform.rotation = Quaternion.Euler(playerCameraManagerScript.xRotation, playerCameraManagerScript.yRotation, 0);
-        playerColliderTransform.rotation = Quaternion.Euler(0, playerCameraManagerScript.yRotation, 0);
+        playerCameraManagerScript.XRotation = PlayerPrefs.GetFloat("playerRotationX");
+        playerCameraManagerScript.YRotation = PlayerPrefs.GetFloat("playerRotationY");
+        cameraHolderTransform.rotation = Quaternion.Euler(playerCameraManagerScript.XRotation, playerCameraManagerScript.YRotation, 0);
+        playerColliderTransform.rotation = Quaternion.Euler(0, playerCameraManagerScript.YRotation, 0);
 
         if (PlayerPrefs.GetInt("playerDied") == -1)
         {
@@ -85,23 +96,23 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
 
             if (PlayerPrefs.GetInt("playerCrouching") == -1)
             {
-                playerColliderCapsuleCollider.height = playerMovementManagerScript.playerHeight;
-                cameraPositionTransform.localPosition = new Vector3(cameraPositionTransform.localPosition.x, playerMovementManagerScript.cameraPositionLocalPositionWhenNotCrouched, cameraPositionTransform.localPosition.z);
-                frontBumpingDetectorTransform.localScale = new Vector3(frontBumpingDetectorTransform.localScale.x, playerMovementManagerScript.frontBumpingDetectorLocalScaleWhenNotCrouched, frontBumpingDetectorTransform.localScale.z);
-                playerCapsuleModelTransform.localScale = new Vector3(playerCapsuleModelTransform.localScale.x, playerMovementManagerScript.playerHeight / 2, playerCapsuleModelTransform.localScale.z);
-                playerMovementManagerScript.crouching = false;
+                playerColliderCapsuleCollider.height = playerMovementManagerScript.PlayerHeight;
+                cameraPositionTransform.localPosition = new Vector3(cameraPositionTransform.localPosition.x, playerMovementManagerScript.CameraPositionLocalPositionWhenNotCrouched, cameraPositionTransform.localPosition.z);
+                frontBumpingDetectorTransform.localScale = new Vector3(frontBumpingDetectorTransform.localScale.x, playerMovementManagerScript.FrontBumpingDetectorLocalScaleWhenNotCrouched, frontBumpingDetectorTransform.localScale.z);
+                playerCapsuleModelTransform.localScale = new Vector3(playerCapsuleModelTransform.localScale.x, playerMovementManagerScript.PlayerHeight / 2, playerCapsuleModelTransform.localScale.z);
+                playerMovementManagerScript.Crouching = false;
             }
             else if (PlayerPrefs.GetInt("playerCrouching") == 1)
             {
-                playerColliderCapsuleCollider.height = playerMovementManagerScript.crouchHeight;
-                cameraPositionTransform.localPosition = new Vector3(cameraPositionTransform.localPosition.x, playerMovementManagerScript.cameraPositionLocalPositionWhenCrouched, cameraPositionTransform.localPosition.z);
-                frontBumpingDetectorTransform.localScale = new Vector3(frontBumpingDetectorTransform.localScale.x, playerMovementManagerScript.frontBumpingDetectorLocalScaleWhenCrouched, frontBumpingDetectorTransform.localScale.z);
-                playerCapsuleModelTransform.localScale = new Vector3(playerCapsuleModelTransform.localScale.x, playerMovementManagerScript.crouchHeight / 2, playerCapsuleModelTransform.localScale.z);
-                playerMovementManagerScript.crouching = true;
+                playerColliderCapsuleCollider.height = playerMovementManagerScript.CrouchHeight;
+                cameraPositionTransform.localPosition = new Vector3(cameraPositionTransform.localPosition.x, playerMovementManagerScript.CameraPositionLocalPositionWhenCrouched, cameraPositionTransform.localPosition.z);
+                frontBumpingDetectorTransform.localScale = new Vector3(frontBumpingDetectorTransform.localScale.x, playerMovementManagerScript.FrontBumpingDetectorLocalScaleWhenCrouched, frontBumpingDetectorTransform.localScale.z);
+                playerCapsuleModelTransform.localScale = new Vector3(playerCapsuleModelTransform.localScale.x, playerMovementManagerScript.CrouchHeight / 2, playerCapsuleModelTransform.localScale.z);
+                playerMovementManagerScript.Crouching = true;
             }
 
             cameraHolderTransform.position = cameraPositionTransform.position;
-            playerMovementManagerScript.startOfFall = playerRigidbody.position.y; // Setting the start of fall to player's y position because if not, the PlayerMovementManager script does not know it's initial falling position at the start of the game.
+            playerMovementManagerScript.StartOfFall = playerRigidbody.position.y; // Setting the start of fall to player's y position because if not, the PlayerMovementManager script does not know it's initial falling position at the start of the game.
             playerRigidbody.linearVelocity = new Vector3(PlayerPrefs.GetFloat("playerLinearVelocityX"), PlayerPrefs.GetFloat("playerLinearVelocityY"), PlayerPrefs.GetFloat("playerLinearVelocityZ"));
             yield return new WaitForSeconds(spawnProtectionSeconds);
             spawnProtection = false;
@@ -116,11 +127,11 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
 
     IEnumerator NotUsingTheSaveAtTheStartOfTheGame()
     {
-        playerStatusManagerScript.playerHealth = 100;
+        playerStatusManagerScript.PlayerHealth = 100;
         spawnProtection = true;
         playerRigidbody.position = playerInitialPosition;
         cameraHolderTransform.position = cameraPositionTransform.position;
-        playerMovementManagerScript.startOfFall = playerRigidbody.position.y; // Setting the start of fall to player's y position because if not, the PlayerMovementManager script does not know it's initial falling position at the start of the game.
+        playerMovementManagerScript.StartOfFall = playerRigidbody.position.y; // Setting the start of fall to player's y position because if not, the PlayerMovementManager script does not know it's initial falling position at the start of the game.
         yield return new WaitForSeconds(spawnProtectionSeconds);
         spawnProtection = false;
     }
@@ -138,7 +149,7 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
             savingTheGameTimer = savingTheGameDelay;
         }
 
-        if (playerStatusManagerScript.playerHealth <= 0)
+        if (playerStatusManagerScript.PlayerHealth <= 0)
         {
             if (!playerDied)
             {
@@ -153,7 +164,7 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
 
         if (playerTransform.position.y < -100 && !playerDied)
         {
-            playerStatusManagerScript.playerHealth = 0;
+            playerStatusManagerScript.PlayerHealth = 0;
         }
     }
 
@@ -168,15 +179,15 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
             PlayerPrefs.SetInt("playerDied", 1);
         }
 
-        PlayerPrefs.SetFloat("playerRotationX", playerCameraManagerScript.xRotation);
-        PlayerPrefs.SetFloat("playerRotationY", playerCameraManagerScript.yRotation);
+        PlayerPrefs.SetFloat("playerRotationX", playerCameraManagerScript.XRotation);
+        PlayerPrefs.SetFloat("playerRotationY", playerCameraManagerScript.YRotation);
         PlayerPrefs.SetFloat("playerPositionX", playerTransform.position.x);
         PlayerPrefs.SetFloat("playerPositionY", playerTransform.position.y);
         PlayerPrefs.SetFloat("playerPositionZ", playerTransform.position.z);
         PlayerPrefs.SetFloat("playerLinearVelocityX", playerRigidbody.linearVelocity.x);
         PlayerPrefs.SetFloat("playerLinearVelocityY", playerRigidbody.linearVelocity.y);
         PlayerPrefs.SetFloat("playerLinearVelocityZ", playerRigidbody.linearVelocity.z);
-        PlayerPrefs.SetString("playerHealth", playerStatusManagerScript.playerHealth.ToString());
+        PlayerPrefs.SetString("playerHealth", playerStatusManagerScript.PlayerHealth.ToString());
     }
 
     void PlayerDeath()
@@ -189,10 +200,10 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
     void PlayerDespawning()
     {
         playerDied = true;
-        playerStatusManagerScript.playerHealth = 0;
+        playerStatusManagerScript.PlayerHealth = 0;
         deathMenuObject.SetActive(true); // Haberin olsun. Eğer ki karakter öldüğünde ekranda gözükmesini istemediğin Menu'ler varsa, bu koddan önce o Menu'lerin SetActive'lerini false yap ve ardından bu kodu çalıştır. Yoksa Menu'ler üst üste olabilir ve biri diğerini engelleyebilir.
 
-        if (playerInteractionManagerScript.grabbedObjectRigidbody)
+        if (playerInteractionManagerScript.GrabbedObjectRigidbody)
         {
             playerInteractionManagerScript.ReleaseObject();
         }
@@ -207,17 +218,17 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
         playerObject.SetActive(true);
         respawnButtonPressed = false;
         spawnProtection = true;
-        playerCameraManagerScript.xRotation = playerCameraManagerScript.yRotation = 0;
+        playerCameraManagerScript.XRotation = playerCameraManagerScript.YRotation = 0;
         playerTransform.position = playerInitialPosition;
-        playerMovementManagerScript.startOfFall = playerTransform.position.y; // Setting the start of fall to player's y position because if not, the PlayerMovementManager script does not know it's initial falling position when respawned.
-        playerMovementManagerScript.endOfFall = playerMovementManagerScript.fallDistance = 0;
-        playerColliderCapsuleCollider.height = playerMovementManagerScript.playerHeight;
-        cameraPositionTransform.localPosition = new Vector3(cameraPositionTransform.localPosition.x, playerMovementManagerScript.cameraPositionLocalPositionWhenNotCrouched, cameraPositionTransform.localPosition.z);
-        frontBumpingDetectorTransform.localScale = new Vector3(frontBumpingDetectorTransform.localScale.x, playerMovementManagerScript.frontBumpingDetectorLocalScaleWhenNotCrouched, frontBumpingDetectorTransform.localScale.z);
-        playerCapsuleModelTransform.localScale = new Vector3(playerCapsuleModelTransform.localScale.x, playerMovementManagerScript.playerHeight / 2, playerCapsuleModelTransform.localScale.z);
-        playerMovementManagerScript.crouching = false;
+        playerMovementManagerScript.StartOfFall = playerTransform.position.y; // Setting the start of fall to player's y position because if not, the PlayerMovementManager script does not know it's initial falling position when respawned.
+        playerMovementManagerScript.EndOfFall = playerMovementManagerScript.FallDistance = 0;
+        playerColliderCapsuleCollider.height = playerMovementManagerScript.PlayerHeight;
+        cameraPositionTransform.localPosition = new Vector3(cameraPositionTransform.localPosition.x, playerMovementManagerScript.CameraPositionLocalPositionWhenNotCrouched, cameraPositionTransform.localPosition.z);
+        frontBumpingDetectorTransform.localScale = new Vector3(frontBumpingDetectorTransform.localScale.x, playerMovementManagerScript.FrontBumpingDetectorLocalScaleWhenNotCrouched, frontBumpingDetectorTransform.localScale.z);
+        playerCapsuleModelTransform.localScale = new Vector3(playerCapsuleModelTransform.localScale.x, playerMovementManagerScript.PlayerHeight / 2, playerCapsuleModelTransform.localScale.z);
+        playerMovementManagerScript.Crouching = false;
         playerRigidbody.linearVelocity = Vector3.zero;
-        playerStatusManagerScript.playerHealth = 100;
+        playerStatusManagerScript.PlayerHealth = 100;
         playerDied = false;
         deathMenuObject.SetActive(false);
         SavingTheGame();

@@ -1,18 +1,17 @@
-using System;
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 using System.Linq;
+using TMPro;
+using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PauseMenuManager : MonoBehaviour
 {
     //* Attach this script to the UserInterface game object.
     //* "PauseMenu"yü aktive et ve "SettingsButton"ın "Text"ine gel. O "Text"in "Outline" materyalinin "Face"inin "Dilate"sini 0.1 yap. "Outline"ının rengini bembeyaz yap ve "Thickness"ını 0.05 yap. Ardından "PauseMenu"yü inaktif yap.
 
-    [NonSerialized] public bool gamePaused, dynamicFOV, settingsMenuOpened;
     int[] last5FPS = new int[5];
     int defaultFOV = 90, defaultMaxFPS = 8, defaultMouseSensitivity = 100, defaultShowFPS = 1, defaultIncreasedSensitivity = -1, defaultDynamicFOV = 1, defaultShowSpeedText = 1, defaultPlayerSpeedTweak = 9, defaultPlayerThrowForceTweak = 60, defaultPlayerNormalJumpForceTweak = 20, defaultPlayerBouncyJumpForceTweak = 55, defaultPlayerNoFallDamageTweak = -1, counter;
+    bool gamePaused, dynamicFOV, settingsMenuOpened; // These values have getters and setters.
     bool cancelKeyPressed;
     RectTransform FPSTextRectTransform;
     TextMeshProUGUI speedText, FPSText;
@@ -26,6 +25,24 @@ public class PauseMenuManager : MonoBehaviour
     [SerializeField] Toggle dynamicFOVToggle, showSpeedTextToggle, increasedSensitivityToggle, showFPSToggle, playerNoDamageTweakToggle;
     [SerializeField] Slider FOVSlider, mouseSensitivitySlider, maxFPSSlider, playerSpeedTweakSlider, playerThrowForceTweakSlider, playerNormalJumpForceSlider, playerBouncyJumpForceSlider;
     [SerializeField] PlayerCameraManager playerCameraManagerScript;
+
+    public bool GamePaused
+    {
+        get => gamePaused;
+        set { gamePaused = value; }
+    }
+
+    public bool DynamicFOV
+    {
+        get => dynamicFOV;
+        set { dynamicFOV = value; }
+    }
+
+    public bool SettingsMenuOpened
+    {
+        get => settingsMenuOpened;
+        set { settingsMenuOpened = value; }
+    }
 
     void Start()
     {
@@ -100,7 +117,7 @@ public class PauseMenuManager : MonoBehaviour
             PlayerPrefs.SetInt("playerNoFallDamageTweak", defaultPlayerNoFallDamageTweak);
         }
 
-        playerCameraManagerScript.normalFOV = PlayerPrefs.GetInt("FOV");
+        playerCameraManagerScript.NormalFOV = PlayerPrefs.GetInt("FOV");
 
         switch (PlayerPrefs.GetInt("maxFPS"))
         {
@@ -142,7 +159,7 @@ public class PauseMenuManager : MonoBehaviour
                 break;
         }
 
-        playerCameraManagerScript.sensitivity = PlayerPrefs.GetInt("mouseSensitivity");
+        playerCameraManagerScript.Sensitivity = PlayerPrefs.GetInt("mouseSensitivity");
 
         if (PlayerPrefs.GetInt("showFPS") == 1)
         {
@@ -183,20 +200,20 @@ public class PauseMenuManager : MonoBehaviour
             FPSTextRectTransform.anchoredPosition = new Vector2(FPSTextRectTransform.anchoredPosition.x, -45);
         }
 
-        playerMovementManagerScript.normalMoveSpeed = PlayerPrefs.GetInt("playerSpeedTweak");
-        playerMovementManagerScript.runSpeed = playerMovementManagerScript.normalMoveSpeed * 4 / 3;
-        playerMovementManagerScript.crouchSpeed = playerMovementManagerScript.normalMoveSpeed * 2 / 3;
-        playerInteractionManagerScript.throwForce = PlayerPrefs.GetInt("playerThrowForceTweak");
-        playerMovementManagerScript.normalJumpForce = PlayerPrefs.GetInt("playerNormalJumpForceTweak");
-        playerMovementManagerScript.bouncyJumpForce = PlayerPrefs.GetInt("playerBouncyJumpForceTweak");
+        playerMovementManagerScript.NormalMoveSpeed = PlayerPrefs.GetInt("playerSpeedTweak");
+        playerMovementManagerScript.RunSpeed = playerMovementManagerScript.NormalMoveSpeed * 4 / 3;
+        playerMovementManagerScript.CrouchSpeed = playerMovementManagerScript.NormalMoveSpeed * 2 / 3;
+        playerInteractionManagerScript.ThrowForce = PlayerPrefs.GetInt("playerThrowForceTweak");
+        playerMovementManagerScript.NormalJumpForce = PlayerPrefs.GetInt("playerNormalJumpForceTweak");
+        playerMovementManagerScript.BouncyJumpForce = PlayerPrefs.GetInt("playerBouncyJumpForceTweak");
 
         if (PlayerPrefs.GetInt("playerNoFallDamageTweak") == -1)
         {
-            playerMovementManagerScript.noFallDamage = false;
+            playerMovementManagerScript.NoFallDamage = false;
         }
         else if (PlayerPrefs.GetInt("playerNoFallDamageTweak") == 1)
         {
-            playerMovementManagerScript.noFallDamage = true;
+            playerMovementManagerScript.NoFallDamage = true;
         }
     }
 
@@ -207,11 +224,11 @@ public class PauseMenuManager : MonoBehaviour
 
     void Update()
     {
-        if (!(gamePaused || playerSpawnAndSaveManagerScript.playerDied))
+        if (!(gamePaused || playerSpawnAndSaveManagerScript.PlayerDied))
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-            speedText.text = $"Speed: {playerStatusManagerScript.flatVelocityMagnitude}";
+            speedText.text = $"Speed: {playerStatusManagerScript.FlatVelocityMagnitude}";
         }
         else
         {
@@ -244,7 +261,7 @@ public class PauseMenuManager : MonoBehaviour
                 {
                     if (!gamePaused)
                     {
-                        if (!playerSpawnAndSaveManagerScript.playerDied)
+                        if (!playerSpawnAndSaveManagerScript.PlayerDied)
                         {
                             Pause();
                         }
@@ -292,9 +309,9 @@ public class PauseMenuManager : MonoBehaviour
 
     public void Settings()
     {
-        FOVSlider.value = playerCameraManagerScript.normalFOV;
+        FOVSlider.value = playerCameraManagerScript.NormalFOV;
 
-        switch (playerCameraManagerScript.normalFOV)
+        switch (playerCameraManagerScript.NormalFOV)
         {
             case 90:
                 FOVText.text = "FOV: Normal";
@@ -306,7 +323,7 @@ public class PauseMenuManager : MonoBehaviour
                 FOVText.text = "FOV: Telescope";
                 break;
             default:
-                FOVText.text = $"FOV: {playerCameraManagerScript.normalFOV}";
+                FOVText.text = $"FOV: {playerCameraManagerScript.NormalFOV}";
                 break;
         }
 
@@ -353,9 +370,9 @@ public class PauseMenuManager : MonoBehaviour
         if (PlayerPrefs.GetInt("increasedSensitivity") == -1)
         {
             increasedSensitivityToggle.isOn = false;
-            mouseSensitivitySlider.value = playerCameraManagerScript.sensitivity;
+            mouseSensitivitySlider.value = playerCameraManagerScript.Sensitivity;
 
-            switch (playerCameraManagerScript.sensitivity)
+            switch (playerCameraManagerScript.Sensitivity)
             {
                 case 100:
                     mouseSensitivityText.text = "Mouse Sensitivity: Normal";
@@ -367,16 +384,16 @@ public class PauseMenuManager : MonoBehaviour
                     mouseSensitivityText.text = "Mouse Sensitivity: Snail";
                     break;
                 default:
-                    mouseSensitivityText.text = $"Mouse Sensitivity: {playerCameraManagerScript.sensitivity}";
+                    mouseSensitivityText.text = $"Mouse Sensitivity: {playerCameraManagerScript.Sensitivity}";
                     break;
             }
         }
         else if (PlayerPrefs.GetInt("increasedSensitivity") == 1)
         {
             increasedSensitivityToggle.isOn = true;
-            mouseSensitivitySlider.value = playerCameraManagerScript.sensitivity - 200;
+            mouseSensitivitySlider.value = playerCameraManagerScript.Sensitivity - 200;
 
-            switch (playerCameraManagerScript.sensitivity)
+            switch (playerCameraManagerScript.Sensitivity)
             {
                 case 300:
                     mouseSensitivityText.text = "Mouse Sensitivity: VERY FAST";
@@ -385,7 +402,7 @@ public class PauseMenuManager : MonoBehaviour
                     mouseSensitivityText.text = "Mouse Sensitivity: MAXIMUM";
                     break;
                 default:
-                    mouseSensitivityText.text = $"Mouse Sensitivity: {playerCameraManagerScript.sensitivity}";
+                    mouseSensitivityText.text = $"Mouse Sensitivity: {playerCameraManagerScript.Sensitivity}";
                     break;
             }
         }
@@ -425,7 +442,7 @@ public class PauseMenuManager : MonoBehaviour
     public void FOV(float value)
     {
         PlayerPrefs.SetInt("FOV", (int)value);
-        playerCameraManagerScript.normalFOV = value;
+        playerCameraManagerScript.NormalFOV = value;
 
         switch (value)
         {
@@ -545,7 +562,7 @@ public class PauseMenuManager : MonoBehaviour
             }
         }
 
-        playerCameraManagerScript.sensitivity = PlayerPrefs.GetInt("mouseSensitivity");
+        playerCameraManagerScript.Sensitivity = PlayerPrefs.GetInt("mouseSensitivity");
     }
 
     public void ShowFPSSwitch(bool active)
@@ -615,7 +632,7 @@ public class PauseMenuManager : MonoBehaviour
             PlayerPrefs.SetInt("increasedSensitivity", 1);
         }
 
-        playerCameraManagerScript.sensitivity = PlayerPrefs.GetInt("mouseSensitivity");
+        playerCameraManagerScript.Sensitivity = PlayerPrefs.GetInt("mouseSensitivity");
     }
 
     public void DynamicFOVSwitch(bool active)
@@ -659,7 +676,7 @@ public class PauseMenuManager : MonoBehaviour
     {
         PlayerPrefs.SetInt("FOV", defaultFOV);
         FOVSlider.value = defaultFOV;
-        playerCameraManagerScript.normalFOV = defaultFOV;
+        playerCameraManagerScript.NormalFOV = defaultFOV;
 
         switch (defaultFOV)
         {
@@ -770,7 +787,7 @@ public class PauseMenuManager : MonoBehaviour
             increasedSensitivityToggle.isOn = true;
         }
 
-        playerCameraManagerScript.sensitivity = defaultMouseSensitivity;
+        playerCameraManagerScript.Sensitivity = defaultMouseSensitivity;
         PlayerPrefs.SetInt("showFPS", defaultShowFPS);
 
         if (defaultShowFPS == 1)
@@ -853,30 +870,30 @@ public class PauseMenuManager : MonoBehaviour
     public void PlayerSpeedTweak(float value)
     {
         PlayerPrefs.SetInt("playerSpeedTweak", (int)value);
-        playerMovementManagerScript.normalMoveSpeed = (int)value;
-        playerMovementManagerScript.runSpeed = playerMovementManagerScript.normalMoveSpeed * 4 / 3;
-        playerMovementManagerScript.crouchSpeed = playerMovementManagerScript.normalMoveSpeed * 2 / 3;
+        playerMovementManagerScript.NormalMoveSpeed = (int)value;
+        playerMovementManagerScript.RunSpeed = playerMovementManagerScript.NormalMoveSpeed * 4 / 3;
+        playerMovementManagerScript.CrouchSpeed = playerMovementManagerScript.NormalMoveSpeed * 2 / 3;
         playerSpeedTweakText.text = $"Player Speed: {(int)value}";
     }
 
     public void PlayerThrowForceTweak(float value)
     {
         PlayerPrefs.SetInt("playerThrowForceTweak", (int)value);
-        playerInteractionManagerScript.throwForce = (int)value;
+        playerInteractionManagerScript.ThrowForce = (int)value;
         playerThrowForceTweakText.text = $"Throw Force: {(int)value}";
     }
 
     public void PlayerNormalJumpForceTweak(float value)
     {
         PlayerPrefs.SetInt("playerNormalJumpForceTweak", (int)value);
-        playerMovementManagerScript.normalJumpForce = (int)value;
+        playerMovementManagerScript.NormalJumpForce = (int)value;
         playerNormalJumpForceTweakText.text = $"Normal Jump Force: {(int)value}";
     }
 
     public void PlayerBouncyJumpForceTweak(float value)
     {
         PlayerPrefs.SetInt("playerBouncyJumpForceTweak", (int)value);
-        playerMovementManagerScript.bouncyJumpForce = (int)value;
+        playerMovementManagerScript.BouncyJumpForce = (int)value;
         playerBouncyJumpForceTweakText.text = $"Bouncy Jump Force: {(int)value}";
     }
 
@@ -885,12 +902,12 @@ public class PauseMenuManager : MonoBehaviour
         if (!active)
         {
             PlayerPrefs.SetInt("playerNoFallDamageTweak", -1);
-            playerMovementManagerScript.noFallDamage = false;
+            playerMovementManagerScript.NoFallDamage = false;
         }
         else
         {
             PlayerPrefs.SetInt("playerNoFallDamageTweak", 1);
-            playerMovementManagerScript.noFallDamage = true;
+            playerMovementManagerScript.NoFallDamage = true;
         }
     }
 
@@ -898,31 +915,31 @@ public class PauseMenuManager : MonoBehaviour
     {
         PlayerPrefs.SetInt("playerSpeedTweak", defaultPlayerSpeedTweak);
         playerSpeedTweakSlider.value = defaultPlayerSpeedTweak;
-        playerMovementManagerScript.normalMoveSpeed = defaultPlayerSpeedTweak;
-        playerMovementManagerScript.runSpeed = playerMovementManagerScript.normalMoveSpeed * 4 / 3;
-        playerMovementManagerScript.crouchSpeed = playerMovementManagerScript.normalMoveSpeed * 2 / 3;
+        playerMovementManagerScript.NormalMoveSpeed = defaultPlayerSpeedTweak;
+        playerMovementManagerScript.RunSpeed = playerMovementManagerScript.NormalMoveSpeed * 4 / 3;
+        playerMovementManagerScript.CrouchSpeed = playerMovementManagerScript.NormalMoveSpeed * 2 / 3;
         playerSpeedTweakText.text = $"Player Speed: {defaultPlayerSpeedTweak}";
         PlayerPrefs.SetInt("playerThrowForceTweak", defaultPlayerThrowForceTweak);
         playerThrowForceTweakSlider.value = defaultPlayerThrowForceTweak;
-        playerInteractionManagerScript.throwForce = defaultPlayerThrowForceTweak;
+        playerInteractionManagerScript.ThrowForce = defaultPlayerThrowForceTweak;
         playerThrowForceTweakText.text = $"Throw Force: {defaultPlayerThrowForceTweak}";
         PlayerPrefs.SetInt("playerNormalJumpForceTweak", defaultPlayerNormalJumpForceTweak);
         playerNormalJumpForceSlider.value = defaultPlayerNormalJumpForceTweak;
-        playerMovementManagerScript.normalJumpForce = defaultPlayerNormalJumpForceTweak;
+        playerMovementManagerScript.NormalJumpForce = defaultPlayerNormalJumpForceTweak;
         playerNormalJumpForceTweakText.text = $"Normal Jump Force: {defaultPlayerNormalJumpForceTweak}";
         PlayerPrefs.SetInt("playerBouncyJumpForceTweak", defaultPlayerBouncyJumpForceTweak);
         playerBouncyJumpForceSlider.value = defaultPlayerBouncyJumpForceTweak;
-        playerMovementManagerScript.bouncyJumpForce = defaultPlayerBouncyJumpForceTweak;
+        playerMovementManagerScript.BouncyJumpForce = defaultPlayerBouncyJumpForceTweak;
         playerBouncyJumpForceTweakText.text = $"Bouncy Jump Force: {defaultPlayerBouncyJumpForceTweak}";
         PlayerPrefs.SetInt("playerNoFallDamageTweak", defaultPlayerNoFallDamageTweak);
 
         if (defaultPlayerNoFallDamageTweak == -1)
         {
-            playerNoDamageTweakToggle.isOn = playerMovementManagerScript.noFallDamage = false;
+            playerNoDamageTweakToggle.isOn = playerMovementManagerScript.NoFallDamage = false;
         }
         else if (defaultPlayerNoFallDamageTweak == 1)
         {
-            playerNoDamageTweakToggle.isOn = playerMovementManagerScript.noFallDamage = true;
+            playerNoDamageTweakToggle.isOn = playerMovementManagerScript.NoFallDamage = true;
         }
     }
 

@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -16,46 +15,196 @@ public class PlayerMovementManager : MonoBehaviour
     //* Make sure that movable objects have a Rigidbody.
 
     [Header("Horizontal and Vertical")]
-    [NonSerialized] public int normalMoveSpeed; // If you want to change the value, change it from the PauseMenuManager script.
-    [NonSerialized] public float crouchSpeed, runSpeed;
-    [NonSerialized] public bool runningInput, onSlope, standingOnMovingGround;
-    [NonSerialized] public Vector2 inputtedVector2;
-    [NonSerialized] public Rigidbody objectRigidbodyThatPlayerIsStandingOn;
     const int NormalGroundLinearDamping = 10; // DO NOT change this value if not necessary.
+    int normalMoveSpeed; // This value has getter and setter. Also; if you want to change the value, change it from the PauseMenuManager script.
     const float TheMoveMultiplier = 625.005f, AirMoveMultiplier = 0.16f, AirLinearDamping = 0.04f, BouncyGroundLinearDamping = 12.5f, Minimum = 0.1f; // DO NOT change these values if not necessary.
+    float crouchSpeed, runSpeed; // These values have getters and setters.
     float theMoveSpeed, flatRotationAngleInAir;
+    bool runningInput, onSlope, standingOnMovingGround; // These values have getters and setters.
     bool normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum;
+    Vector2 inputtedVector2; // This value has getter and setter.
     Vector2 flatVelocityRelativeToPlayerInAir, normalizedMoveDirectionRelativeToPlayerInAir, normalizedMoveDirectionAsVector2InAir;
     Vector3 normalizedMoveDirection, normalizedSlopeMoveDirection;
     Transform playerTransform;
+    Rigidbody objectRigidbodyThatPlayerIsStandingOn; // This value has getter and setter.
     Rigidbody playerRigidbody;
     RaycastHit slopeHit, whatMovableObjectIsPlayerStandingOnHit;
 
+    public int NormalMoveSpeed
+    {
+        get => normalMoveSpeed;
+        set { normalMoveSpeed = value; }
+    }
+
+    public float CrouchSpeed
+    {
+        get => crouchSpeed;
+        set { crouchSpeed = value; }
+    }
+
+    public float RunSpeed
+    {
+        get => runSpeed;
+        set { runSpeed = value; }
+    }
+
+    public bool RunningInput
+    {
+        get => runningInput;
+        set { runningInput = value; }
+    }
+
+    public bool OnSlope
+    {
+        get => onSlope;
+        set { onSlope = value; }
+    }
+
+    public bool StandingOnMovingGround
+    {
+        get => standingOnMovingGround;
+        set { standingOnMovingGround = value; }
+    }
+
+    public Vector2 InputtedVector2
+    {
+        get => inputtedVector2;
+        set { inputtedVector2 = value; }
+    }
+
+    public Rigidbody ObjectRigidbodyThatPlayerIsStandingOn
+    {
+        get => objectRigidbodyThatPlayerIsStandingOn;
+        set { objectRigidbodyThatPlayerIsStandingOn = value; }
+    }
+
     [Header("Crouch")]
-    [NonSerialized] public float playerHeight = 3, crouchHeight = 2, cameraPositionLocalPositionWhenNotCrouched, cameraPositionLocalPositionWhenCrouched, frontBumpingDetectorLocalScaleWhenNotCrouched, frontBumpingDetectorLocalScaleWhenCrouched;
-    [NonSerialized] public bool crouching;
     const float PlayerWidthRadius = 0.5f, IfPlayerHeightWouldBe2AndPlayerTransformWouldBeVector3ZeroThenYLocalPositionOfCameraPositionWouldBe = 0.7f, IfPlayerHeightWouldBe2ThenYLocalScaleOfFrontBumpingDetectorWouldBe = 1.25f;
+    float playerHeight = 3, crouchHeight = 2, cameraPositionLocalPositionWhenNotCrouched, cameraPositionLocalPositionWhenCrouched, frontBumpingDetectorLocalScaleWhenNotCrouched, frontBumpingDetectorLocalScaleWhenCrouched; // These values have getters and setters.
+    bool crouching; // This value has getter and setter.
     bool crouchingInput, dontUncrouch;
+
+    public float PlayerHeight
+    {
+        get => playerHeight;
+        set { playerHeight = value; }
+    }
+
+    public float CrouchHeight
+    {
+        get => crouchHeight;
+        set { crouchHeight = value; }
+    }
+
+    public float CameraPositionLocalPositionWhenNotCrouched
+    {
+        get => cameraPositionLocalPositionWhenNotCrouched;
+        set { cameraPositionLocalPositionWhenNotCrouched = value; }
+    }
+
+    public float CameraPositionLocalPositionWhenCrouched
+    {
+        get => cameraPositionLocalPositionWhenCrouched;
+        set { cameraPositionLocalPositionWhenCrouched = value; }
+    }
+
+    public float FrontBumpingDetectorLocalScaleWhenNotCrouched
+    {
+        get => frontBumpingDetectorLocalScaleWhenNotCrouched;
+        set { frontBumpingDetectorLocalScaleWhenNotCrouched = value; }
+    }
+
+    public float FrontBumpingDetectorLocalScaleWhenCrouched
+    {
+        get => frontBumpingDetectorLocalScaleWhenCrouched;
+        set { frontBumpingDetectorLocalScaleWhenCrouched = value; }
+    }
+
+    public bool Crouching
+    {
+        get => crouching;
+        set { crouching = value; }
+    }
 
     [Header("Coyote Time")]
     const float CoyoteTimeSeconds = 0.15f;
     float coyoteTimeCounter;
 
     [Header("Jump And Fall")]
-    [NonSerialized] public int normalJumpForce, bouncyJumpForce; // If you want to change the values, change them from the PauseMenuManager script.
-    [NonSerialized] public float startOfFall, endOfFall, fallDistance, maxFallWithoutFallDamage = 15;
-    [NonSerialized] public bool jumping, groundedForAll, noFallDamage;
     const float GroundedSphereRadius = 0.3f, JumpingCooldown = 0.1f, JumpAgainCooldown = 0.3f;
+    int normalJumpForce, bouncyJumpForce; // These values have getters and setters. Also; if you want to change the values, change them from the PauseMenuManager script.
     int maxFallWithoutBouncyJumpCalculationByThisScript = 5, maxFallWithoutParticles = 5;
+    float maxFallWithoutFallDamage = 15, startOfFall, endOfFall, fallDistance; // These values have getters and setters.
+    bool jumping, groundedForAll, noFallDamage; // These values have getters and setters.
     bool readyToJump = true, jumpingInput, groundedForBouncyEnvironment, touchingToAnyGround, touchingToAnyGroundAndGroundedForAll, falling, wasFalling, wasTouchingToAnyGround, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment;
 
+    public int NormalJumpForce
+    {
+        get => normalJumpForce;
+        set { normalJumpForce = value; }
+    }
+
+    public int BouncyJumpForce
+    {
+        get => bouncyJumpForce;
+        set { bouncyJumpForce = value; }
+    }
+
+    public float MaxFallWithoutFallDamage
+    {
+        get => maxFallWithoutFallDamage;
+        set { maxFallWithoutFallDamage = value; }
+    }
+
+    public float StartOfFall
+    {
+        get => startOfFall;
+        set { startOfFall = value; }
+    }
+
+    public float EndOfFall
+    {
+        get => endOfFall;
+        set { endOfFall = value; }
+    }
+
+    public float FallDistance
+    {
+        get => fallDistance;
+        set { fallDistance = value; }
+    }
+
+    public bool Jumping
+    {
+        get => jumping;
+        set { jumping = value; }
+    }
+
+    public bool GroundedForAll
+    {
+        get => groundedForAll;
+        set { groundedForAll = value; }
+    }
+
+    public bool NoFallDamage
+    {
+        get => noFallDamage;
+        set { noFallDamage = value; }
+    }
+
     [Header("Other Things")]
-    [NonSerialized] public int playerHealthDecrease;
+    int playerHealthDecrease; // This value has getter and setter.
     PlayerInteractionManager playerInteractionManagerScript;
     PauseMenuManager pauseMenuManagerScript;
     PlayerSpawnAndSaveManager playerSpawnAndSaveManagerScript;
     PlayerStatusManager playerStatusManagerScript;
     InputSystem_Actions inputActions;
+
+    public int PlayerHealthDecrease
+    {
+        get => playerHealthDecrease;
+        set { playerHealthDecrease = value; }
+    }
 
     [Header("Inputs")]
     [SerializeField] GameObject userInterfaceObject;
@@ -98,7 +247,7 @@ public class PlayerMovementManager : MonoBehaviour
 
     void JumpInputPerformed(InputAction.CallbackContext context)
     {
-        if (!pauseMenuManagerScript.gamePaused)
+        if (!pauseMenuManagerScript.GamePaused)
         {
             jumpingInput = true;
         }
@@ -111,7 +260,7 @@ public class PlayerMovementManager : MonoBehaviour
 
     void CrouchInputPerformed(InputAction.CallbackContext context)
     {
-        if (!pauseMenuManagerScript.gamePaused)
+        if (!pauseMenuManagerScript.GamePaused)
         {
             crouchingInput = true;
         }
@@ -124,7 +273,7 @@ public class PlayerMovementManager : MonoBehaviour
 
     void RunInputPerformed(InputAction.CallbackContext context)
     {
-        if (!pauseMenuManagerScript.gamePaused)
+        if (!pauseMenuManagerScript.GamePaused)
         {
             runningInput = true;
         }
@@ -137,7 +286,7 @@ public class PlayerMovementManager : MonoBehaviour
 
     void Update()
     {
-        if (!pauseMenuManagerScript.gamePaused)
+        if (!pauseMenuManagerScript.GamePaused)
         {
             inputtedVector2 = inputActions.Player.Walk.ReadValue<Vector2>();
         }
@@ -168,12 +317,13 @@ public class PlayerMovementManager : MonoBehaviour
             // Üstünde durduğun objeyi algılamak için
             // groundedForAll şartının sebebi, o şartı koymazsam, hold ettiği objeyi grounded etmeden altında tutsan bile elinden bırakıyor. Ben grounded ederse bıraksın istiyorum.
             // Bu arada playerHeight / 2 - 1 yazmamın sebebi, sadece playerHeight / 2 yazarsam çalışmıyor ve eğer ki 2 movable objenin üstünde durarsan sadece alttaki objeyi algılıyor. Ben de -playerTransform.up demek 1 metre aşağı anlamına geldiği için belki playerHeight / 2 - 1 yazarsam (yani 1 metre yukarı kaydırırsam) belki çalışır diye düşündüm. Ve çalıştı da!
-            if (groundedForAll && Physics.SphereCast(playerTransform.position - new Vector3(0, playerHeight / 2 - 1, 0), GroundedSphereRadius, -playerTransform.up, out whatMovableObjectIsPlayerStandingOnHit, movableNormalLayer | movableBouncyLayer))
+            // SphereCast'in maxDistance'ı olarak da 1 yazdım çünkü test ettiğimde tam istediğim gibi çalışıyor.
+            if (groundedForAll && Physics.SphereCast(playerTransform.position - new Vector3(0, playerHeight / 2 - 1, 0), GroundedSphereRadius, -playerTransform.up, out whatMovableObjectIsPlayerStandingOnHit, 1, movableNormalLayer | movableBouncyLayer))
             {
                 objectRigidbodyThatPlayerIsStandingOn = whatMovableObjectIsPlayerStandingOnHit.rigidbody;
 
                 // Tuttuğun obje ile havada süzülerek inmeyi engellemek için
-                if (objectRigidbodyThatPlayerIsStandingOn && objectRigidbodyThatPlayerIsStandingOn.Equals(playerInteractionManagerScript.grabbedObjectRigidbody) && playerInteractionManagerScript.canReleaseHoldedObjectWhenTouchedToPlayer)
+                if (objectRigidbodyThatPlayerIsStandingOn && objectRigidbodyThatPlayerIsStandingOn.Equals(playerInteractionManagerScript.GrabbedObjectRigidbody) && playerInteractionManagerScript.CanReleaseHoldedObjectWhenTouchedToPlayer)
                 {
                     playerInteractionManagerScript.ReleaseObject();
                 }
@@ -191,12 +341,13 @@ public class PlayerMovementManager : MonoBehaviour
             // Üstünde durduğun objeyi algılamak için
             // groundedForAll şartının sebebi, yukarıdakiyle aynı.
             // crouchHeight / 2 - 1 yazmamın sebebi, yukarıda playerHeight / 2 - 1 yazmamın sebebiyle aynı.
-            if (groundedForAll && Physics.SphereCast(playerTransform.position - new Vector3(0, crouchHeight / 2 - 1, 0), GroundedSphereRadius, -playerTransform.up, out whatMovableObjectIsPlayerStandingOnHit, movableNormalLayer | movableBouncyLayer))
+            // SphereCast'in maxDistance'ı olarak 1 yazmamın sebebi de yukarıdakiyke aynı.
+            if (groundedForAll && Physics.SphereCast(playerTransform.position - new Vector3(0, crouchHeight / 2 - 1, 0), GroundedSphereRadius, -playerTransform.up, out whatMovableObjectIsPlayerStandingOnHit, 1, movableNormalLayer | movableBouncyLayer))
             {
                 objectRigidbodyThatPlayerIsStandingOn = whatMovableObjectIsPlayerStandingOnHit.rigidbody;
 
                 // Tuttuğun obje ile havada süzülerek inmeyi engellemek için
-                if (objectRigidbodyThatPlayerIsStandingOn && objectRigidbodyThatPlayerIsStandingOn.Equals(playerInteractionManagerScript.grabbedObjectRigidbody) && playerInteractionManagerScript.canReleaseHoldedObjectWhenTouchedToPlayer)
+                if (objectRigidbodyThatPlayerIsStandingOn && objectRigidbodyThatPlayerIsStandingOn.Equals(playerInteractionManagerScript.GrabbedObjectRigidbody) && playerInteractionManagerScript.CanReleaseHoldedObjectWhenTouchedToPlayer)
                 {
                     playerInteractionManagerScript.ReleaseObject();
                 }
@@ -250,10 +401,10 @@ public class PlayerMovementManager : MonoBehaviour
 
             if (fallDistance > maxFallWithoutBouncyJumpCalculationByThisScript && groundedForBouncyEnvironment && !crouching && readyToJump && !jumping)
             {
-                Jumping(bouncyJumpForce);
+                ExecutingJump(bouncyJumpForce);
             }
 
-            if (fallDistance > maxFallWithoutFallDamage && !groundedForBouncyEnvironment && !playerSpawnAndSaveManagerScript.spawnProtection && !noFallDamage)
+            if (fallDistance > maxFallWithoutFallDamage && !groundedForBouncyEnvironment && !playerSpawnAndSaveManagerScript.SpawnProtection && !noFallDamage)
             {
                 playerHealthDecrease += (int)(fallDistance - maxFallWithoutFallDamage);
             }
@@ -287,16 +438,16 @@ public class PlayerMovementManager : MonoBehaviour
         {// Hatıladığım kadarıyla; justBeforeGrounded şeylerini eklememin sebebi bir bug'ı engellemek içindi. O bug ise hatırladığım kadarıyla eğer ki bouncy bir yüzeyden zıplayıp sonrasında bir duvara değerek normal zemine düşersen ve düşerken de zıplama tuşuna basılı tutarsan, normal zeminde zıpladığında sanki bouncy zeminde zıplıyormuşsun gibi çok zıplıyorsun.
             if (justBeforeGroundedForNormalEnvironment && ((touchingToAnyGroundAndGroundedForAll && !groundedForBouncyEnvironment) || (!groundedForAll && coyoteTimeCounter > 0)))
             {
-                Jumping(normalJumpForce);
+                ExecutingJump(normalJumpForce);
             }
             else if (justBeforeGroundedForBouncyEnvironment && ((touchingToAnyGroundAndGroundedForAll && groundedForBouncyEnvironment) || (!groundedForAll && coyoteTimeCounter > 0)))
             {
-                Jumping(bouncyJumpForce);
+                ExecutingJump(bouncyJumpForce);
             }
         }
     }
 
-    void Jumping(int jumpForce)
+    void ExecutingJump(int jumpForce)
     {
         //print($"Jump started at y: {playerTransform.position.y}"); // For testing
         readyToJump = false;
@@ -365,7 +516,7 @@ public class PlayerMovementManager : MonoBehaviour
 
     void LinearDamping()
     {
-        if (groundedForAll && !jumping && !playerStatusManagerScript.sliding)
+        if (groundedForAll && !jumping && !playerStatusManagerScript.Sliding)
         {
             playerRigidbody.linearDamping = !groundedForBouncyEnvironment ? NormalGroundLinearDamping : BouncyGroundLinearDamping;
         }
@@ -377,8 +528,10 @@ public class PlayerMovementManager : MonoBehaviour
 
     void Movement()
     {
+        // Burada fazladan ".normalized" yazmadım çünkü inputtedVector2 zaten normalized olmuş halde.
         normalizedMoveDirection = playerColliderTransform.forward * inputtedVector2.y + playerColliderTransform.right * inputtedVector2.x;
-        onSlope = ((!crouching && Physics.Raycast(playerTransform.position, -playerTransform.up, out slopeHit, playerHeight / 2 + GroundedSphereRadius * 2)) || (crouching && Physics.Raycast(playerTransform.position, -playerTransform.up, out slopeHit, crouchHeight / 2 + GroundedSphereRadius * 2))) && slopeHit.normal != playerTransform.up; // slopeHit.normal kısmını sona koyman lazım çünkü Raycast'i bilmeden hit olan şeyi hesaplamaya çalışırsan olmaz.
+        // Burada playerHeight / 2 - 1, crouchHeight / 2 - 1 ve SphereCast'in maxDistance'ı olarak 1 yazmamın sebebini GroundedCheck fonksiyonunun orada anlatmıştım.
+        onSlope = ((!crouching && Physics.SphereCast(playerTransform.position - new Vector3(0, playerHeight / 2 - 1, 0), GroundedSphereRadius, -playerTransform.up, out slopeHit, 1, staticNormalLayer | staticBouncyLayer | movableNormalLayer | movableBouncyLayer)) || (crouching && Physics.SphereCast(playerTransform.position - new Vector3(0, crouchHeight / 2 - 1, 0), GroundedSphereRadius, -playerTransform.up, out slopeHit, 1, staticNormalLayer | staticBouncyLayer | movableNormalLayer | movableBouncyLayer))) && slopeHit.normal != playerTransform.up; // slopeHit.normal kısmını sona koyman lazım çünkü RaycastHit'i bilmeden hit olan şeyi hesaplamaya çalışırsan olmaz.
 
         if (playerRigidbody.linearDamping != AirLinearDamping)
         {
@@ -479,7 +632,7 @@ public class PlayerMovementManager : MonoBehaviour
     {
         // Gets x and z vectors and an angle. Then returs x and y vectors. x means x vector, y means z vector.
         // If you enter the angle negative and the vectors as relative to player, it returns the vectors as relative to world.
-        return new Vector2(x * Mathf.Cos(Mathf.Deg2Rad * angle) - z * MathF.Sin(Mathf.Deg2Rad * angle), x * Mathf.Sin(Mathf.Deg2Rad * angle) + z * Mathf.Cos(Mathf.Deg2Rad * angle));
+        return new Vector2(x * Mathf.Cos(Mathf.Deg2Rad * angle) - z * Mathf.Sin(Mathf.Deg2Rad * angle), x * Mathf.Sin(Mathf.Deg2Rad * angle) + z * Mathf.Cos(Mathf.Deg2Rad * angle));
     }
 
     void GravityAndSpeedControl()
@@ -502,7 +655,7 @@ public class PlayerMovementManager : MonoBehaviour
         {
             theMoveSpeed = crouchSpeed;
         }
-        else if (playerStatusManagerScript.running)
+        else if (playerStatusManagerScript.Running)
         {
             theMoveSpeed = runSpeed;
         }
@@ -536,7 +689,7 @@ public class PlayerMovementManager : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         // Tuttuğun obje ile uçmayı ve sürüklenmeyi engellemek için
-        if ((collision.gameObject.layer == 7 || collision.gameObject.layer == 8) && collision.rigidbody && collision.rigidbody.Equals(playerInteractionManagerScript.grabbedObjectRigidbody) && playerInteractionManagerScript.canReleaseHoldedObjectWhenTouchedToPlayer)
+        if ((collision.gameObject.layer == 7 || collision.gameObject.layer == 8) && collision.rigidbody && collision.rigidbody.Equals(playerInteractionManagerScript.GrabbedObjectRigidbody) && playerInteractionManagerScript.CanReleaseHoldedObjectWhenTouchedToPlayer)
         {
             playerInteractionManagerScript.ReleaseObjectWithResettingLinearAndAngularVelocity();
         }
@@ -556,7 +709,7 @@ public class PlayerMovementManager : MonoBehaviour
         if ((collision.gameObject.layer == 7 || collision.gameObject.layer == 8) && collision.rigidbody)
         {
             // Tuttuğun obje ile uçmayı ve sürüklenmeyi engellemek için
-            if (collision.rigidbody.Equals(playerInteractionManagerScript.grabbedObjectRigidbody) && playerInteractionManagerScript.canReleaseHoldedObjectWhenTouchedToPlayer)
+            if (collision.rigidbody.Equals(playerInteractionManagerScript.GrabbedObjectRigidbody) && playerInteractionManagerScript.CanReleaseHoldedObjectWhenTouchedToPlayer)
             {
                 playerInteractionManagerScript.ReleaseObjectWithResettingLinearAndAngularVelocity();
             }

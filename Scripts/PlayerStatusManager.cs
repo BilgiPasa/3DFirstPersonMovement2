@@ -1,18 +1,17 @@
-using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class PlayerStatusManager : MonoBehaviour
 {
     //* Attach this script to the UserInterface game object.
     //* "OtherIndicatiors"ta "PlayerHealth"te "HealthText"te "Drop Shadow" materyalinin "Face"inin "Dilate"sini 0.2 ve "Outline"ının "Thickness"ını 0.2 yap.
 
-    [NonSerialized] public int playerHealth;
-    [NonSerialized] public float flatVelocityMagnitude;
-    [NonSerialized] public bool walking, running, jumpingUp, sliding;
+    int playerHealth; // This value has getter and setter.
     const float Minimum = 0.1f;
+    float flatVelocityMagnitude; // This value has getter and setter.
     float relativeFlatVelocityMagnitude;
+    bool walking, running, jumpingUp, sliding; // These values have getters and setters.
     Transform playerTransform;
     PlayerSpawnAndSaveManager playerSpawnAndSaveManagerScript;
     PlayerMovementManager playerMovementManagerScript;
@@ -22,6 +21,42 @@ public class PlayerStatusManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI healthText;
     [SerializeField] Slider healthBarSlider;
     [SerializeField] PlayerFrontBumpingManager playerFrontBumpingManagerScript;
+
+    public int PlayerHealth
+    {
+        get => playerHealth;
+        set { playerHealth = value; }
+    }
+
+    public float FlatVelocityMagnitude
+    {
+        get => flatVelocityMagnitude;
+        set { flatVelocityMagnitude = value; }
+    }
+
+    public bool Walking
+    {
+        get => walking;
+        set { walking = value; }
+    }
+
+    public bool Running
+    {
+        get => running;
+        set { running = value; }
+    }
+
+    public bool JumpingUp
+    {
+        get => jumpingUp;
+        set { jumpingUp = value; }
+    }
+
+    public bool Sliding
+    {
+        get => sliding;
+        set { sliding = value; }
+    }
 
     void Start()
     {
@@ -35,48 +70,48 @@ public class PlayerStatusManager : MonoBehaviour
         healthText.text = $"{playerHealth}";
         healthBarSlider.value = playerHealth;
 
-        if (playerMovementManagerScript.playerHealthDecrease > 0)
+        if (playerMovementManagerScript.PlayerHealthDecrease > 0)
         {
-            playerHealth -= playerMovementManagerScript.playerHealthDecrease;
-            playerMovementManagerScript.playerHealthDecrease = 0;
+            playerHealth -= playerMovementManagerScript.PlayerHealthDecrease;
+            playerMovementManagerScript.PlayerHealthDecrease = 0;
         }
 
-        if (!playerSpawnAndSaveManagerScript.playerDied)
+        if (!playerSpawnAndSaveManagerScript.PlayerDied)
         {
             flatVelocityMagnitude = new Vector2(playerRigidbody.linearVelocity.x, playerRigidbody.linearVelocity.z).magnitude;
 
-            if (!(playerMovementManagerScript.standingOnMovingGround && playerMovementManagerScript.objectRigidbodyThatPlayerIsStandingOn))
+            if (!(playerMovementManagerScript.StandingOnMovingGround && playerMovementManagerScript.ObjectRigidbodyThatPlayerIsStandingOn))
             {
                 relativeFlatVelocityMagnitude = flatVelocityMagnitude;
-                playerMovementManagerScript.standingOnMovingGround = false;
+                playerMovementManagerScript.StandingOnMovingGround = false;
             }
             else
             {
-                relativeFlatVelocityMagnitude = new Vector2(playerRigidbody.linearVelocity.x - playerMovementManagerScript.objectRigidbodyThatPlayerIsStandingOn.linearVelocity.x, playerRigidbody.linearVelocity.z - playerMovementManagerScript.objectRigidbodyThatPlayerIsStandingOn.linearVelocity.z).magnitude; // Oyuncu; hareketli objenin üstündeyken, hareketli objeye göre oyuncunun hızını hesaplamak için
+                relativeFlatVelocityMagnitude = new Vector2(playerRigidbody.linearVelocity.x - playerMovementManagerScript.ObjectRigidbodyThatPlayerIsStandingOn.linearVelocity.x, playerRigidbody.linearVelocity.z - playerMovementManagerScript.ObjectRigidbodyThatPlayerIsStandingOn.linearVelocity.z).magnitude; // Oyuncu; hareketli objenin üstündeyken, hareketli objeye göre oyuncunun hızını hesaplamak için
             }
 
-            if (!playerMovementManagerScript.crouching)
+            if (!playerMovementManagerScript.Crouching)
             {
-                playerGroundParticlesTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (playerMovementManagerScript.playerHeight / 2), playerTransform.position.z);
+                playerGroundParticlesTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (playerMovementManagerScript.PlayerHeight / 2), playerTransform.position.z);
                 sliding = false;
-                walking = playerMovementManagerScript.inputtedVector2.magnitude > Minimum && relativeFlatVelocityMagnitude > Minimum;
+                walking = playerMovementManagerScript.InputtedVector2.magnitude > Minimum && relativeFlatVelocityMagnitude > Minimum;
 
-                if (playerMovementManagerScript.runningInput && playerMovementManagerScript.inputtedVector2.y > Minimum && walking)
+                if (playerMovementManagerScript.RunningInput && playerMovementManagerScript.InputtedVector2.y > Minimum && walking)
                 {
                     running = true;
                 }
-                else if (!walking || (playerMovementManagerScript.inputtedVector2.y <= Minimum && walking) || (playerFrontBumpingManagerScript.frontBumping && !playerMovementManagerScript.runningInput))
+                else if (!walking || (playerMovementManagerScript.InputtedVector2.y <= Minimum && walking) || (playerFrontBumpingManagerScript.FrontBumping && !playerMovementManagerScript.RunningInput))
                 {
                     running = false;
                 }
 
-                jumpingUp = playerMovementManagerScript.jumping && playerRigidbody.linearVelocity.y > Minimum && playerMovementManagerScript.groundedForAll;
+                jumpingUp = playerMovementManagerScript.Jumping && playerRigidbody.linearVelocity.y > Minimum && playerMovementManagerScript.GroundedForAll;
             }
             else
             {
-                playerGroundParticlesTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (playerMovementManagerScript.crouchHeight / 2), playerTransform.position.z);
+                playerGroundParticlesTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y - (playerMovementManagerScript.CrouchHeight / 2), playerTransform.position.z);
                 walking = running = jumpingUp = false;
-                sliding = relativeFlatVelocityMagnitude > playerMovementManagerScript.runSpeed || playerMovementManagerScript.onSlope; // BURAYA, "playerMovementManagerScript.groundedForAll" ŞARTINI EKLEME! Çünkü eklersen; eğimli yüzeyden eğilerek kayıp düz zemine (hala eğilirken) çartığında, hızının bir kısmını kaybedebiliyorsun (ama normalde kaybetmemen lazım). Bence bunun olmasının sebebi; yere çarptığında, bir anlığına movement scriptinin, oyuncunun kaymıyor olduğunu zannettiği için olabilir. Ve evet; yere değme şartını eklemediğim için, oyuncu havada hızlı giderken eğilirse kayıyor sayılıyor ki böyle olmasında bence bir sorun yok.
+                sliding = relativeFlatVelocityMagnitude > playerMovementManagerScript.RunSpeed || playerMovementManagerScript.OnSlope; // BURAYA, "playerMovementManagerScript.groundedForAll" ŞARTINI EKLEME! Çünkü eklersen; eğimli yüzeyden eğilerek kayıp düz zemine (hala eğilirken) çartığında, hızının bir kısmını kaybedebiliyorsun (ama normalde kaybetmemen lazım). Bence bunun olmasının sebebi; yere çarptığında, bir anlığına movement scriptinin, oyuncunun kaymıyor olduğunu zannettiği için olabilir. Ve evet; yere değme şartını eklemediğim için, oyuncu havada hızlı giderken eğilirse kayıyor sayılıyor ki böyle olmasında bence bir sorun yok.
             }
         }
         else
@@ -89,11 +124,11 @@ public class PlayerStatusManager : MonoBehaviour
             runJumpParticles.Play();
         }
 
-        if ((sliding || running) && relativeFlatVelocityMagnitude > playerMovementManagerScript.runSpeed / 4 && playerMovementManagerScript.groundedForAll && !runAndSlideParticles.isEmitting)
+        if ((sliding || running) && relativeFlatVelocityMagnitude > playerMovementManagerScript.RunSpeed / 4 && playerMovementManagerScript.GroundedForAll && !runAndSlideParticles.isEmitting)
         {
             runAndSlideParticles.Play();
         }
-        else if ((!(sliding || running) || relativeFlatVelocityMagnitude <= playerMovementManagerScript.runSpeed / 4 || !playerMovementManagerScript.groundedForAll) && runAndSlideParticles.isEmitting)
+        else if ((!(sliding || running) || relativeFlatVelocityMagnitude <= playerMovementManagerScript.RunSpeed / 4 || !playerMovementManagerScript.GroundedForAll) && runAndSlideParticles.isEmitting)
         {
             runAndSlideParticles.Stop();
         }
