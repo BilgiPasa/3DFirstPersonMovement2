@@ -247,10 +247,7 @@ public class PlayerMovementManager : MonoBehaviour
 
     void JumpInputPerformed(InputAction.CallbackContext context)
     {
-        if (!pauseMenuManagerScript.GamePaused)
-        {
-            jumpingInput = true;
-        }
+        jumpingInput = true;
     }
 
     void JumpInputCancelled(InputAction.CallbackContext context)
@@ -260,10 +257,7 @@ public class PlayerMovementManager : MonoBehaviour
 
     void CrouchInputPerformed(InputAction.CallbackContext context)
     {
-        if (!pauseMenuManagerScript.GamePaused)
-        {
-            crouchingInput = true;
-        }
+        crouchingInput = true;
     }
 
     void CrouchInputCancelled(InputAction.CallbackContext context)
@@ -273,10 +267,7 @@ public class PlayerMovementManager : MonoBehaviour
 
     void RunInputPerformed(InputAction.CallbackContext context)
     {
-        if (!pauseMenuManagerScript.GamePaused)
-        {
-            runningInput = true;
-        }
+        runningInput = true;
     }
 
     void RunInputCancelled(InputAction.CallbackContext context)
@@ -529,7 +520,7 @@ public class PlayerMovementManager : MonoBehaviour
     void Movement()
     {
         // Burada fazladan ".normalized" yazmadım çünkü inputtedVector2 zaten normalized olmuş halde.
-        normalizedMoveDirection = playerColliderTransform.forward * inputtedVector2.y + playerColliderTransform.right * inputtedVector2.x;
+        normalizedMoveDirection = inputtedVector2.y * playerColliderTransform.forward + inputtedVector2.x * playerColliderTransform.right;
         // Burada playerHeight / 2 - 1, crouchHeight / 2 - 1 ve SphereCast'in maxDistance'ı olarak 1 yazmamın sebebini GroundedCheck fonksiyonunun orada anlatmıştım.
         onSlope = ((!crouching && Physics.SphereCast(playerTransform.position - new Vector3(0, playerHeight / 2 - 1, 0), GroundedSphereRadius, -playerTransform.up, out slopeHit, 1, staticNormalLayer | staticBouncyLayer | movableNormalLayer | movableBouncyLayer)) || (crouching && Physics.SphereCast(playerTransform.position - new Vector3(0, crouchHeight / 2 - 1, 0), GroundedSphereRadius, -playerTransform.up, out slopeHit, 1, staticNormalLayer | staticBouncyLayer | movableNormalLayer | movableBouncyLayer))) && slopeHit.normal != playerTransform.up; // slopeHit.normal kısmını sona koyman lazım çünkü RaycastHit'i bilmeden hit olan şeyi hesaplamaya çalışırsan olmaz.
 
