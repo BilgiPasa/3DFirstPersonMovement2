@@ -8,8 +8,7 @@ public class GranadeManager : MonoBehaviour
     //* Attach this script to explodable (granade) objects.
 
     int delaySeconds = 1, explosionRadius = 15, explosionForce = 2000;
-    bool removePin; // This value has getter and setter.
-    bool pimRemoved;
+    bool removePin, pimRemoved;
     Transform granadeTransform;
     Rigidbody granadeRigidbody, objectRigidbodyThatEffectedFromExplosion;
     PlayerInteractionManager playerInteractionManagerScriptFromPlayerThatEffectedFromExplosion;

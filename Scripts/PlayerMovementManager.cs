@@ -16,18 +16,14 @@ public class PlayerMovementManager : MonoBehaviour
 
     [Header("Horizontal and Vertical")]
     const int NormalGroundLinearDamping = 10; // DO NOT change this value if not necessary.
-    int normalMoveSpeed; // This value has getter and setter. Also; if you want to change the value, change it from the PauseMenuManager script.
+    int normalMoveSpeed; // If you want to change the value, change it from the PauseMenuManager script.
     const float TheMoveMultiplier = 625.005f, AirMoveMultiplier = 0.16f, AirLinearDamping = 0.04f, BouncyGroundLinearDamping = 12.5f, Minimum = 0.1f; // DO NOT change these values if not necessary.
-    float crouchSpeed, runSpeed; // These values have getters and setters.
-    float theMoveSpeed, flatRotationAngleInAir;
-    bool runningInput, onSlope, standingOnMovingGround; // These values have getters and setters.
-    bool normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum;
-    Vector2 inputtedVector2; // This value has getter and setter.
-    Vector2 flatVelocityRelativeToPlayerInAir, normalizedMoveDirectionRelativeToPlayerInAir, normalizedMoveDirectionAsVector2InAir;
+    float crouchSpeed, runSpeed, theMoveSpeed, flatRotationAngleInAir;
+    bool standingOnMovingGround, runningInput, onSlope, normalizedMoveDirectionRelativeToPlayerInAirYIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirYIsSmallerThanMinusMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsBiggerThanMinimum, normalizedMoveDirectionRelativeToPlayerInAirXIsSmallerThanMinusMinimum;
+    Vector2 inputtedVector2, flatVelocityRelativeToPlayerInAir, normalizedMoveDirectionRelativeToPlayerInAir, normalizedMoveDirectionAsVector2InAir;
     Vector3 normalizedMoveDirection, normalizedSlopeMoveDirection;
     Transform playerTransform;
-    Rigidbody objectRigidbodyThatPlayerIsStandingOn; // This value has getter and setter.
-    Rigidbody playerRigidbody;
+    Rigidbody objectRigidbodyThatPlayerIsStandingOn, playerRigidbody;
     RaycastHit slopeHit, whatMovableObjectIsPlayerStandingOnHit;
 
     public int NormalMoveSpeed
@@ -48,76 +44,65 @@ public class PlayerMovementManager : MonoBehaviour
         set { runSpeed = value; }
     }
 
-    public bool RunningInput
-    {
-        get => runningInput;
-        set { runningInput = value; }
-    }
-
-    public bool OnSlope
-    {
-        get => onSlope;
-        set { onSlope = value; }
-    }
-
     public bool StandingOnMovingGround
     {
         get => standingOnMovingGround;
         set { standingOnMovingGround = value; }
     }
 
+    public bool RunningInput
+    {
+        get => runningInput;
+    }
+
+    public bool OnSlope
+    {
+        get => onSlope;
+    }
+
     public Vector2 InputtedVector2
     {
         get => inputtedVector2;
-        set { inputtedVector2 = value; }
     }
 
     public Rigidbody ObjectRigidbodyThatPlayerIsStandingOn
     {
         get => objectRigidbodyThatPlayerIsStandingOn;
-        set { objectRigidbodyThatPlayerIsStandingOn = value; }
     }
 
     [Header("Crouch")]
     const float PlayerWidthRadius = 0.5f, IfPlayerHeightWouldBe2AndPlayerTransformWouldBeVector3ZeroThenYLocalPositionOfCameraPositionWouldBe = 0.7f, IfPlayerHeightWouldBe2ThenYLocalScaleOfFrontBumpingDetectorWouldBe = 1.25f;
-    float playerHeight = 3, crouchHeight = 2, cameraPositionLocalPositionWhenNotCrouched, cameraPositionLocalPositionWhenCrouched, frontBumpingDetectorLocalScaleWhenNotCrouched, frontBumpingDetectorLocalScaleWhenCrouched; // These values have getters and setters.
-    bool crouching; // This value has getter and setter.
-    bool crouchingInput, dontUncrouch;
+    float playerHeight = 3, crouchHeight = 2, cameraPositionLocalPositionWhenNotCrouched, cameraPositionLocalPositionWhenCrouched, frontBumpingDetectorLocalScaleWhenNotCrouched, frontBumpingDetectorLocalScaleWhenCrouched;
+    bool crouching, crouchingInput, dontUncrouch;
 
     public float PlayerHeight
     {
         get => playerHeight;
-        set { playerHeight = value; }
     }
 
     public float CrouchHeight
     {
         get => crouchHeight;
-        set { crouchHeight = value; }
     }
 
     public float CameraPositionLocalPositionWhenNotCrouched
     {
         get => cameraPositionLocalPositionWhenNotCrouched;
-        set { cameraPositionLocalPositionWhenNotCrouched = value; }
     }
 
     public float CameraPositionLocalPositionWhenCrouched
     {
         get => cameraPositionLocalPositionWhenCrouched;
-        set { cameraPositionLocalPositionWhenCrouched = value; }
     }
 
     public float FrontBumpingDetectorLocalScaleWhenNotCrouched
     {
         get => frontBumpingDetectorLocalScaleWhenNotCrouched;
-        set { frontBumpingDetectorLocalScaleWhenNotCrouched = value; }
     }
 
     public float FrontBumpingDetectorLocalScaleWhenCrouched
     {
         get => frontBumpingDetectorLocalScaleWhenCrouched;
-        set { frontBumpingDetectorLocalScaleWhenCrouched = value; }
     }
 
     public bool Crouching
@@ -131,12 +116,11 @@ public class PlayerMovementManager : MonoBehaviour
     float coyoteTimeCounter;
 
     [Header("Jump And Fall")]
+    const int MaxFallWithoutBouncyJumpCalculationByThisScript = 5, MaxFallWithoutParticles = 5;
+    int normalJumpForce, bouncyJumpForce; // If you want to change the values, change them from the PauseMenuManager script.
     const float GroundedSphereRadius = 0.3f, JumpingCooldown = 0.1f, JumpAgainCooldown = 0.3f;
-    int normalJumpForce, bouncyJumpForce; // These values have getters and setters. Also; if you want to change the values, change them from the PauseMenuManager script.
-    int maxFallWithoutBouncyJumpCalculationByThisScript = 5, maxFallWithoutParticles = 5;
-    float maxFallWithoutFallDamage = 15, startOfFall, endOfFall, fallDistance; // These values have getters and setters.
-    bool jumping, groundedForAll, noFallDamage; // These values have getters and setters.
-    bool readyToJump = true, jumpingInput, groundedForBouncyEnvironment, touchingToAnyGround, touchingToAnyGroundAndGroundedForAll, falling, wasFalling, wasTouchingToAnyGround, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment;
+    float maxFallWithoutFallDamage = 15, startOfFall, endOfFall, fallDistance;
+    bool noFallDamage, jumping, groundedForAll, readyToJump = true, jumpingInput, groundedForBouncyEnvironment, touchingToAnyGround, touchingToAnyGroundAndGroundedForAll, falling, wasFalling, wasTouchingToAnyGround, justBeforeGroundedForNormalEnvironment, justBeforeGroundedForBouncyEnvironment;
 
     public int NormalJumpForce
     {
@@ -153,7 +137,6 @@ public class PlayerMovementManager : MonoBehaviour
     public float MaxFallWithoutFallDamage
     {
         get => maxFallWithoutFallDamage;
-        set { maxFallWithoutFallDamage = value; }
     }
 
     public float StartOfFall
@@ -174,26 +157,24 @@ public class PlayerMovementManager : MonoBehaviour
         set { fallDistance = value; }
     }
 
-    public bool Jumping
-    {
-        get => jumping;
-        set { jumping = value; }
-    }
-
-    public bool GroundedForAll
-    {
-        get => groundedForAll;
-        set { groundedForAll = value; }
-    }
-
     public bool NoFallDamage
     {
         get => noFallDamage;
         set { noFallDamage = value; }
     }
 
+    public bool Jumping
+    {
+        get => jumping;
+    }
+
+    public bool GroundedForAll
+    {
+        get => groundedForAll;
+    }
+
     [Header("Other Things")]
-    int playerHealthDecrease; // This value has getter and setter.
+    int playerHealthDecrease;
     PlayerInteractionManager playerInteractionManagerScript;
     PauseMenuManager pauseMenuManagerScript;
     PlayerSpawnAndSaveManager playerSpawnAndSaveManagerScript;
@@ -385,12 +366,12 @@ public class PlayerMovementManager : MonoBehaviour
 
         if (fallDistance > Minimum)
         {
-            if (fallDistance > maxFallWithoutParticles && !jumpingDownParticles.isEmitting)
+            if (fallDistance > MaxFallWithoutParticles && !jumpingDownParticles.isEmitting)
             {
                 jumpingDownParticles.Play();
             }
 
-            if (fallDistance > maxFallWithoutBouncyJumpCalculationByThisScript && groundedForBouncyEnvironment && !crouching && readyToJump && !jumping)
+            if (fallDistance > MaxFallWithoutBouncyJumpCalculationByThisScript && groundedForBouncyEnvironment && !crouching && readyToJump && !jumping)
             {
                 ExecutingJump(bouncyJumpForce);
             }

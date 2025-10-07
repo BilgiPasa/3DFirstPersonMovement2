@@ -12,13 +12,12 @@ public class PlayerInteractionManager : MonoBehaviour
 
     [Header("Holding and Throwing")]
     const int NormalHoldingObjectDistance = 4, HoldForce = 30, MaxHoldingObjectCanBeOffsetDistance = 10, MaxHoldingObjectDistance = 6, MinHoldingObjectDistance = 3;
-    int throwForce; // This value has getter and setter. Also; if you want to change the value, change it from the PauseMenuManager script.
+    int throwForce; // If you want to change the value, change it from the PauseMenuManager script.
     const float MovingHoldingObjectWithScrollWheelSpeed = 0.4f, GrabbedObjectLinearVelocityAndAngularVelocitySlowingMultiplier = 0.3f, CanReleaseHoldedObjectWhenTouchedToPlayerCooldown = 0.2f, HoldAgainCooldown = 0.6f, CrosshairBeingRedTime = 0.3f;
     float tempHoldingObjectDistance, mouseScrollY;
-    bool canReleaseHoldedObjectWhenTouchedToPlayer; // This value has getter and setter.
-    bool readyToHold = true, interacionKeyPressed, throwKeyPressedWhileHoldingAnObject;
+    bool canReleaseHoldedObjectWhenTouchedToPlayer, readyToHold = true, interacionKeyPressed, throwKeyPressedWhileHoldingAnObject;
     Transform grabbedObjectTransform, mainCameraTransform;
-    Rigidbody grabbedObjectRigidbody; // This value has getter and setter.
+    Rigidbody grabbedObjectRigidbody;
     RaycastHit holdInteractionHit;
 
     public int ThrowForce
@@ -30,13 +29,11 @@ public class PlayerInteractionManager : MonoBehaviour
     public bool CanReleaseHoldedObjectWhenTouchedToPlayer
     {
         get => canReleaseHoldedObjectWhenTouchedToPlayer;
-        set { canReleaseHoldedObjectWhenTouchedToPlayer = value; }
     }
 
     public Rigidbody GrabbedObjectRigidbody
     {
         get => grabbedObjectRigidbody;
-        set { grabbedObjectRigidbody = value; }
     }
 
     [Header("Granade")]

@@ -5,10 +5,8 @@ public class PlayerCameraManager : MonoBehaviour
 {
     //* Attach this script to the CameraHolder game object.
 
-    int sensitivity; // This value has getter and setter.
-    int normalCameraRotationMultiplier = 1, zoomingSpeed = 10;
-    float xRotation, yRotation, normalFOV; // These values have getters and setters.
-    float zoomedCameraRotationMultiplier = 0.5f, theCameraRotationMultiplier, sprintFOV, zoomFOV, zoomSprintFOV;
+    int sensitivity, normalCameraRotationMultiplier = 1, zoomingSpeed = 10;
+    float xRotation, yRotation, normalFOV, zoomedCameraRotationMultiplier = 0.5f, theCameraRotationMultiplier, sprintFOV, zoomFOV, zoomSprintFOV;
     bool zoomingInput;
     Transform cameraHolderTransform;
     PauseMenuManager pauseMenuManagerScript;

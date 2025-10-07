@@ -10,13 +10,12 @@ public class PlayerFrontBumpingManager : MonoBehaviour
     //* In Unity Editor, layer 7 should be "Movable Normal Layer".
     //* In Unity Editor, layer 8 should be "Movable Bouncy Layer".
 
-    bool frontBumping; // This value has getter and setter.
+    bool frontBumping;
     BoxCollider frontBumpingDetectorBoxCollider;
 
     public bool FrontBumping
     {
         get => frontBumping;
-        set { frontBumping = value; }
     }
 
     void Start()

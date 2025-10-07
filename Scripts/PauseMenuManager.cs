@@ -11,8 +11,7 @@ public class PauseMenuManager : MonoBehaviour
 
     int[] last5FPS = new int[5];
     int defaultFOV = 90, defaultMaxFPS = 8, defaultMouseSensitivity = 100, defaultShowFPS = 1, defaultIncreasedSensitivity = -1, defaultDynamicFOV = 1, defaultShowSpeedText = 1, defaultPlayerSpeedTweak = 9, defaultPlayerThrowForceTweak = 60, defaultPlayerNormalJumpForceTweak = 20, defaultPlayerBouncyJumpForceTweak = 55, defaultPlayerNoFallDamageTweak = -1, counter;
-    bool gamePaused, dynamicFOV, settingsMenuOpened; // These values have getters and setters.
-    bool cancelKeyPressed;
+    bool gamePaused, dynamicFOV, settingsMenuOpened, cancelKeyPressed;
     RectTransform FPSTextRectTransform;
     TextMeshProUGUI speedText, FPSText;
     PlayerInteractionManager playerInteractionManagerScript;
@@ -29,19 +28,16 @@ public class PauseMenuManager : MonoBehaviour
     public bool GamePaused
     {
         get => gamePaused;
-        set { gamePaused = value; }
     }
 
     public bool DynamicFOV
     {
         get => dynamicFOV;
-        set { dynamicFOV = value; }
     }
 
     public bool SettingsMenuOpened
     {
         get => settingsMenuOpened;
-        set { settingsMenuOpened = value; }
     }
 
     void Start()

@@ -8,8 +8,7 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
 
     int savingTheGameDelay = 15, spawnProtectionSeconds = 3;
     float savingTheGameTimer;
-    bool playerDied, spawnProtection; // These values have getters and setters.
-    bool thePlayerDiedSaveValueWasZero, respawnButtonPressed;
+    bool playerDied, spawnProtection, thePlayerDiedSaveValueWasZero, respawnButtonPressed;
     Transform playerTransform;
     Rigidbody playerRigidbody;
     PlayerStatusManager playerStatusManagerScript;
@@ -27,13 +26,11 @@ public class PlayerSpawnAndSaveManager : MonoBehaviour
     public bool PlayerDied
     {
         get => playerDied;
-        set { playerDied = value; }
     }
 
     public bool SpawnProtection
     {
         get => spawnProtection;
-        set { spawnProtection = value; }
     }
 
     void Start()

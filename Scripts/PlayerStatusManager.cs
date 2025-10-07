@@ -7,11 +7,10 @@ public class PlayerStatusManager : MonoBehaviour
     //* Attach this script to the UserInterface game object.
     //* "OtherIndicatiors"ta "PlayerHealth"te "HealthText"te "Drop Shadow" materyalinin "Face"inin "Dilate"sini 0.2 ve "Outline"ının "Thickness"ını 0.2 yap.
 
-    int playerHealth; // This value has getter and setter.
+    int playerHealth;
     const float Minimum = 0.1f;
-    float flatVelocityMagnitude; // This value has getter and setter.
-    float relativeFlatVelocityMagnitude;
-    bool walking, running, jumpingUp, sliding; // These values have getters and setters.
+    float flatVelocityMagnitude, relativeFlatVelocityMagnitude;
+    bool running, sliding, walking, jumpingUp;
     Transform playerTransform;
     PlayerSpawnAndSaveManager playerSpawnAndSaveManagerScript;
     PlayerMovementManager playerMovementManagerScript;
@@ -31,31 +30,16 @@ public class PlayerStatusManager : MonoBehaviour
     public float FlatVelocityMagnitude
     {
         get => flatVelocityMagnitude;
-        set { flatVelocityMagnitude = value; }
-    }
-
-    public bool Walking
-    {
-        get => walking;
-        set { walking = value; }
     }
 
     public bool Running
     {
         get => running;
-        set { running = value; }
-    }
-
-    public bool JumpingUp
-    {
-        get => jumpingUp;
-        set { jumpingUp = value; }
     }
 
     public bool Sliding
     {
         get => sliding;
-        set { sliding = value; }
     }
 
     void Start()
