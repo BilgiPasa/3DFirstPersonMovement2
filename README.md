@@ -18,7 +18,7 @@ Projemin ana sahnesi "BILGI_PASA" klasörünün içindeki "MovementSystemDemoSce
 
 Projemde, Unity'nin "Particle Effects" ücretsiz assetini kullandım Unity Asset Store'dan.
 
-Projemin v2.0'dan önceki ve v2.1.3'ten sonraki versiyonlarının .unitypackage dosyaları bu repo'da bulunuyor. Diğer versiyonlarda bulunmamasının sebebi ise Unity Asset Store'da bu projemi satmayı düşünüyordum ama gerekli koşulları karşılamadığım için Asset Store'da paylaşmama izin vermediler. O yüzden Asset Store yerine burada paylaşmaya karar verdim. Kendi projelerinizde hareket sistemimi kullanabilirsiniz. Ama eğer ki kullanırsanız, LÜTFEN bu hareket sistemini kullandığınızı belirtiniz. (Ve lütfen bu repo'yu yıldızlayınız.)
+Projemin v2.0'dan önceki ve v2.1.3'ten sonraki versiyonlarının .unitypackage dosyaları bu repo'da bulunuyor. Diğer versiyonlarda bulunmamasının sebebi ise Unity Asset Store'da bu projemi satmayı düşünüyordum ama gerekli koşulları karşılamadığım için Asset Store'da paylaşmama izin vermediler. Zaten gerekli koşulları karşılamaya uğraşsam da uğraştığıma değmeyeceğini düşündüm. O yüzden Asset Store yerine burada paylaşmaya devam etmeye karar verdim. Kendi projelerinizde hareket sistemimi kullanabilirsiniz. Ama eğer ki kullanırsanız, LÜTFEN oyununuzda bu hareket sistemini kullandığınızı belirtiniz. (Ve lütfen bu repo'yu yıldızlayınız.)
 
 Haberiniz olsun bu proje üstünde daha çalışmayı düşünmüyorum. Yani yeni bi özellik ekleme gibi bir niyetim yok.
 
