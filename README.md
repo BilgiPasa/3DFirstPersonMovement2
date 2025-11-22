@@ -20,7 +20,7 @@ Projemin .unitypackage dosyası, Unity'nin 6000.0.58f2 versiyonunda Universal Re
 
 Projemin ana sahnesi "BILGI_PASA" klasörünün içindeki "MovementSystemDemoScene" sahnesidir.
 
-Projemin v2.1.3'ten sonraki ve v2.0'dan önceki versiyonlarının .unitypackage dosyaları bu repo'da bulunuyor. v2.1.3 ile v2.0 versiyonları ve aralarındaki versiyonlarda bulunmamasının sebebi ise Unity Asset Store'a bu projemi yükleyip satmaya çalışmıştım, ama gerekli koşulları karşılamadığım için Asset Store'da paylaşmama izin vermediler. Zaten gerekli koşulları karşılamaya uğraşsam da uğraştığıma değmeyeceğini düşündüm. O yüzden Asset Store yerine burada paylaşmaya devam etmeye karar verdim. Kendi projelerinizde bu hareket sistemimi kullanabilirsiniz. Ama eğer ki kullanırsanız, LÜTFEN oyununuzda bu hareket sistemini kullandığınızı belirtiniz. (Ve lütfen bu repo'yu yıldızlayınız.)
+Projemin v2.1.3'ten sonraki ve v2.0'dan önceki versiyonlarının .unitypackage dosyaları bu repo'da bulunuyor. v2.1.3 ile v2.0 versiyonları ve aralarındaki versiyonlarda bulunmamasının sebebi ise Unity Asset Store'a bu projemi paylaşıp, orada satmaya çalışmıştım. Fakat gerekli koşulları karşılamadığım için Asset Store'da paylaşmama izin vermediler. Zaten gerekli koşulları karşılamaya uğraşsam da uğraştığıma değmeyeceğini düşündüm. O yüzden Asset Store yerine burada paylaşmaya devam etmeye karar verdim. Kendi projelerinizde bu hareket sistemimi kullanabilirsiniz. Ama eğer ki kullanırsanız, LÜTFEN oyununuzda bu hareket sistemini kullandığınızı belirtiniz. (Ve lütfen bu repo'yu yıldızlayınız.)
 
 Haberiniz olsun bu proje üstünde daha çalışmayı düşünmüyorum. Yani yeni bi özellik ekleme gibi bir niyetim yok.
 
