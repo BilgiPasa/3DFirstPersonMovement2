@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 34cba35a1cdfe28aea0c6343dce58d76
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - explosionEffectObject: {instanceID: 0}
+  - playerStatusManagerScript: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
