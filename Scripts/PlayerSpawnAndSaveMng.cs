@@ -18,7 +18,7 @@ public class PlayerSpawnAndSaveMng : MonoBehaviour
     [SerializeField] Vector3 playerInitialPos = Vector3.zero;
     [SerializeField] GameObject playerObj, deathMenuObj, pauseMenuObj, settingsMenuObj;
     [SerializeField] Transform playerCollTransform, camPosTransform, camHolderTransform, frontBumpingDetectorTransform, playerCapsuleModelTransform;
-    [SerializeField] Camera mainCamera;
+    [SerializeField] Camera mainCam;
     [SerializeField] CapsuleCollider playerCollCapsuleColl;
     [SerializeField] Image crosshairImg;
     [SerializeField] PlayerCamMng playerCamMng;
@@ -207,7 +207,7 @@ public class PlayerSpawnAndSaveMng : MonoBehaviour
 
         crosshairImg.color = Color.black;
         playerObj.SetActive(false);
-        mainCamera.fieldOfView = PlayerPrefs.GetInt("FOV");
+        mainCam.fieldOfView = PlayerPrefs.GetInt("FOV");
     }
 
     IEnumerator PlayerRespawning()

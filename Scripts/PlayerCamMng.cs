@@ -3,18 +3,18 @@ using UnityEngine.InputSystem;
 
 public class PlayerCamMng : MonoBehaviour
 {
-    //* Attach this script to the CameraHolder game object.
+    //* Attach this script to the CamHolder game object.
 
-    int sensitivity, normalCameraRotationMult = 1, zoomingSpeed = 10;
-    float xRotation, yRotation, normalFOV, zoomedCameraRotationMult = 0.5f, theCameraRotationMult, sprintFOV, zoomFOV, zoomSprintFOV;
+    int sensitivity, normalCamRotMult = 1, zoomingSpeed = 10;
+    float xRotation, yRotation, normalFOV, zoomedCamRotMult = 0.5f, theCamRotMult, sprintFOV, zoomFOV, zoomSprintFOV;
     bool zoomingInput;
-    Transform cameraHolderTransform;
+    Transform camHolderTransform;
     PauseMenuMng pauseMenuMng;
     PlayerSpawnAndSaveMng playerSpawnAndSaveMng;
     PlayerStatusMng playerStatusMng;
     InputSystem_Actions inputActions;
     [SerializeField] GameObject userInterfaceObj;
-    [SerializeField] Transform playerColliderTransform, cameraPositionTransform;
+    [SerializeField] Transform playerCollTransform, camPosTransform;
     [SerializeField] Camera mainCam;
     [SerializeField] PlayerMovementMng playerMovementMng;
 
@@ -46,23 +46,23 @@ public class PlayerCamMng : MonoBehaviour
     {
         mainCam.nearClipPlane = 0.1f;
         mainCam.fieldOfView = normalFOV;
-        cameraHolderTransform = transform;
-        theCameraRotationMult = normalCameraRotationMult;
+        camHolderTransform = transform;
+        theCamRotMult = normalCamRotMult;
         pauseMenuMng = userInterfaceObj.GetComponent<PauseMenuMng>();
         playerSpawnAndSaveMng = userInterfaceObj.GetComponent<PlayerSpawnAndSaveMng>();
         playerStatusMng = userInterfaceObj.GetComponent<PlayerStatusMng>();
         inputActions = new InputSystem_Actions();
         inputActions.Player.Enable();
-        inputActions.Player.CameraZoom.performed += CameraZoomInputPerformed;
-        inputActions.Player.CameraZoom.canceled += CameraZoomInputCancelled;
+        inputActions.Player.CamZoom.performed += CamZoomInputPerformed;
+        inputActions.Player.CamZoom.canceled += CamZoomInputCancelled;
     }
 
-    void CameraZoomInputPerformed(InputAction.CallbackContext context)
+    void CamZoomInputPerformed(InputAction.CallbackContext context)
     {
         zoomingInput = true;
     }
 
-    void CameraZoomInputCancelled(InputAction.CallbackContext context)
+    void CamZoomInputCancelled(InputAction.CallbackContext context)
     {
         zoomingInput = false;
     }
@@ -71,7 +71,7 @@ public class PlayerCamMng : MonoBehaviour
     {
         if (!pauseMenuMng.GamePaused)
         {
-            CameraLook();
+            CamLook();
 
             if (!playerSpawnAndSaveMng.PlayerDied)
             {
@@ -87,27 +87,27 @@ public class PlayerCamMng : MonoBehaviour
 
     void LateUpdate()
     {// I didn't pause the camera position change for not to see your body when you pause the game.
-        cameraHolderTransform.position = cameraPositionTransform.position;
+        camHolderTransform.position = camPosTransform.position;
     }
 
-    void CameraLook()
+    void CamLook()
     {
         if (!playerSpawnAndSaveMng.PlayerDied)
         {
-            yRotation += inputActions.Player.Look.ReadValue<Vector2>().x * sensitivity * theCameraRotationMult * 0.001f;
-            xRotation -= inputActions.Player.Look.ReadValue<Vector2>().y * sensitivity * theCameraRotationMult * 0.001f;
+            yRotation += inputActions.Player.Look.ReadValue<Vector2>().x * sensitivity * theCamRotMult * 0.001f;
+            xRotation -= inputActions.Player.Look.ReadValue<Vector2>().y * sensitivity * theCamRotMult * 0.001f;
             xRotation = Mathf.Clamp(xRotation, -90, 90);
         }
 
-        cameraHolderTransform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
-        playerColliderTransform.rotation = Quaternion.Euler(0, yRotation, 0);
+        camHolderTransform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
+        playerCollTransform.rotation = Quaternion.Euler(0, yRotation, 0);
     }
 
     void FOVChange()
     {
         if (!zoomingInput)
         {
-            theCameraRotationMult = normalCameraRotationMult;
+            theCamRotMult = normalCamRotMult;
 
             if (!(pauseMenuMng.DynamicFOV && (playerStatusMng.Running || (playerStatusMng.Sliding && playerStatusMng.FlatVelMag > playerMovementMng.RunSpeed))))
             {
@@ -121,7 +121,7 @@ public class PlayerCamMng : MonoBehaviour
         }
         else
         {
-            theCameraRotationMult = zoomedCameraRotationMult;
+            theCamRotMult = zoomedCamRotMult;
 
             if (!(pauseMenuMng.DynamicFOV && (playerStatusMng.Running || (playerStatusMng.Sliding && playerStatusMng.FlatVelMag > playerMovementMng.RunSpeed))))
             {
