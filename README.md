@@ -22,7 +22,7 @@ Projemin ana sahnesi "BILGI_PASA" klasörünün içindeki "MovementSystemDemoSce
 
 Projemin v2.1.3'ten sonraki ve v2.0'dan önceki versiyonlarının .unitypackage dosyaları bu repo'da bulunuyor. v2.1.3 ile v2.0 versiyonları ve aralarındaki versiyonlarda bulunmamasının sebebi ise Unity Asset Store'a bu projemi paylaşıp, orada satmaya çalışmıştım. Fakat gerekli koşulları karşılamadığım için Asset Store'da paylaşmama izin vermediler. Zaten gerekli koşulları karşılamaya uğraşsam da uğraştığıma değmeyeceğini düşündüm. O yüzden Asset Store yerine burada paylaşmaya devam etmeye karar verdim. Kendi projelerinizde bu hareket sistemimi kullanabilirsiniz. Ama eğer ki kullanırsanız, LÜTFEN oyununuzda bu hareket sistemini kullandığınızı belirtiniz ve lütfen bu repo'yu yıldızlayınız.
 
-Haberiniz olsun bu proje üstünde daha çalışmayı düşünmüyorum. Yani yeni bi özellik ekleme gibi bir niyetim yok.
+Haberiniz olsun, bu proje üstünde daha çalışmayı düşünmüyorum. Yani yeni bi özellik ekleme gibi bir niyetim yok.
 
 Bu hareket sistemi projemin önceki versiyonuna bakmak isterseniz GitHub linki: https://github.com/BilgiPasa/3DFirstPersonMovement.git
 
