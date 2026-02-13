@@ -16,11 +16,9 @@ Projemin son versiyonunun .unitypackage dosyası, Unity'nin 6000.0.58f2 versiyon
 
 Projemin ana sahnesi "BILGI_PASA" klasörünün içindeki "MovementSystemDemoScene" sahnesidir.
 
-Bilginize, ben vibe coding yapmam. Kodu kendim yazarım. Ama tabii ki de internette bulduğum tutorial'lardan yardım aldığım oldu.
+Projenin kodunu kendim yazdım. Vibe coding yapmadım. Ancak bazı kısımlarda internette bulduğum tutorial'lardan yardım aldığım oldu.
 
 Kendi projelerinizde bu hareket sistemimi kullanabilirsiniz. Ama eğer ki kullanırsanız LÜTFEN oyununuzda bu hareket sistemini kullandığınızı belirtiniz ve lütfen bu repo'yu yıldızlayınız.
-
-Haberiniz olsun, bu proje üstünde daha çalışmayı düşünmüyorum. Yani yeni bi özellik ekleme gibi bir niyetim yok.
 
 Bu hareket sistemi projemin önceki versiyonuna bakmak isterseniz GitHub linki: https://github.com/BilgiPasa/3DFirstPersonMovement.git
 
