@@ -20,7 +20,7 @@ Kendi projelerinizde bu hareket sistemimi kullanabilirsiniz. Ama eğer ki kullan
 
 Bu hareket sistemi projemin önceki versiyonuna bakmak isterseniz GitHub linki: https://github.com/BilgiPasa/3DFirstPersonMovement.git
 
-Projemin v2.1.3'ten sonraki ve v2.0'dan önceki versiyonlarının .unitypackage dosyaları bu repo'da bulunuyor. v2.1.3 ile v2.0 versiyonları ve aralarındaki versiyonlarda .unitypackage dosyalarının bulunmamasının sebebi, o versiyonların .unitypackage dosyalarını burada paylaşmak yerine Unity Asset Store'da satmaya çalışmıştım. Fakat gerekli koşulları karşılamadığım için Asset Store'da paylaşmama izin vermediler. Zaten gerekli koşulları karşılamaya uğraşsam da uğraştığıma değmeyeceğini ve .unitypackage dosyalarını burada paylaşmamın daha iyi olacağını düşündüm. O yüzden Asset Store yerine .unitypackage dosyalarını burada paylaşmaya devam etmeye karar verdim.
+Projemin v2.1.3'ten sonraki ve v2.0'dan önceki versiyonlarının .unitypackage dosyaları bu repo'da bulunuyor. v2.1.3 ile v2.0 versiyonları ve aralarındaki versiyonlarda .unitypackage dosyalarının bulunmamasının sebebi, o versiyonların .unitypackage dosyalarını burada paylaşmak yerine Unity Asset Store'da satmaya karar vermiştim. Fakat, gerekli koşulları karşılamadığım için Asset Store'da paylaşmama izin vermediler. Hem gerekli koşulları karşılamaya uğraşsam da uğraştığıma değmeyeceğini hem de .unitypackage dosyalarını burada paylaşmamın daha iyi olacağını düşündüğümden dolayı Asset Store yerine .unitypackage dosyalarını burada paylaşmaya devam etmeye karar verdim.
 
 Aşağıdaki üstü çizili yerde yazdığım sorun benim bilgisayarımdan kaynaklıymış. Yani önemli bir şey değil.
 
