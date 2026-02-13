@@ -6,9 +6,9 @@ Bu projedeki obje tutma sistemi hakkındaki videom: https://youtu.be/gGU53Ct5m6E
 
 Projemi denemek isterseniz, "Releases" kısmında projemin çalıştırma dosyaları (Windows için .exe, Linux için .x86_64 dosyaları) bulunuyor.
 
-Bilginize, ben vibe coding yapmam. Kodu kendim yazarım. Ama tabii ki de internette bulduğum tutorial'lardan yardım aldığım oldu.
-
 Scriptlerin üst satırlarında yazmış olduğum yorumları okuyunuz. O yorumlar, Unity editörünüzde bazı şeyleri yapmanızı isteyecek.
+
+Bilginize, ben vibe coding yapmam. Kodu kendim yazarım. Ama tabii ki de internette bulduğum tutorial'lardan yardım aldığım oldu.
 
 Scriptlerin içindeki kod yorumlarının bazıları Türkçe, bazıları İngilizce haberiniz olsun.
 
