@@ -6,7 +6,7 @@ Bu projedeki obje tutma sistemi hakkındaki videom: https://youtu.be/gGU53Ct5m6E
 
 Projemi denemek isterseniz, "Releases" kısmında projemin çalıştırma dosyaları (Windows için .exe, Linux için .x86_64 dosyaları) bulunuyor.
 
-Scriptlerin üst satırlarında yazmış olduğum yorumları okuyunuz. O yorumlar, Unity editörünüzde bazı şeyleri yapmanızı isteyecek.
+Scriptlerin üst satırlarında yazmış olduğum yorumları okuyunuz. O yorumlar, Unity editörünüzde bazı şeyleri yapmanızı isteyebilir.
 
 Projemde, Unity'nin "Particle Effects" ücretsiz assetini kullandım Unity Asset Store'dan.
 
