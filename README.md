@@ -14,7 +14,7 @@ Projemin son versiyonunun .unitypackage dosyası, Unity'nin 6000.0.58f2 versiyon
 
 Projemin ana sahnesi "BILGI_PASA" klasörünün içindeki "MovementSystemDemoScene" sahnesidir.
 
-Projenin kodunu kendim yazdım. Vibe coding yapmadım. Ancak bazı kısımlarda internette bulduğum tutorial'lardan yardım aldığım oldu.
+Projemin kodunu kendim yazdım. Vibe coding yapmadım. Ancak bazı kısımlarda internette bulduğum tutorial'lardan yardım aldığım oldu.
 
 Kendi projelerinizde bu hareket sistemimi kullanabilirsiniz. Ama eğer ki kullanırsanız lütfen oyununuzda bu hareket sistemini kullandığınızı belirtiniz ve lütfen bu repo'yu yıldızlayınız.
 
