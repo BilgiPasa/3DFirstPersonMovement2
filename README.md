@@ -18,7 +18,7 @@ Projemin ana sahnesi "BILGI_PASA" klasörünün içindeki "MovementSystemDemoSce
 
 Projenin kodunu kendim yazdım. Vibe coding yapmadım. Ancak bazı kısımlarda internette bulduğum tutorial'lardan yardım aldığım oldu.
 
-Kendi projelerinizde bu hareket sistemimi kullanabilirsiniz. Ama eğer ki kullanırsanız LÜTFEN oyununuzda bu hareket sistemini kullandığınızı belirtiniz ve lütfen bu repo'yu yıldızlayınız.
+Kendi projelerinizde bu hareket sistemimi kullanabilirsiniz. Ama eğer ki kullanırsanız lütfen oyununuzda bu hareket sistemini kullandığınızı belirtiniz ve lütfen bu repo'yu yıldızlayınız.
 
 Bu hareket sistemi projemin önceki versiyonuna bakmak isterseniz GitHub linki: https://github.com/BilgiPasa/3DFirstPersonMovement.git
 
