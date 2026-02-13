@@ -8,8 +8,6 @@ Projemi denemek isterseniz, "Releases" kısmında projemin çalıştırma dosyal
 
 Scriptlerin üst satırlarında yazmış olduğum yorumları okuyunuz. O yorumlar, Unity editörünüzde bazı şeyleri yapmanızı isteyecek.
 
-Bilginize, ben vibe coding yapmam. Kodu kendim yazarım. Ama tabii ki de internette bulduğum tutorial'lardan yardım aldığım oldu.
-
 Scriptlerin içindeki kod yorumlarının bazıları Türkçe, bazıları İngilizce haberiniz olsun.
 
 Projemde, Unity'nin "Particle Effects" ücretsiz assetini kullandım Unity Asset Store'dan.
@@ -17,6 +15,8 @@ Projemde, Unity'nin "Particle Effects" ücretsiz assetini kullandım Unity Asset
 Projemin son versiyonunun .unitypackage dosyası, Unity'nin 6000.0.58f2 versiyonunda Universal Render Pipeline (URP) ile kullanılabilir.
 
 Projemin ana sahnesi "BILGI_PASA" klasörünün içindeki "MovementSystemDemoScene" sahnesidir.
+
+Bilginize, ben vibe coding yapmam. Kodu kendim yazarım. Ama tabii ki de internette bulduğum tutorial'lardan yardım aldığım oldu.
 
 Kendi projelerinizde bu hareket sistemimi kullanabilirsiniz. Ama eğer ki kullanırsanız LÜTFEN oyununuzda bu hareket sistemini kullandığınızı belirtiniz ve lütfen bu repo'yu yıldızlayınız.
 
