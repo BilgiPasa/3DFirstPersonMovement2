@@ -6,9 +6,7 @@ Bu projedeki obje tutma sistemi hakkındaki videom: https://youtu.be/gGU53Ct5m6E
 
 Projemi denemek isterseniz, "Releases" kısmında projemin çalıştırma dosyaları (Windows için .exe, Linux için .x86_64 dosyaları) bulunuyor.
 
-Projemi yapmak için hiçbir Generative AI prompt'u KULLANMADIM ki zaten Generative AI kullanmayı sevmiyorum ve tavsiye etmiyorum da.
-
-Projemdeki kodların ve yorum satırlarının hepsini kendim yazdım ama tabii ki de internette bulduğum tutorial'lardan yardım aldığım oldu.
+Bilginize, ben vibe coding yapmam. Kodu kendim yazarım. Ama tabii ki de internette bulduğum tutorial'lardan yardım aldığım oldu.
 
 Scriptlerin üst satırlarında yazmış olduğum yorumları okuyunuz. O yorumlar, Unity editörünüzde bazı şeyleri yapmanızı isteyecek.
 
