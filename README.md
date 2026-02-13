@@ -8,8 +8,6 @@ Projemi denemek isterseniz, "Releases" kısmında projemin çalıştırma dosyal
 
 Scriptlerin üst satırlarında yazmış olduğum yorumları okuyunuz. O yorumlar, Unity editörünüzde bazı şeyleri yapmanızı isteyecek.
 
-Scriptlerin içindeki kod yorumlarının bazıları Türkçe, bazıları İngilizce haberiniz olsun.
-
 Projemde, Unity'nin "Particle Effects" ücretsiz assetini kullandım Unity Asset Store'dan.
 
 Projemin son versiyonunun .unitypackage dosyası, Unity'nin 6000.0.58f2 versiyonunda Universal Render Pipeline (URP) ile kullanılabilir.
