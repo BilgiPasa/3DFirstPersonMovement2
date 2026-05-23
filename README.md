@@ -6,7 +6,7 @@ I wrote the code of the project. **I did not do** "vibe coding".
 
 The Unity version of the project is 6000.0.58f2
 
-You can try the project here: https://bilgipasa.itch.io/3dfirstpersonmovement2
+If you want to try the project, you can check out its itch.io page: https://bilgipasa.itch.io/3dfirstpersonmovement2
 
 The video that I made about the movement system of the project: https://www.youtube.com/watch?v=6q3XmCUo-m0
 
