@@ -2,9 +2,9 @@
 
 These are the scripts of the second 3D First Person Movement system that I made in Unity.
 
-I wrote the code of the project. **I did not do** "vibe coding".
-
 The Unity version of the project is 6000.0.58f2
+
+I wrote the code of the project. **I did not do** "vibe coding".
 
 If you want to try the project, you can check out its itch.io page: https://bilgipasa.itch.io/3dfirstpersonmovement2
 
